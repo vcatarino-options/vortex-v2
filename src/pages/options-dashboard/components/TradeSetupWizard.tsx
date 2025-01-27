@@ -2,8 +2,14 @@ import Box, { BoxProps } from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { getLightestGrey, getLightGrey } from "../../../layouts/mui-treasury/mockup-utils";
 import { Autocomplete, Button, ButtonGroup, Divider, TextField } from "@mui/material";
+import { stockList } from "../../../utils/stockList";
 
-export const TradeSetupWizard = (props: BoxProps) => {
+interface TradeSetupWizardProps extends BoxProps {
+    getValue: (newValue: string | null) => void,
+    formValue: any
+    setIputValue: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
+}
+export const TradeSetupWizard = (props: TradeSetupWizardProps) => {
     return (
         <Box
             {...props}
@@ -20,7 +26,8 @@ export const TradeSetupWizard = (props: BoxProps) => {
         >
             <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "space-around", height: "18vh" }}>
                 <Autocomplete
-                    options={["teste1"]}
+                    onChange={(event, newValue) => props.getValue(newValue)}
+                    options={stockList}
                     sx={{ width: 200 }}
                     size="small"
                     renderInput={(params) => <TextField {...params} label="Ativo" />}
@@ -39,9 +46,12 @@ export const TradeSetupWizard = (props: BoxProps) => {
 
             <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "space-around", width: "100%" }}>
                 <TextField
+                    name="rate"
                     label="Juros"
                     type="number"
                     size="small"
+                    value={props.formValue.rate}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => props.setIputValue(e)}
                     sx={{ width: 200 }}
                     slotProps={{
                         inputLabel: {
@@ -52,9 +62,12 @@ export const TradeSetupWizard = (props: BoxProps) => {
 
                 <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
                     <TextField
+                        name="price"
                         label="Preço"
                         type="number"
                         size="small"
+                        value={props.formValue.price}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => props.setIputValue(e)}
                         sx={{ width: 200 }}
                         slotProps={{
                             inputLabel: {
@@ -63,13 +76,16 @@ export const TradeSetupWizard = (props: BoxProps) => {
                         }}
                     />
                     <TextField
+                        name="estimatedMargin"
                         label="Margem aproximada"
                         type="number"
                         size="small"
+                        value={props.formValue.estimatedMargin}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => props.setIputValue(e)}
                         sx={{ width: 200 }}
                         slotProps={{
                             input: {
-                                readOnly: true,
+                                shrink: true,
                             }
                         }}
                     />

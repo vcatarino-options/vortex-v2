@@ -8,11 +8,13 @@ import { TradeSetupWizard } from "./components/TradeSetupWizard";
 import OptionsTable from "./components/OptionsTable";
 import { Strategy, createEmptyStrategy } from "../../models/strategy";
 import { v4 as uuidv4 } from 'uuid';
+import useForm from "../../hooks/useForm"
 
 const OptionsDashboard = () => {
     const [open, setOpen] = useState(false);
     const [strategyName, setStrategyName] = useState("")
     const [tabIndex, setTabIndex] = React.useState(0);
+    const { formValue, setFormData } = useForm({ rate: "", price: "", estimatedMargin: "" })
 
     const [strategies, setStrategies] = useState<Strategy[]>([])
 
@@ -49,6 +51,12 @@ const OptionsDashboard = () => {
         const value = event.target.value
         setStrategyName(value)
     }
+
+    useEffect(() => {
+        console.log("TAB - INDEX: ", tabIndex)
+        console.log("Item correspondente: ", strategies[tabIndex])
+    }, [tabIndex])
+
     return (
         <>
             <FormDialog
@@ -140,7 +148,11 @@ const OptionsDashboard = () => {
                         <Box sx={{ px: 2, pt: 1 }}>
                             <Grid2 container spacing={2}>
                                 <Grid2 size={{ xs: 12, md: 6 }}>
-                                    <TradeSetupWizard />
+                                    <TradeSetupWizard
+                                        getValue={(newValue) => console.log("NOVO VALOR: ", newValue)}
+                                        formValue={formValue}
+                                        setIputValue={setFormData}
+                                    />
                                 </Grid2>
                             </Grid2>
                         </Box>
