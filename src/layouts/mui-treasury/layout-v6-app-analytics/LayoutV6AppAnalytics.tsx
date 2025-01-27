@@ -26,7 +26,7 @@ import {
 } from "../mockup-dashboard";
 import { UnderlineTabs } from "../mockup-tabs";
 import EnhancedTable from "../../../pages/options-dashboard/EnhancedTable"
-import { TradeSetupWizard } from "../../../pages/options-dashboard/TradeSetupWizard";
+import { TradeSetupWizard } from "../../../pages/options-dashboard/components/TradeSetupWizard";
 import { Outlet } from "react-router";
 
 export function LayoutV6AppAnalytics() {

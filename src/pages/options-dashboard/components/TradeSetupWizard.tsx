@@ -1,6 +1,6 @@
 import Box, { BoxProps } from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { getLightestGrey, getLightGrey } from "../../layouts/mui-treasury/mockup-utils";
+import { getLightestGrey, getLightGrey } from "../../../layouts/mui-treasury/mockup-utils";
 import { Autocomplete, Button, ButtonGroup, Divider, TextField } from "@mui/material";
 
 export const TradeSetupWizard = (props: BoxProps) => {

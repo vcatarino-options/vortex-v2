@@ -3,8 +3,8 @@ import FormDialog from "../../components/dialogs/FormDialog";
 import { Box, Button, Grid2, IconButton, Tab } from "@mui/material";
 import { UnderlineTabs } from "../../layouts/mui-treasury/mockup-tabs";
 import CloseIcon from "@mui/icons-material/Close";
-import { TradeSetupWizard } from "./TradeSetupWizard";
-import EnhancedTable from "./EnhancedTable";
+import { TradeSetupWizard } from "./components/TradeSetupWizard";
+import OptionsTable from "./components/OptionsTable";
 
 const OptionsDashboard = () => {
     const [open, setOpen] = useState(false);
@@ -129,7 +129,7 @@ const OptionsDashboard = () => {
             {/* FIM INFORMAÇÕES DO ATIVO */}
 
             {/* INÍCIO TABELA */}
-            <EnhancedTable />
+            <OptionsTable />
             {/* FIM TABELA */}
         </>
     )
