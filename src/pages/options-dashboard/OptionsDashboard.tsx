@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import FormDialog from "../../components/dialogs/FormDialog";
 import { Box, Button, Grid2, IconButton, Tab } from "@mui/material";
+import { TabContext, TabPanel } from "@mui/lab";
 import { UnderlineTabs } from "../../layouts/mui-treasury/mockup-tabs";
 import CloseIcon from "@mui/icons-material/Close";
 import { TradeSetupWizard } from "./components/TradeSetupWizard";
@@ -9,22 +10,20 @@ import { Strategy, createEmptyStrategy } from "../../models/strategy";
 import { v4 as uuidv4 } from 'uuid';
 
 const OptionsDashboard = () => {
-    const emptyStrategy = createEmptyStrategy()
     const [open, setOpen] = useState(false);
     const [strategyName, setStrategyName] = useState("")
-    const [strategyList, setStrategyList] = useState<string[]>([])
     const [tabIndex, setTabIndex] = React.useState(0);
 
     const [strategies, setStrategies] = useState<Strategy[]>([])
 
     const handleCloseTab = (value: string) => {
-        console.log(`Fechar a tabela ${value}`)
-        const updatedStrategiesList = strategyList.filter((strategy: string) => strategy !== value);
-        setStrategyList(updatedStrategiesList);
-        const listSize = updatedStrategiesList.length
+        console.log(`Fechar a tabela de id ${value}`)
+        const updatedStrategies = strategies.filter((strategy: Strategy) => strategy.id !== value);
+        setStrategies(updatedStrategies)
+        const listSize = updatedStrategies.length
         if (listSize > 0) {
             const newIndex = listSize - 1 >= 0 ? listSize - 1 : 0
-            setTabIndex(newIndex); // Seleciona a próxima aba
+            setTabIndex(newIndex);
         }
     };
     const handleClickOpen = () => {
@@ -37,14 +36,6 @@ const OptionsDashboard = () => {
 
     const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        console.log("O nome da estratégia é: ", strategyName)
-        let clonedStrategyList = [...strategyList]
-        clonedStrategyList.push(strategyName)
-        console.log("NAMES: ", strategyList)
-        setStrategyList(clonedStrategyList)
-        handleClose();
-
-
         const newStrategy = createEmptyStrategy()
         newStrategy.id = uuidv4()
         newStrategy.name = strategyName
@@ -53,10 +44,6 @@ const OptionsDashboard = () => {
         setStrategies(clonedStrategies)
         handleClose();
     }
-
-    useEffect(() => {
-        console.log("STRATEGIES: ", strategies)
-    }, [strategies])
 
     const onchange = (event: React.FormEvent<HTMLInputElement>) => {
         const value = event.target.value
@@ -91,53 +78,63 @@ const OptionsDashboard = () => {
                 </Button>
             </Box>
             {
-                strategyList.length > 0 && (
+                strategies.length > 0 && (
                     <>
-                        {/* INÍCIO TABS */}
-                        <UnderlineTabs
-                            value={tabIndex}
-                            onChange={(event, index) => setTabIndex(index)}
-                            sx={{
-                                ...(strategyList.length === 0 && { display: "none" }),
-                                minHeight: { xs: 44, md: 48 },
-                                px: 2,
-                                "& .MuiTab-root": {
+                        <TabContext value={tabIndex}>
+                            {/* INÍCIO TABS */}
+                            <UnderlineTabs
+                                value={tabIndex}
+                                onChange={(event, index) => setTabIndex(index)}
+                                sx={{
+                                    ...(strategies.length === 0 && { display: "none" }),
                                     minHeight: { xs: 44, md: 48 },
-                                    minWidth: 0,
-                                    fontSize: { md: 16 },
-                                },
-                            }}
-                        >
+                                    px: 2,
+                                    "& .MuiTab-root": {
+                                        minHeight: { xs: 44, md: 48 },
+                                        minWidth: 0,
+                                        fontSize: { md: 16 },
+                                    },
+                                }}
+                            >
+                                {
+                                    strategies.length > 0 && strategies.map((strategy, id) => (
+                                        <Tab
+                                            key={strategy.id}
+                                            value={id}
+                                            label={
+                                                <Box sx={{ display: 'flex', justifyContent: "space-between", alignItems: "baseline" }}>
+                                                    <Box>
+                                                        {strategy.name}
+                                                    </Box>
+                                                    <Box>
+                                                        <IconButton
+                                                            size="small"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation(); // Impede que o clique no botão "x" altere a aba
+                                                                handleCloseTab(strategy.id);
+                                                            }}
+                                                        >
+
+                                                            <CloseIcon fontSize="small" />
+                                                        </IconButton>
+                                                    </Box>
+                                                </Box>
+                                            }
+                                            disableTouchRipple
+                                        />
+
+                                    ))
+                                }
+                            </UnderlineTabs>
+                            {/* FIM TABS */}
                             {
-                                strategyList.length > 0 && strategyList.map(strategy => (
-                                    <Tab
-                                        label={
-                                            <Box sx={{ display: 'flex', justifyContent: "space-between", alignItems: "baseline" }}>
-                                                <Box>
-                                                    {strategy}
-                                                </Box>
-                                                <Box>
-                                                    <IconButton
-                                                        size="small"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation(); // Impede que o clique no botão "x" altere a aba
-                                                            handleCloseTab(strategy);
-                                                        }}
-                                                    >
-
-                                                        <CloseIcon fontSize="small" />
-                                                    </IconButton>
-                                                </Box>
-                                            </Box>
-                                        }
-                                        disableTouchRipple
-                                    />
-
+                                strategies.map((strategy: Strategy, id) => (
+                                    <TabPanel key={strategy.id} value={id}>
+                                        {strategy.name}
+                                    </TabPanel>
                                 ))
                             }
-                        </UnderlineTabs>
-                        {/* FIM TABS */}
-
+                        </TabContext>
 
                         {/* INÍCIO INFORMAÇÕES DO ATIVO */}
                         <Box sx={{ px: 2, pt: 1 }}>
