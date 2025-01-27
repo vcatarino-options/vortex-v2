@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { LayoutV6AppAnalytics } from "../../layouts/mui-treasury/layout-v6-app-analytics/index"
 import FormDialog from "../../components/dialogs/FormDialog";
 import { Box, Button, Grid2, IconButton, Tab } from "@mui/material";
 import { UnderlineTabs } from "../../layouts/mui-treasury/mockup-tabs";
@@ -58,118 +57,80 @@ const OptionsDashboard = () => {
                 open={open}
                 handleClose={handleClose}
             />
-            {/* <LayoutV6AppAnalytics
-                tabsTitle={strategyList}
-                handleCloseTab={handleCloseTab}
-                tabIndex={tabIndex}
-                setTabIndex={setTabIndex}
-                handleClickOpen={handleClickOpen}
-            /> */}
 
-            <>
-                <Box sx={{ px: 2, py: 2 }}>
-                    <Button
-                        variant="contained"
-                        // color="info"
-                        onClick={handleClickOpen}
-                        sx={{
-                            color: (theme) => theme.palette.primary.contrastText,
-                            background: (theme) => theme.palette.primary.light,
-                            fontWeight: 700,
-                            width: "200px"
-                        }}
-                    >
-                        NOVA ESTRATÉGIA
-                    </Button>
-                </Box>
-                {/* INÍCIO TABS */}
-                <UnderlineTabs
-                    value={tabIndex}
-                    onChange={(event, index) => setTabIndex(index)}
+            <Box sx={{ px: 2, py: 2 }}>
+                <Button
+                    variant="contained"
+                    // color="info"
+                    onClick={handleClickOpen}
                     sx={{
-                        ...(strategyList.length === 0 && { display: "none" }),
-                        minHeight: { xs: 44, md: 48 },
-                        px: 2,
-                        "& .MuiTab-root": {
-                            minHeight: { xs: 44, md: 48 },
-                            minWidth: 0,
-                            fontSize: { md: 16 },
-                        },
+                        color: (theme) => theme.palette.primary.contrastText,
+                        background: (theme) => theme.palette.primary.light,
+                        fontWeight: 700,
+                        width: "200px"
                     }}
                 >
-                    {
-                        strategyList.length > 0 && strategyList.map(strategy => (
-                            <Tab
-                                label={
-                                    <Box sx={{ display: 'flex', justifyContent: "space-between", alignItems: "baseline" }}>
-                                        <Box>
-                                            {strategy}
-                                        </Box>
-                                        <Box>
-                                            <IconButton
-                                                size="small"
-                                                onClick={(e) => {
-                                                    e.stopPropagation(); // Impede que o clique no botão "x" altere a aba
-                                                    handleCloseTab(strategy);
-                                                }}
-                                            >
-
-                                                <CloseIcon fontSize="small" />
-                                            </IconButton>
-                                        </Box>
+                    NOVA ESTRATÉGIA
+                </Button>
+            </Box>
+            {/* INÍCIO TABS */}
+            <UnderlineTabs
+                value={tabIndex}
+                onChange={(event, index) => setTabIndex(index)}
+                sx={{
+                    ...(strategyList.length === 0 && { display: "none" }),
+                    minHeight: { xs: 44, md: 48 },
+                    px: 2,
+                    "& .MuiTab-root": {
+                        minHeight: { xs: 44, md: 48 },
+                        minWidth: 0,
+                        fontSize: { md: 16 },
+                    },
+                }}
+            >
+                {
+                    strategyList.length > 0 && strategyList.map(strategy => (
+                        <Tab
+                            label={
+                                <Box sx={{ display: 'flex', justifyContent: "space-between", alignItems: "baseline" }}>
+                                    <Box>
+                                        {strategy}
                                     </Box>
-                                }
-                                disableTouchRipple
-                            />
+                                    <Box>
+                                        <IconButton
+                                            size="small"
+                                            onClick={(e) => {
+                                                e.stopPropagation(); // Impede que o clique no botão "x" altere a aba
+                                                handleCloseTab(strategy);
+                                            }}
+                                        >
 
-                        ))
-                    }
-                </UnderlineTabs>
-                {/* FIM TABS */}
+                                            <CloseIcon fontSize="small" />
+                                        </IconButton>
+                                    </Box>
+                                </Box>
+                            }
+                            disableTouchRipple
+                        />
 
-                {/* INÍCIO INFORMAÇÕES DO ATIVO */}
-                <Box sx={{ px: 2, pt: 1 }}>
-                    <Grid2 container spacing={2}>
-                        {/* <Grid2 size={{ xs: 12, sm: 6, md: 8 }} container spacing={2}> */}
-                        <Grid2 size={{ xs: 12, md: 6 }}>
-                            <TradeSetupWizard />
-                        </Grid2>
-                        {/* <Grid2 size={{ xs: 6 }}>
-                <StatCardMockup />
-              </Grid2>
-              <Grid2 size={{ xs: 6 }}>
-                <StatCardMockup />
-              </Grid2>
-              <Grid2 size={{ xs: 6 }}>
-                <StatCardMockup />
-              </Grid2>
-              <Grid2 size={{ xs: 12, md: 6 }}>
-                <UserActiveCardMockup />
-              </Grid2> */}
-                        {/* </Grid2> */}
-                        {/* <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
-              <TopUsersCardMockup sx={{ height: "100%" }} />
-            </Grid2> */}
+                    ))
+                }
+            </UnderlineTabs>
+            {/* FIM TABS */}
+
+            {/* INÍCIO INFORMAÇÕES DO ATIVO */}
+            <Box sx={{ px: 2, pt: 1 }}>
+                <Grid2 container spacing={2}>
+                    <Grid2 size={{ xs: 12, md: 6 }}>
+                        <TradeSetupWizard />
                     </Grid2>
-                </Box>
-                {/* FIM INFORMAÇÕES DO ATIVO */}
-                {/* INÍCIO TABELA */}
-                <EnhancedTable />
-                {/* FIM TABELA */}
-                <Box
-                    sx={{
-                        height: "16vh",
-                        minHeight: 240,
-                        borderRadius: 2,
-                        bgcolor: "rgba(0 0 0 / 0.12)",
-                        m: 2,
-                    }}
-                />
+                </Grid2>
+            </Box>
+            {/* FIM INFORMAÇÕES DO ATIVO */}
 
-                <br />
-                <br />
-                <br />
-            </>
+            {/* INÍCIO TABELA */}
+            <EnhancedTable />
+            {/* FIM TABELA */}
         </>
     )
 }
