@@ -1,16 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import FormDialog from "../../components/dialogs/FormDialog";
 import { Box, Button, Grid2, IconButton, Tab } from "@mui/material";
 import { UnderlineTabs } from "../../layouts/mui-treasury/mockup-tabs";
 import CloseIcon from "@mui/icons-material/Close";
 import { TradeSetupWizard } from "./components/TradeSetupWizard";
 import OptionsTable from "./components/OptionsTable";
+import { Strategy, createEmptyStrategy } from "../../models/strategy";
+import { v4 as uuidv4 } from 'uuid';
 
 const OptionsDashboard = () => {
+    const emptyStrategy = createEmptyStrategy()
     const [open, setOpen] = useState(false);
     const [strategyName, setStrategyName] = useState("")
     const [strategyList, setStrategyList] = useState<string[]>([])
     const [tabIndex, setTabIndex] = React.useState(0);
+
+    const [strategies, setStrategies] = useState<Strategy[]>([])
 
     const handleCloseTab = (value: string) => {
         console.log(`Fechar a tabela ${value}`)
@@ -38,7 +43,20 @@ const OptionsDashboard = () => {
         console.log("NAMES: ", strategyList)
         setStrategyList(clonedStrategyList)
         handleClose();
+
+
+        const newStrategy = createEmptyStrategy()
+        newStrategy.id = uuidv4()
+        newStrategy.name = strategyName
+        let clonedStrategies = [...strategies]
+        clonedStrategies.push(newStrategy)
+        setStrategies(clonedStrategies)
+        handleClose();
     }
+
+    useEffect(() => {
+        console.log("STRATEGIES: ", strategies)
+    }, [strategies])
 
     const onchange = (event: React.FormEvent<HTMLInputElement>) => {
         const value = event.target.value
@@ -132,7 +150,7 @@ const OptionsDashboard = () => {
                         {/* FIM INFORMAÇÕES DO ATIVO */}
 
                         {/* INÍCIO TABELA */}
-                        <OptionsTable />
+                        {/* <OptionsTable /> */}
                         {/* FIM TABELA */}
                     </>
                 )

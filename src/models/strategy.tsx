@@ -1,11 +1,19 @@
-interface Strategy {
+export interface Strategy {
     id: string,
     name: string
     tradeSetupWizard?: TradeSetupWizard,
     optionsTable?: OptionTable[],
 }
 
-interface TradeSetupWizard {
+export const createEmptyStrategy = () => {
+    const strategy: Strategy = {
+        id: "",
+        name: ""
+    }
+    return strategy
+}
+
+export interface TradeSetupWizard {
     id: string,
     strategyId: string,
     stockName?: string,
@@ -14,7 +22,7 @@ interface TradeSetupWizard {
     estimatedMargin?: string
 }
 
-interface OptionTable {
+export interface OptionTable {
     id: string,
     strategyId: string,
     stockName: string,
@@ -30,19 +38,19 @@ interface OptionTable {
     optionGreek: OptionGreek
 }
 
-interface OptionIn {
+export interface OptionIn {
     costVolatility: string,
     bandCost: string,
     cost: string,
 }
 
-interface OptionOut {
+export interface OptionOut {
     salesVolatility: string,
     bandSales: string,
     sales: string,
 }
 
-interface OptionGreek {
+export interface OptionGreek {
     delta: string,
     gama: string,
     theta: string,
