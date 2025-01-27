@@ -61,7 +61,6 @@ const OptionsDashboard = () => {
             <Box sx={{ px: 2, py: 2 }}>
                 <Button
                     variant="contained"
-                    // color="info"
                     onClick={handleClickOpen}
                     sx={{
                         color: (theme) => theme.palette.primary.contrastText,
@@ -73,64 +72,71 @@ const OptionsDashboard = () => {
                     NOVA ESTRATÉGIA
                 </Button>
             </Box>
-            {/* INÍCIO TABS */}
-            <UnderlineTabs
-                value={tabIndex}
-                onChange={(event, index) => setTabIndex(index)}
-                sx={{
-                    ...(strategyList.length === 0 && { display: "none" }),
-                    minHeight: { xs: 44, md: 48 },
-                    px: 2,
-                    "& .MuiTab-root": {
-                        minHeight: { xs: 44, md: 48 },
-                        minWidth: 0,
-                        fontSize: { md: 16 },
-                    },
-                }}
-            >
-                {
-                    strategyList.length > 0 && strategyList.map(strategy => (
-                        <Tab
-                            label={
-                                <Box sx={{ display: 'flex', justifyContent: "space-between", alignItems: "baseline" }}>
-                                    <Box>
-                                        {strategy}
-                                    </Box>
-                                    <Box>
-                                        <IconButton
-                                            size="small"
-                                            onClick={(e) => {
-                                                e.stopPropagation(); // Impede que o clique no botão "x" altere a aba
-                                                handleCloseTab(strategy);
-                                            }}
-                                        >
+            {
+                strategyList.length > 0 && (
+                    <>
+                        {/* INÍCIO TABS */}
+                        <UnderlineTabs
+                            value={tabIndex}
+                            onChange={(event, index) => setTabIndex(index)}
+                            sx={{
+                                ...(strategyList.length === 0 && { display: "none" }),
+                                minHeight: { xs: 44, md: 48 },
+                                px: 2,
+                                "& .MuiTab-root": {
+                                    minHeight: { xs: 44, md: 48 },
+                                    minWidth: 0,
+                                    fontSize: { md: 16 },
+                                },
+                            }}
+                        >
+                            {
+                                strategyList.length > 0 && strategyList.map(strategy => (
+                                    <Tab
+                                        label={
+                                            <Box sx={{ display: 'flex', justifyContent: "space-between", alignItems: "baseline" }}>
+                                                <Box>
+                                                    {strategy}
+                                                </Box>
+                                                <Box>
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation(); // Impede que o clique no botão "x" altere a aba
+                                                            handleCloseTab(strategy);
+                                                        }}
+                                                    >
 
-                                            <CloseIcon fontSize="small" />
-                                        </IconButton>
-                                    </Box>
-                                </Box>
+                                                        <CloseIcon fontSize="small" />
+                                                    </IconButton>
+                                                </Box>
+                                            </Box>
+                                        }
+                                        disableTouchRipple
+                                    />
+
+                                ))
                             }
-                            disableTouchRipple
-                        />
+                        </UnderlineTabs>
+                        {/* FIM TABS */}
 
-                    ))
-                }
-            </UnderlineTabs>
-            {/* FIM TABS */}
 
-            {/* INÍCIO INFORMAÇÕES DO ATIVO */}
-            <Box sx={{ px: 2, pt: 1 }}>
-                <Grid2 container spacing={2}>
-                    <Grid2 size={{ xs: 12, md: 6 }}>
-                        <TradeSetupWizard />
-                    </Grid2>
-                </Grid2>
-            </Box>
-            {/* FIM INFORMAÇÕES DO ATIVO */}
+                        {/* INÍCIO INFORMAÇÕES DO ATIVO */}
+                        <Box sx={{ px: 2, pt: 1 }}>
+                            <Grid2 container spacing={2}>
+                                <Grid2 size={{ xs: 12, md: 6 }}>
+                                    <TradeSetupWizard />
+                                </Grid2>
+                            </Grid2>
+                        </Box>
+                        {/* FIM INFORMAÇÕES DO ATIVO */}
 
-            {/* INÍCIO TABELA */}
-            <OptionsTable />
-            {/* FIM TABELA */}
+                        {/* INÍCIO TABELA */}
+                        <OptionsTable />
+                        {/* FIM TABELA */}
+                    </>
+                )
+            }
         </>
     )
 }
