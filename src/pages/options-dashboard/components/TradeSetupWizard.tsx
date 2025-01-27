@@ -8,6 +8,7 @@ interface TradeSetupWizardProps extends BoxProps {
     getValue: (newValue: string | null) => void,
     formValue: any
     setIputValue: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
+    addingOperation: (str: string) => void
 }
 export const TradeSetupWizard = (props: TradeSetupWizardProps) => {
     return (
@@ -35,9 +36,9 @@ export const TradeSetupWizard = (props: TradeSetupWizardProps) => {
                 <Box>
                     <Typography variant="h5" fontWeight="500" pb={0.5}>Adicionar Operações:</Typography>
                     <ButtonGroup variant="contained" aria-label="Basic button group">
-                        <Button sx={{ background: (theme) => theme.palette.primary.light }} >ATIVO</Button>
-                        <Button sx={{ background: (theme) => theme.palette.primary.light }} >CALL</Button>
-                        <Button sx={{ background: (theme) => theme.palette.primary.light }} >PUT</Button>
+                        <Button sx={{ background: (theme) => theme.palette.primary.light }} onClick={() => props.addingOperation("active")}>ATIVO</Button>
+                        <Button sx={{ background: (theme) => theme.palette.primary.light }} onClick={() => props.addingOperation("call")} >CALL</Button>
+                        <Button sx={{ background: (theme) => theme.palette.primary.light }} onClick={() => props.addingOperation("put")} >PUT</Button>
                     </ButtonGroup>
                 </Box>
             </Box>

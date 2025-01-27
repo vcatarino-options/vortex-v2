@@ -6,13 +6,14 @@ import { UnderlineTabs } from "../../layouts/mui-treasury/mockup-tabs";
 import CloseIcon from "@mui/icons-material/Close";
 import { TradeSetupWizard } from "./components/TradeSetupWizard";
 import OptionsTable from "./components/OptionsTable";
-import { Strategy, createEmptyStrategy } from "../../models/strategy";
+import { Strategy, TradeSetupWizard as TradeSetupWizardType, createEmptyStrategy } from "../../models/strategy";
 import { v4 as uuidv4 } from 'uuid';
 import useForm from "../../hooks/useForm"
 
 const OptionsDashboard = () => {
     const [open, setOpen] = useState(false);
     const [strategyName, setStrategyName] = useState("")
+    const [stockName, setStockName] = useState<string | null>("")
     const [tabIndex, setTabIndex] = React.useState(0);
     const { formValue, setFormData } = useForm({ rate: "", price: "", estimatedMargin: "" })
 
@@ -50,6 +51,22 @@ const OptionsDashboard = () => {
     const onchange = (event: React.FormEvent<HTMLInputElement>) => {
         const value = event.target.value
         setStrategyName(value)
+    }
+
+    const addingOperation = (value: string) => {
+        let clonedStrategies = [...strategies]
+        const strategy = clonedStrategies[tabIndex]
+        const tradeSetupWizard: TradeSetupWizardType = {
+            id: uuidv4(),
+            strategyId: strategy.id,
+            stockName: stockName || "",
+            rate: formValue.rate,
+            price: formValue.price,
+            estimatedMargin: formValue.estimatedMargin
+        }
+        clonedStrategies[tabIndex].tradeSetupWizard = tradeSetupWizard
+        console.log("clonedStrategies: ", clonedStrategies)
+        setStrategies(clonedStrategies)
     }
 
     useEffect(() => {
@@ -149,9 +166,10 @@ const OptionsDashboard = () => {
                             <Grid2 container spacing={2}>
                                 <Grid2 size={{ xs: 12, md: 6 }}>
                                     <TradeSetupWizard
-                                        getValue={(newValue) => console.log("NOVO VALOR: ", newValue)}
+                                        getValue={(newValue) => setStockName(newValue)}
                                         formValue={formValue}
                                         setIputValue={setFormData}
+                                        addingOperation={addingOperation}
                                     />
                                 </Grid2>
                             </Grid2>
