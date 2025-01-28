@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import FormDialog from "../../components/dialogs/FormDialog";
 import { Box, Button, IconButton, Tab, TextField } from "@mui/material";
 import { TabContext, TabPanel } from "@mui/lab";
@@ -10,8 +10,16 @@ import { Strategy, createEmptyStrategy, createOptionTable, OptionType, OptionTab
 import { v4 as uuidv4 } from 'uuid';
 import useForm from "../../hooks/useForm"
 import { FinancialSummary } from "./components/FinancialSummary";
+import WebSocketConnection from "../../services/ws-connection/WebSocketConnection";
+import WebSocketService from "../../services/ws-service/WebSocketService";
+
+const webSocketConnection = WebSocketConnection.getInstance()
+webSocketConnection.connect()
+const socket = webSocketConnection.getSocket()
+const webSocketService = new WebSocketService(socket)
 
 const OptionsDashboard = () => {
+    const [fee, setFee] = useState<string>("")
     const [open, setOpen] = useState(false);
     const [strategyName, setStrategyName] = useState("")
     const [stockName, setStockName] = useState<string | null>("")
@@ -21,6 +29,18 @@ const OptionsDashboard = () => {
     const [strategies, setStrategies] = useState<Strategy[]>([])
     const [operationKeyValue, setOperationKeyValue] = useState<Record<string, OptionTable[]>>({})
     const [selecteds, setSelecteds] = React.useState<string[]>([]);
+
+    useEffect(() => {
+        console.log()
+        webSocketService.getRiskFree((r: unknown) => {
+            getFee(r)
+        })
+    }, [])
+
+    const getFee = (r: unknown) => {
+        const response: string = r as string
+        setFee(response)
+    }
 
     const handleCloseTab = (value: string) => {
         console.log(`Fechar a tabela de id ${value}`)
@@ -115,7 +135,7 @@ const OptionsDashboard = () => {
                         name="rate"
                         label="Juros (%)"
                         size="small"
-                        value={"12,25"}
+                        value={fee}
                         sx={{ width: 90 }}
                         slotProps={{
                             inputLabel: {
