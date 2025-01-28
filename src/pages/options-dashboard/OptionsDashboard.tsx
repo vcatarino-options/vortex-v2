@@ -20,6 +20,7 @@ const OptionsDashboard = () => {
 
     const [strategies, setStrategies] = useState<Strategy[]>([])
     const [operationKeyValue, setOperationKeyValue] = useState<Record<string, OptionTable[]>>({})
+    const [selecteds, setSelecteds] = React.useState<string[]>([]);
 
     const handleCloseTab = (value: string) => {
         console.log(`Fechar a tabela de id ${value}`)
@@ -71,6 +72,14 @@ const OptionsDashboard = () => {
             updatedOperationKeyValue = clonedOperationsKeyValue
         }
         setOperationKeyValue(updatedOperationKeyValue)
+    }
+
+    const deletingOptionFromTable = () => {
+        const key = strategies[tabIndex].id
+        const clonedOperationsKeyValue = JSON.parse(JSON.stringify(operationKeyValue))
+        const intersections = clonedOperationsKeyValue[key].filter((option: OptionTable) => !selecteds.includes(option.id));
+        clonedOperationsKeyValue[key] = intersections
+        setOperationKeyValue(clonedOperationsKeyValue)
     }
 
     return (
@@ -179,7 +188,11 @@ const OptionsDashboard = () => {
                                         {
                                             operationKeyValue[strategy.id] &&
                                             operationKeyValue[strategy.id].length > 0 &&
-                                            <OptionsTable options={operationKeyValue[strategy.id]} />
+                                            <OptionsTable
+                                                options={operationKeyValue[strategy.id]}
+                                                selecteds={selecteds}
+                                                setSelecteds={setSelecteds}
+                                                deleteItens={deletingOptionFromTable} />
                                         }
                                     </TabPanel>
                                 ))

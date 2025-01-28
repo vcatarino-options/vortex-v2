@@ -151,8 +151,9 @@ const EnhancedTableHead: React.FC<EnhancedTableHeadProps> = ({ onSelectAllClick,
 
 interface EnhancedTableToolbarProps {
     numSelected: number
+    deleteItens: (e: any) => void
 };
-const EnhancedTableToolbar: React.FC<EnhancedTableToolbarProps> = ({ numSelected }: EnhancedTableToolbarProps) => {
+const EnhancedTableToolbar: React.FC<EnhancedTableToolbarProps> = ({ numSelected, deleteItens }: EnhancedTableToolbarProps) => {
     return (
         <Toolbar
             sx={{
@@ -172,7 +173,7 @@ const EnhancedTableToolbar: React.FC<EnhancedTableToolbarProps> = ({ numSelected
 
             {numSelected > 0 && (
                 <Tooltip title="Delete">
-                    <IconButton>
+                    <IconButton onClick={deleteItens}>
                         <FeatherIcon icon="trash-2" width="18" />
                     </IconButton>
                 </Tooltip>
@@ -182,42 +183,46 @@ const EnhancedTableToolbar: React.FC<EnhancedTableToolbarProps> = ({ numSelected
 };
 
 interface OptionsTableProps {
-    options: OptionTable[]
+    options: OptionTable[],
+    selecteds: string[],
+    deleteItens: (e: any) => void,
+    setSelecteds: (e: any) => void
+
 }
 
-const OptionsTable: React.FC<OptionsTableProps> = ({ options }: OptionsTableProps) => {
-    const [selected, setSelected] = React.useState<string[]>([]);
+const OptionsTable: React.FC<OptionsTableProps> = ({ options, deleteItens, selecteds, setSelecteds }: OptionsTableProps) => {
+    // const [selecteds, setSelecteds] = React.useState<string[]>([]);
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
             const newSelecteds = options.map((n) => n.id);
-            setSelected(newSelecteds);
+            setSelecteds(newSelecteds);
             return;
         }
-        setSelected([]);
+        setSelecteds([]);
     };
-    
+
     const handleClick = (_: React.ChangeEvent<HTMLInputElement>, id: string) => {
-        const selectedIndex = selected.indexOf(id);
+        const selectedIndex = selecteds.indexOf(id);
         let newSelected: string[] = [];
 
         if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, id);
+            newSelected = newSelected.concat(selecteds, id);
         } else if (selectedIndex === 0) {
-            newSelected = newSelected.concat(selected.slice(1));
-        } else if (selectedIndex === selected.length - 1) {
-            newSelected = newSelected.concat(selected.slice(0, -1));
+            newSelected = newSelected.concat(selecteds.slice(1));
+        } else if (selectedIndex === selecteds.length - 1) {
+            newSelected = newSelected.concat(selecteds.slice(0, -1));
         } else if (selectedIndex > 0) {
             newSelected = newSelected.concat(
-                selected.slice(0, selectedIndex),
-                selected.slice(selectedIndex + 1),
+                selecteds.slice(0, selectedIndex),
+                selecteds.slice(selectedIndex + 1),
             );
         }
 
-        setSelected(newSelected);
+        setSelecteds(newSelected);
     };
 
-    const isSelected = (id: string) => selected.indexOf(id) !== -1;
+    const isSelected = (id: string) => selecteds.indexOf(id) !== -1;
 
     return (
         <>
@@ -225,7 +230,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options }: OptionsTableProp
                 <CardContent>
                     <Box>
                         <Paper sx={{ width: '100%', mb: 2 }}>
-                            <EnhancedTableToolbar numSelected={selected.length} />
+                            <EnhancedTableToolbar numSelected={selecteds.length} deleteItens={deleteItens} />
                             <TableContainer>
                                 <Table
                                     sx={{ minWidth: 750 }}
@@ -233,7 +238,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options }: OptionsTableProp
                                     size={'medium'}
                                 >
                                     <EnhancedTableHead
-                                        numSelected={selected.length}
+                                        numSelected={selecteds.length}
                                         onSelectAllClick={handleSelectAllClick}
                                         rowCount={options.length}
                                     />
