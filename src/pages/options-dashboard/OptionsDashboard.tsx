@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import FormDialog from "../../components/dialogs/FormDialog";
-import { Box, Button, Grid2, IconButton, Tab } from "@mui/material";
+import { Box, Button, IconButton, Tab, TextField } from "@mui/material";
 import { TabContext, TabPanel } from "@mui/lab";
 import { UnderlineTabs } from "../../layouts/mui-treasury/mockup-tabs";
 import CloseIcon from "@mui/icons-material/Close";
-import { TradeSetupWizard } from "./components/TradeSetupWizard";
+import { ButtonGroupOperation } from "./components/ButtonGroupOperation";
 import OptionsTable from "./components/OptionsTable";
 import { Strategy, TradeSetupWizard as TradeSetupWizardType, createEmptyStrategy } from "../../models/strategy";
 import { v4 as uuidv4 } from 'uuid';
 import useForm from "../../hooks/useForm"
+import { FinancialSummary } from "./components/FinancialSummary";
 
 const OptionsDashboard = () => {
     const [open, setOpen] = useState(false);
@@ -88,7 +89,7 @@ const OptionsDashboard = () => {
                 handleClose={handleClose}
             />
 
-            <Box sx={{ px: 2, py: 2 }}>
+            <Box sx={{ px: 2, py: 2, display: "flex" }}>
                 <Button
                     variant="contained"
                     onClick={handleClickOpen}
@@ -101,6 +102,21 @@ const OptionsDashboard = () => {
                 >
                     NOVA ESTRATÉGIA
                 </Button>
+                <Box sx={{ pl: "15px" }}>
+                    <TextField
+                        disabled
+                        name="rate"
+                        label="Juros (%)"
+                        size="small"
+                        value={"12,25"}
+                        sx={{ width: 90 }}
+                        slotProps={{
+                            inputLabel: {
+                                shrink: true,
+                            },
+                        }}
+                    />
+                </Box>
             </Box>
             {
                 strategies.length > 0 && (
@@ -152,33 +168,29 @@ const OptionsDashboard = () => {
                                 }
                             </UnderlineTabs>
                             {/* FIM TABS */}
-                            {
+
+                            {/* INÍCIO DADOS PARA CADA TAB */}
+                            {/* {
                                 strategies.map((strategy: Strategy, id) => (
                                     <TabPanel key={strategy.id} value={id}>
                                         {strategy.name}
                                     </TabPanel>
                                 ))
-                            }
+                            } */}
+
+                            {/* INÍCIO INFORMAÇÕES DO ATIVO */}
+                            <Box sx={{ px: 2, pt: 1, display: "flex", justifyContent: "space-between" }}>
+                                <ButtonGroupOperation addingOperation={addingOperation} />
+                                <FinancialSummary setIputValue={setFormData} />
+                            </Box>
+                            {/* FIM INFORMAÇÕES DO ATIVO */}
+
+                            {/* INÍCIO TABELA */}
+                            <OptionsTable />
+                            {/* FIM TABELA */}
+
+                            {/* FIM DADOS PARA CADA TAB */}
                         </TabContext>
-
-                        {/* INÍCIO INFORMAÇÕES DO ATIVO */}
-                        <Box sx={{ px: 2, pt: 1 }}>
-                            <Grid2 container spacing={2}>
-                                <Grid2 size={{ xs: 12, md: 6 }}>
-                                    <TradeSetupWizard
-                                        getValue={(newValue) => setStockName(newValue)}
-                                        formValue={formValue}
-                                        setIputValue={setFormData}
-                                        addingOperation={addingOperation}
-                                    />
-                                </Grid2>
-                            </Grid2>
-                        </Box>
-                        {/* FIM INFORMAÇÕES DO ATIVO */}
-
-                        {/* INÍCIO TABELA */}
-                        {/* <OptionsTable /> */}
-                        {/* FIM TABELA */}
                     </>
                 )
             }

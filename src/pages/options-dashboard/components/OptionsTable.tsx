@@ -16,6 +16,8 @@ import {
     Card,
     CardContent,
     Typography,
+    Autocomplete,
+    TextField,
 } from '@mui/material';
 import FeatherIcon from 'feather-icons-react';
 import CustomCheckbox from '../../../components/custom-elements/CustomCheckbox';
@@ -50,7 +52,7 @@ function EnhancedTableHead(props) {
     return (
         <TableHead>
             <TableRow>
-                <TableCell colSpan={7} />
+                <TableCell colSpan={8} />
                 <TableCell colSpan={2} align={'center'} sx={{ backgroundColor: "#282C34" }}> Teórica</TableCell>
                 <TableCell colSpan={2} align={'center'}> Entrada</TableCell>
                 <TableCell colSpan={2} align={'center'} sx={{ backgroundColor: "#282C34" }}> Saída</TableCell>
@@ -72,6 +74,10 @@ function EnhancedTableHead(props) {
                     <Typography variant="h6" fontWeight="500">
                         Ativo
                     </Typography>
+                </TableCell>
+                <TableCell>
+                    <Typography variant="h6" fontWeight="500">Preço</Typography>
+                    <Typography variant="h6" fontWeight="500">(R$)</Typography>
                 </TableCell>
                 <TableCell>
                     <Typography variant="h6" fontWeight="500">
@@ -264,8 +270,7 @@ const OptionsTable = () => {
                                             return (
                                                 <TableRow
                                                     hover
-                                                    onClick={(event) => handleClick(event, row.name)}
-                                                    role="checkbox"
+                                                    // role="checkbox"
                                                     aria-checked={isItemSelected}
                                                     tabIndex={-1}
                                                     key={row.id}
@@ -273,6 +278,7 @@ const OptionsTable = () => {
                                                 >
                                                     <TableCell padding="checkbox">
                                                         <CustomCheckbox
+                                                            onClick={(event) => handleClick(event, row.id)}
                                                             color="primary"
                                                             checked={isItemSelected}
                                                             inputprops={{
@@ -282,7 +288,19 @@ const OptionsTable = () => {
                                                     </TableCell>
                                                     <TableCell>
                                                         <Typography variant="h6" fontWeight="600">
-                                                            {row.stockName}
+                                                            <Autocomplete
+                                                                // onChange={(event, newValue) => props.getValue(newValue)}
+                                                                onClick={(event) => event.stopPropagation()}
+                                                                options={["PETR4", "BOVA11", "CCCC34"]}
+                                                                sx={{ width: 145 }}
+                                                                size="small"
+                                                                renderInput={(params) => <TextField {...params} label="Ativo" />}
+                                                            />
+                                                        </Typography>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Typography color="textSecondary" variant="h6" fontWeight="400">
+                                                            145,00
                                                         </Typography>
                                                     </TableCell>
                                                     <TableCell>

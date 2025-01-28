@@ -5,6 +5,11 @@ export interface Strategy {
     optionsTable?: OptionTable[],
 }
 
+export interface FinancialSummary {
+    optionPrice: string | null
+    estimatedMargin: string | null
+}
+
 export const createEmptyStrategy = () => {
     const strategy: Strategy = {
         id: "",
