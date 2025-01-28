@@ -186,23 +186,23 @@ interface OptionsTableProps {
 }
 
 const OptionsTable: React.FC<OptionsTableProps> = ({ options }: OptionsTableProps) => {
-    const [selected, setSelected] = React.useState([]);
+    const [selected, setSelected] = React.useState<string[]>([]);
 
-    const handleSelectAllClick = (event) => {
+    const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
-            const newSelecteds = rows.map((n) => n.name);
+            const newSelecteds = options.map((n) => n.id);
             setSelected(newSelecteds);
             return;
         }
         setSelected([]);
     };
-
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
-        let newSelected = [];
+    
+    const handleClick = (_: React.ChangeEvent<HTMLInputElement>, id: string) => {
+        const selectedIndex = selected.indexOf(id);
+        let newSelected: string[] = [];
 
         if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
+            newSelected = newSelected.concat(selected, id);
         } else if (selectedIndex === 0) {
             newSelected = newSelected.concat(selected.slice(1));
         } else if (selectedIndex === selected.length - 1) {
@@ -217,7 +217,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options }: OptionsTableProp
         setSelected(newSelected);
     };
 
-    const isSelected = (name) => selected.indexOf(name) !== -1;
+    const isSelected = (id: string) => selected.indexOf(id) !== -1;
 
     return (
         <>
@@ -238,8 +238,8 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options }: OptionsTableProp
                                         rowCount={options.length}
                                     />
                                     <TableBody>
-                                        {options.map((row, index) => {
-                                            const isItemSelected = isSelected(row.name);
+                                        {options.map((option, index) => {
+                                            const isItemSelected = isSelected(option.id);
                                             const labelId = `enhanced-table-checkbox-${index}`;
 
                                             return (
@@ -248,12 +248,12 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options }: OptionsTableProp
                                                     // role="checkbox"
                                                     aria-checked={isItemSelected}
                                                     tabIndex={-1}
-                                                    key={row.id}
+                                                    key={option.id}
                                                     selected={isItemSelected}
                                                 >
                                                     <TableCell padding="checkbox">
                                                         <CustomCheckbox
-                                                            onClick={(event) => handleClick(event, row.id)}
+                                                            onClick={(event: React.ChangeEvent<HTMLInputElement>) => handleClick(event, option.id)}
                                                             color="primary"
                                                             checked={isItemSelected}
                                                             inputprops={{
@@ -280,32 +280,32 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options }: OptionsTableProp
                                                     </TableCell>
                                                     <TableCell>
                                                         <Typography color="textSecondary" variant="h6" fontWeight="400">
-                                                            {row.type}
+                                                            {option.type}
                                                         </Typography>
                                                     </TableCell>
                                                     <TableCell>
                                                         <Typography color="textSecondary" variant="h6" fontWeight="400">
-                                                            {row.qtd}
+                                                            {option.qtd}
                                                         </Typography>
                                                     </TableCell>
                                                     <TableCell>
                                                         <Typography color="textSecondary" variant="h6" fontWeight="400">
-                                                            {row.serie}
+                                                            {option.serie}
                                                         </Typography>
                                                     </TableCell>
                                                     <TableCell>
                                                         <Typography color="textSecondary" variant="body1" fontWeight="400">
-                                                            {row.workingDays}
+                                                            {option.workingDays}
                                                         </Typography>
                                                     </TableCell>
                                                     <TableCell>
-                                                        <Typography variant="h6">{row.strike}</Typography>
+                                                        <Typography variant="h6">{option.strike}</Typography>
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6">{row.volatility}</Typography>
+                                                        <Typography variant="h6">{option.volatility}</Typography>
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6">{row.price}</Typography>
+                                                        <Typography variant="h6">{option.price}</Typography>
                                                     </TableCell>
                                                     <TableCell>
                                                         <Box display="flex" alignItems="center">
@@ -314,7 +314,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options }: OptionsTableProp
                                                                     ml: 2,
                                                                 }}
                                                             >
-                                                                <Typography variant="h6">{row.costVolatility}</Typography>
+                                                                <Typography variant="h6">{option.costVolatility}</Typography>
                                                                 <Typography color="textSecondary" variant="h6" fontWeight="400">
                                                                     bandCost
                                                                 </Typography>
@@ -322,7 +322,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options }: OptionsTableProp
                                                         </Box>
                                                     </TableCell>
                                                     <TableCell>
-                                                        <Typography variant="h6">{row.costValue}</Typography>
+                                                        <Typography variant="h6">{option.costValue}</Typography>
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
                                                         <Box display="flex" alignItems="center">
@@ -331,7 +331,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options }: OptionsTableProp
                                                                     ml: 2,
                                                                 }}
                                                             >
-                                                                <Typography variant="h6">{row.salesVolatility}</Typography>
+                                                                <Typography variant="h6">{option.salesVolatility}</Typography>
                                                                 <Typography color="textSecondary" variant="h6" fontWeight="400">
                                                                     bandSales
                                                                 </Typography>
@@ -340,25 +340,25 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options }: OptionsTableProp
 
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6">{row.salesValue}</Typography>
+                                                        <Typography variant="h6">{option.salesValue}</Typography>
                                                     </TableCell>
                                                     <TableCell>
-                                                        <Typography variant="h6">{row.result}</Typography>
+                                                        <Typography variant="h6">{option.result}</Typography>
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6">{row.delta}</Typography>
+                                                        <Typography variant="h6">{option.delta}</Typography>
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6">{row.gama}</Typography>
+                                                        <Typography variant="h6">{option.gama}</Typography>
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6">{row.theta}</Typography>
+                                                        <Typography variant="h6">{option.theta}</Typography>
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6">{row.vega}</Typography>
+                                                        <Typography variant="h6">{option.vega}</Typography>
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6">{row.rho}</Typography>
+                                                        <Typography variant="h6">{option.rho}</Typography>
                                                     </TableCell>
                                                 </TableRow>
                                             );
