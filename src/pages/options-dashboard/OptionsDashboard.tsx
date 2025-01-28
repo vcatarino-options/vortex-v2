@@ -6,7 +6,7 @@ import { UnderlineTabs } from "../../layouts/mui-treasury/mockup-tabs";
 import CloseIcon from "@mui/icons-material/Close";
 import { ButtonGroupOperation } from "./components/ButtonGroupOperation";
 import OptionsTable from "./components/OptionsTable";
-import { Strategy, TradeSetupWizard as TradeSetupWizardType, createEmptyStrategy } from "../../models/strategy";
+import { Strategy, TradeSetupWizard as TradeSetupWizardType, createEmptyStrategy, createOptionTable, OptionType } from "../../models/strategy";
 import { v4 as uuidv4 } from 'uuid';
 import useForm from "../../hooks/useForm"
 import { FinancialSummary } from "./components/FinancialSummary";
@@ -19,6 +19,7 @@ const OptionsDashboard = () => {
     const { formValue, setFormData } = useForm({ rate: "", price: "", estimatedMargin: "" })
 
     const [strategies, setStrategies] = useState<Strategy[]>([])
+    const [operationKeyValue, setOperationKeyValue] = useState({})
 
     const handleCloseTab = (value: string) => {
         console.log(`Fechar a tabela de id ${value}`)
@@ -54,26 +55,42 @@ const OptionsDashboard = () => {
         setStrategyName(value)
     }
 
-    const addingOperation = (value: string) => {
-        let clonedStrategies = [...strategies]
-        const strategy = clonedStrategies[tabIndex]
-        const tradeSetupWizard: TradeSetupWizardType = {
-            id: uuidv4(),
-            strategyId: strategy.id,
-            stockName: stockName || "",
-            rate: formValue.rate,
-            price: formValue.price,
-            estimatedMargin: formValue.estimatedMargin
-        }
-        clonedStrategies[tabIndex].tradeSetupWizard = tradeSetupWizard
-        console.log("clonedStrategies: ", clonedStrategies)
-        setStrategies(clonedStrategies)
+    const addingOperation = (optiontype: OptionType) => {
+
+        refactoredMethod(optiontype)
+        // let clonedStrategies = [...strategies]
+        // const strategy = clonedStrategies[tabIndex]
+        // const tradeSetupWizard: TradeSetupWizardType = {
+        //     id: uuidv4(),
+        //     strategyId: strategy.id,
+        //     stockName: stockName || "",
+        //     rate: formValue.rate,
+        //     price: formValue.price,
+        //     estimatedMargin: formValue.estimatedMargin
+        // }
+        // clonedStrategies[tabIndex].tradeSetupWizard = tradeSetupWizard
+        // console.log("clonedStrategies: ", clonedStrategies)
+        // setStrategies(clonedStrategies)
     }
 
-    useEffect(() => {
-        console.log("TAB - INDEX: ", tabIndex)
-        console.log("Item correspondente: ", strategies[tabIndex])
-    }, [tabIndex])
+    const refactoredMethod = (optiontype: OptionType) => {
+        const strategy = strategies[tabIndex]
+        const operationKey = strategy.id
+        const clonedOperationsKeyValue = JSON.parse(JSON.stringify(operationKeyValue))
+        const emptyOptionRow = createOptionTable({ id: uuidv4(), optionType: optiontype })
+        let updatedOperationKeyValue = {}
+
+        if (!operationKeyValue.hasOwnProperty(operationKey)) {
+            const operations = [emptyOptionRow]
+            const newOperation = { [operationKey]: operations }
+            updatedOperationKeyValue = { ...clonedOperationsKeyValue, ...newOperation }
+        } else {
+            clonedOperationsKeyValue[operationKey].push(emptyOptionRow)
+            updatedOperationKeyValue = clonedOperationsKeyValue
+        }
+        setOperationKeyValue(updatedOperationKeyValue)
+
+    }
 
     return (
         <>
@@ -186,7 +203,7 @@ const OptionsDashboard = () => {
                             {/* FIM INFORMAÇÕES DO ATIVO */}
 
                             {/* INÍCIO TABELA */}
-                            <OptionsTable />
+                            {/* <OptionsTable /> */}
                             {/* FIM TABELA */}
 
                             {/* FIM DADOS PARA CADA TAB */}

@@ -1,8 +1,6 @@
 export interface Strategy {
     id: string,
     name: string
-    tradeSetupWizard?: TradeSetupWizard,
-    optionsTable?: OptionTable[],
 }
 
 export interface FinancialSummary {
@@ -31,7 +29,8 @@ export interface OptionTable {
     id: string,
     strategyId: string,
     stockName: string,
-    orderType: "buy" | "sell"
+    orderType: "buy" | "sell",
+    optionType: OptionType,
     quantity: string,
     workingDays: string,
     strike: string,
@@ -63,5 +62,50 @@ export interface OptionGreek {
     rho: string,
 }
 
+export const createOptionIn = (data?: Partial<OptionIn>): OptionIn => {
+    return {
+        costVolatility: data?.costVolatility || "0.0",
+        bandCost: data?.bandCost || "0.0",
+        cost: data?.cost || "0.0",
+    };
+}
 
+export const createOptionOut = (data?: Partial<OptionOut>): OptionOut => {
+    return {
+        salesVolatility: data?.salesVolatility || "0.0",
+        bandSales: data?.bandSales || "0.0",
+        sales: data?.sales || "0.0",
+    };
+}
+
+export const createOptionGreek = (data?: Partial<OptionGreek>): OptionGreek => {
+    return {
+        delta: data?.delta || "0.0",
+        gama: data?.gama || "0.0",
+        theta: data?.theta || "0.0",
+        vega: data?.vega || "0.0",
+        rho: data?.rho || "0.0",
+    };
+}
+
+export const createOptionTable = (data?: Partial<OptionTable>): OptionTable => {
+    return {
+        id: data?.id || "",
+        strategyId: data?.strategyId || "",
+        stockName: data?.stockName || "",
+        orderType: data?.orderType || "buy",
+        optionType: data?.optionType || "call",
+        quantity: data?.quantity || "0",
+        workingDays: data?.workingDays || "0",
+        strike: data?.strike || "0.0",
+        volatility: data?.volatility || "0.0",
+        price: data?.price || "0.0",
+        optionIn: createOptionIn(data?.optionIn),
+        optionOut: createOptionOut(data?.optionOut),
+        result: data?.result || "0.0",
+        optionGreek: createOptionGreek(data?.optionGreek),
+    };
+}
+
+export type OptionType = "call" | "put" | "active";
 
