@@ -1,9 +1,10 @@
 import Box, { BoxProps } from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { Button, ButtonGroup } from "@mui/material";
+import { OptionType } from "../../../models/strategy";
 
 interface ButtonGroupOperationProps extends BoxProps {
-    addingOperation: (str: string) => void
+    addingOperation: (str: OptionType) => void
 }
 export const ButtonGroupOperation = (props: ButtonGroupOperationProps) => {
     return (

@@ -119,9 +119,6 @@ export const BuildTheme = (config: any = {}) => {
         activeTheme: OPTIONS_THEME,
         SidebarWidth: 240
     };
-    // console.log("CUSTOMIZER: ", customizer)
-    // console.log("MODE: ", customizer.activeMode)
-    console.log("TRUE::: ", customizer.activeMode === "dark")
     const baseMode = {
         palette: {
             mode: customizer.activeMode,
@@ -149,7 +146,6 @@ export const BuildTheme = (config: any = {}) => {
 
 
     const theme: any = createTheme(merge({}, baseTheme, baseMode, themeOptions, { direction: config.direction }))
-    console.log("Theme: ", theme)
     return theme;
 };
 

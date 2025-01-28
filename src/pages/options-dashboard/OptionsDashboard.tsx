@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import FormDialog from "../../components/dialogs/FormDialog";
 import { Box, Button, IconButton, Tab, TextField } from "@mui/material";
 import { TabContext, TabPanel } from "@mui/lab";
@@ -6,7 +6,7 @@ import { UnderlineTabs } from "../../layouts/mui-treasury/mockup-tabs";
 import CloseIcon from "@mui/icons-material/Close";
 import { ButtonGroupOperation } from "./components/ButtonGroupOperation";
 import OptionsTable from "./components/OptionsTable";
-import { Strategy, TradeSetupWizard as TradeSetupWizardType, createEmptyStrategy, createOptionTable, OptionType } from "../../models/strategy";
+import { Strategy, createEmptyStrategy, createOptionTable, OptionType, OptionTable } from "../../models/strategy";
 import { v4 as uuidv4 } from 'uuid';
 import useForm from "../../hooks/useForm"
 import { FinancialSummary } from "./components/FinancialSummary";
@@ -19,7 +19,7 @@ const OptionsDashboard = () => {
     const { formValue, setFormData } = useForm({ rate: "", price: "", estimatedMargin: "" })
 
     const [strategies, setStrategies] = useState<Strategy[]>([])
-    const [operationKeyValue, setOperationKeyValue] = useState({})
+    const [operationKeyValue, setOperationKeyValue] = useState<Record<string, OptionTable[]>>({})
 
     const handleCloseTab = (value: string) => {
         console.log(`Fechar a tabela de id ${value}`)
@@ -56,24 +56,6 @@ const OptionsDashboard = () => {
     }
 
     const addingOperation = (optiontype: OptionType) => {
-
-        refactoredMethod(optiontype)
-        // let clonedStrategies = [...strategies]
-        // const strategy = clonedStrategies[tabIndex]
-        // const tradeSetupWizard: TradeSetupWizardType = {
-        //     id: uuidv4(),
-        //     strategyId: strategy.id,
-        //     stockName: stockName || "",
-        //     rate: formValue.rate,
-        //     price: formValue.price,
-        //     estimatedMargin: formValue.estimatedMargin
-        // }
-        // clonedStrategies[tabIndex].tradeSetupWizard = tradeSetupWizard
-        // console.log("clonedStrategies: ", clonedStrategies)
-        // setStrategies(clonedStrategies)
-    }
-
-    const refactoredMethod = (optiontype: OptionType) => {
         const strategy = strategies[tabIndex]
         const operationKey = strategy.id
         const clonedOperationsKeyValue = JSON.parse(JSON.stringify(operationKeyValue))
@@ -89,7 +71,6 @@ const OptionsDashboard = () => {
             updatedOperationKeyValue = clonedOperationsKeyValue
         }
         setOperationKeyValue(updatedOperationKeyValue)
-
     }
 
     return (
@@ -185,27 +166,24 @@ const OptionsDashboard = () => {
                                 }
                             </UnderlineTabs>
                             {/* FIM TABS */}
-
-                            {/* INÍCIO DADOS PARA CADA TAB */}
-                            {/* {
-                                strategies.map((strategy: Strategy, id) => (
-                                    <TabPanel key={strategy.id} value={id}>
-                                        {strategy.name}
-                                    </TabPanel>
-                                ))
-                            } */}
-
                             {/* INÍCIO INFORMAÇÕES DO ATIVO */}
                             <Box sx={{ px: 2, pt: 1, display: "flex", justifyContent: "space-between" }}>
                                 <ButtonGroupOperation addingOperation={addingOperation} />
                                 <FinancialSummary setIputValue={setFormData} />
                             </Box>
                             {/* FIM INFORMAÇÕES DO ATIVO */}
-
-                            {/* INÍCIO TABELA */}
-                            {/* <OptionsTable /> */}
-                            {/* FIM TABELA */}
-
+                            {/* INÍCIO DADOS PARA CADA TAB */}
+                            {
+                                strategies.map((strategy: Strategy, id) => (
+                                    <TabPanel sx={{ padding: 0 }} key={strategy.id} value={id}>
+                                        {
+                                            operationKeyValue[strategy.id] &&
+                                            operationKeyValue[strategy.id].length > 0 &&
+                                            <OptionsTable options={operationKeyValue[strategy.id]} />
+                                        }
+                                    </TabPanel>
+                                ))
+                            }
                             {/* FIM DADOS PARA CADA TAB */}
                         </TabContext>
                     </>

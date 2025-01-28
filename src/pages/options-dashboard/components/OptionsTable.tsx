@@ -21,6 +21,7 @@ import {
 } from '@mui/material';
 import FeatherIcon from 'feather-icons-react';
 import CustomCheckbox from '../../../components/custom-elements/CustomCheckbox';
+import { OptionTable } from '../../../models/strategy';
 
 const rows = [
     {
@@ -210,7 +211,11 @@ EnhancedTableToolbar.propTypes = {
     numSelected: PropTypes.number.isRequired,
 };
 
-const OptionsTable = () => {
+interface OptionsTableProps {
+    options: OptionTable[]
+}
+
+const OptionsTable: React.FC<OptionsTableProps> = ({ options }: OptionsTableProps) => {
     const [selected, setSelected] = React.useState([]);
 
     const handleSelectAllClick = (event) => {
@@ -260,10 +265,10 @@ const OptionsTable = () => {
                                     <EnhancedTableHead
                                         numSelected={selected.length}
                                         onSelectAllClick={handleSelectAllClick}
-                                        rowCount={rows.length}
+                                        rowCount={options.length}
                                     />
                                     <TableBody>
-                                        {rows.map((row, index) => {
+                                        {options.map((row, index) => {
                                             const isItemSelected = isSelected(row.name);
                                             const labelId = `enhanced-table-checkbox-${index}`;
 
