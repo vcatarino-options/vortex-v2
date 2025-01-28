@@ -1,5 +1,4 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import { alpha } from '@mui/material/styles';
 import {
     Box,
@@ -23,33 +22,13 @@ import FeatherIcon from 'feather-icons-react';
 import CustomCheckbox from '../../../components/custom-elements/CustomCheckbox';
 import { OptionTable } from '../../../models/strategy';
 
-const rows = [
-    {
-        id: '1',
-        stockName: "PETR4",
-        type: "venda",
-        qtd: '1000',
-        serie: "PETR4NNN",
-        workingDays: '21',
-        strike: 'papel',
-        volatility: '0.1',
-        price: '0.65',
-        costVolatility: '0.1',
-        costValue: '0.1',
-        salesVolatility: '0.1',
-        salesValue: '0.1',
-        result: '1000',
-        delta: '0.1',
-        gama: '0.1',
-        theta: '0.1',
-        vega: '0.1',
-        rho: '0.1',
-    },
+interface EnhancedTableHeadProps {
+    numSelected: number,
+    onSelectAllClick: (e: any) => void,
+    rowCount: number,
+};
 
-];
-
-function EnhancedTableHead(props) {
-    const { onSelectAllClick, numSelected, rowCount } = props;
+const EnhancedTableHead: React.FC<EnhancedTableHeadProps> = ({ onSelectAllClick, numSelected, rowCount }) => {
     return (
         <TableHead>
             <TableRow>
@@ -170,15 +149,10 @@ function EnhancedTableHead(props) {
     );
 }
 
-EnhancedTableHead.propTypes = {
-    numSelected: PropTypes.number.isRequired,
-    onSelectAllClick: PropTypes.func.isRequired,
-    rowCount: PropTypes.number.isRequired,
+interface EnhancedTableToolbarProps {
+    numSelected: number
 };
-
-const EnhancedTableToolbar = (props) => {
-    const { numSelected } = props;
-
+const EnhancedTableToolbar: React.FC<EnhancedTableToolbarProps> = ({ numSelected }: EnhancedTableToolbarProps) => {
     return (
         <Toolbar
             sx={{
@@ -205,10 +179,6 @@ const EnhancedTableToolbar = (props) => {
             )}
         </Toolbar>
     );
-};
-
-EnhancedTableToolbar.propTypes = {
-    numSelected: PropTypes.number.isRequired,
 };
 
 interface OptionsTableProps {
