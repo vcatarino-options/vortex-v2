@@ -270,17 +270,16 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options, deleteItens, selec
                                                         />
                                                     </TableCell>
                                                     <TableCell>
-                                                        <Typography variant="h6" fontWeight="600">
-                                                            <Autocomplete
-                                                                defaultValue={option.activeName}
-                                                                onChange={(event, newValue) => getValueFromAutocomplete(newValue as string, option.id)}
-                                                                onClick={(event) => event.stopPropagation()}
-                                                                options={stockList}
-                                                                sx={{ width: 145 }}
-                                                                size="small"
-                                                                renderInput={(params) => <TextField {...params} label="Ativo" value={"alo"} />}
-                                                            />
-                                                        </Typography>
+                                                        <Autocomplete
+                                                            value={option.activeName || null} // Controlado com estado
+                                                            onChange={(event, newValue) => getValueFromAutocomplete(newValue as string, option.id)}
+                                                            onInputChange={(event, newInputValue) => getValueFromAutocomplete(newInputValue, option.id)}
+                                                            onClick={(event) => event.stopPropagation()}
+                                                            options={stockList}
+                                                            sx={{ width: 145 }}
+                                                            size="small"
+                                                            renderInput={(params) => <TextField {...params} label="Ativo" value={"alo"} />}
+                                                        />
                                                     </TableCell>
                                                     <TableCell>
                                                         <Typography color="textSecondary" variant="h6" fontWeight="400">
