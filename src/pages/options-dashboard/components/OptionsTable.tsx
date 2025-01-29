@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { alpha } from '@mui/material/styles';
-import { NumberField } from '@base-ui-components/react/number-field';
-
 import {
     Box,
     Table,
@@ -336,23 +334,6 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options, deleteItens, selec
                                                                 // },
                                                             }}
                                                         />
-                                                        {/* <input type="number" /> */}
-                                                        {/* <TextField
-                                                            name="workingDays"
-                                                            type='number'
-                                                            size="small"
-                                                            value={option.workingDays}
-                                                            onChange={(e) => {
-                                                                const value = e.target.value
-                                                                updateOption(option.id, { workingDays: value })
-                                                            }}
-                                                            sx={{ width: 90 }}
-                                                            slotProps={{
-                                                                inputLabel: {
-                                                                    shrink: true,
-                                                                }
-                                                            }}
-                                                        />*/}
                                                     </TableCell>
                                                     <TableCell>
                                                         <Autocomplete
@@ -427,20 +408,10 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options, deleteItens, selec
                                                 </TableRow>
                                             );
                                         })}
-                                        {/* {emptyRows > 0 && (
-                                            <TableRow
-                                                style={{
-                                                    height: (dense ? 33 : 53) * emptyRows,
-                                                }}
-                                            >
-                                                <TableCell colSpan={6} />
-                                            </TableRow>
-                                        )} */}
                                     </TableBody>
                                 </Table>
                             </TableContainer>
                         </Paper>
-
                     </Box>
                 </CardContent>
             </Card>

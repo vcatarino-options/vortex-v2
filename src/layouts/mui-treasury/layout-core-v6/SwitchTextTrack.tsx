@@ -12,10 +12,11 @@ const SwitchTextTrack = styled(Switch)({
   [`& .${switchClasses.thumb}`]: {
     width: 26,
     height: 26,
-    backgroundColor: "#e01212",
+    backgroundColor: "#355E3b",
   },
   [`& .${switchClasses.track}`]: {
-    background: "#f55d5d",
+    background: "#43cea2",
+    // background: "#f55d5d",
     opacity: "1 !important",
     borderRadius: 20,
     position: "relative",
@@ -49,10 +50,11 @@ const SwitchTextTrack = styled(Switch)({
       },
     },
     [`& .${switchClasses.thumb}`]: {
-      backgroundColor: "#355E3b",
+      backgroundColor: "#e01212",
     },
     [`& + .${switchClasses.track}`]: {
-      background: "#43cea2",
+      background: "#f55d5d",
+      // background: "#43cea2",
       "&:before": {
         opacity: 1,
       },
