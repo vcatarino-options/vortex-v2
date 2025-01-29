@@ -165,6 +165,7 @@ const OptionsDashboard = () => {
 
             operation.workingDays = data?.workingDays !== undefined ? data.workingDays : operation.workingDays;
             operation.serie = data?.serie !== undefined ? data.serie : operation.serie;
+            operation.strike = data?.strike !== undefined ? data.strike : operation.strike;
             const updatedList = clonedOperationsKeyValue[key].map((op: OptionTable) => op.id === operation.id ? operation : op)
             clonedOperationsKeyValue[key] = updatedList
             setOperationKeyValue(clonedOperationsKeyValue)

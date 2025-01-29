@@ -100,7 +100,7 @@ export const createOptionTable = (data?: Partial<OptionTable>): OptionTable => {
         optionType: data?.optionType || "CALL",
         quantity: data?.quantity || "0",
         workingDays: data?.workingDays || "0",
-        strike: data?.strike || "0.0",
+        strike: data?.strike || "",
         volatility: data?.volatility || "0.0",
         price: data?.price || "0.0",
         optionIn: createOptionIn(data?.optionIn),

@@ -337,13 +337,16 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options, deleteItens, selec
                                                     </TableCell>
                                                     <TableCell>
                                                         <Autocomplete
-                                                            value={option.strike || null}
-                                                            // onChange={(event, newValue) => getValueFromAutocomplete(newValue as string, option.id)}
+                                                            value={option.strike}
+                                                            onChange={(e) => {
+                                                                const value = e.target.value
+                                                                updateOption(option.id, { strike: value })
+                                                            }}
                                                             onClick={(event) => event.stopPropagation()}
                                                             options={option.strikes}
                                                             sx={{ width: 200 }}
                                                             size="small"
-                                                            renderInput={(params) => <TextField {...params} label={option.strike || "Strike"} />}
+                                                            renderInput={(params) => <TextField {...params}/>}
                                                         />
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
