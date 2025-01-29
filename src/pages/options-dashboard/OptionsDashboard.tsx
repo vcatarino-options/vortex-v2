@@ -12,6 +12,7 @@ import useForm from "../../hooks/useForm"
 import { FinancialSummary } from "./components/FinancialSummary";
 import WebSocketConnection from "../../services/ws-connection/WebSocketConnection";
 import WebSocketService from "../../services/ws-service/WebSocketService";
+import { useSnackbar } from 'notistack';
 
 const webSocketConnection = WebSocketConnection.getInstance()
 webSocketConnection.connect()
@@ -29,6 +30,7 @@ const OptionsDashboard = () => {
     const [strategies, setStrategies] = useState<Strategy[]>([])
     const [operationKeyValue, setOperationKeyValue] = useState<Record<string, OptionTable[]>>({})
     const [selecteds, setSelecteds] = React.useState<string[]>([]);
+    const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
         webSocketService.getRiskFree((r: unknown) => {
@@ -102,31 +104,49 @@ const OptionsDashboard = () => {
     }
 
     const findActiveData = (value: string, id: string) => {
-        const operation = getOperationById(id)
-        const operationType = operation.optionType
-        const tickerData: TickerData = {
-            rowId: id,
-            ticker: value,
-            type: operationType,
+        try {
+            const operation = getOperationById(id)
+            const operationType = operation.optionType
+            const tickerData: TickerData = {
+                rowId: id,
+                ticker: value,
+                type: operationType,
 
+            }
+            webSocketService.getTickerChangeData(tickerData, (r: unknown) => getTicker(r, id))
+
+        } catch (e) {
+            console.error("OptionsDashboard - findActiveData", e)
+            enqueueSnackbar('Não foi possível carregar os dados solicitados. O ticker é válido?', { variant: "error", preventDuplicate: true });
         }
-        webSocketService.getTickerChangeData(tickerData, (r: unknown) => getTicker(r, id))
     }
 
     const getTicker = (r: any, opId: string) => {
-        const updatedOp: OptionTable = getOperationById(opId)
-        updatedOp.workingDays = r.du
-        updatedOp.strike = r.option
-        updatedOp.strikes = r.options
-        updatedOp.serie = r.serie
-        updatedOp.series = r.series
+        try {
+            checkTickerReceivedFromWebSocket(r)
+            const updatedOp: OptionTable = getOperationById(opId)
+            updatedOp.workingDays = r.du
+            updatedOp.strike = r.option
+            updatedOp.strikes = r.options
+            updatedOp.serie = r.serie
+            updatedOp.series = r.series
 
-        const key = strategies[tabIndex].id
-        const clonedOperationsKeyValue = JSON.parse(JSON.stringify(operationKeyValue))
+            const key = strategies[tabIndex].id
+            const clonedOperationsKeyValue = JSON.parse(JSON.stringify(operationKeyValue))
 
-        const updatedList = clonedOperationsKeyValue[key].map((op: OptionTable) => op.id === updatedOp.id ? updatedOp : op)
-        clonedOperationsKeyValue[key] = updatedList
-        setOperationKeyValue(clonedOperationsKeyValue)
+            const updatedList = clonedOperationsKeyValue[key].map((op: OptionTable) => op.id === updatedOp.id ? updatedOp : op)
+            clonedOperationsKeyValue[key] = updatedList
+            setOperationKeyValue(clonedOperationsKeyValue)
+        } catch (e) {
+            console.error("OptionsDashboard - getTicker", e)
+            enqueueSnackbar('Não foi possível carregar os dados solicitados. O ticker é válido?', { variant: "error", preventDuplicate: true });
+        }
+    }
+
+    const checkTickerReceivedFromWebSocket = (r: any) => {
+        if (!r.du || !r.option || !r.options || !r.serie || !r.series) {
+            throw new Error("Dados recebidos do WebSocket estão incompletos");
+        }
     }
 
     const getOperationById = (id: string) => {
