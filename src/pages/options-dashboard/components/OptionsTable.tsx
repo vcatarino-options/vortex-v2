@@ -107,13 +107,13 @@ const EnhancedTableHead: React.FC<EnhancedTableHeadProps> = ({ onSelectAllClick,
                     </Typography>
                 </TableCell>
                 <TableCell sx={{ backgroundColor: "#282C34" }}>
-                    <Typography variant="h6" fontWeight="500" >
-                        Vol. Venda
+                    <Typography variant="h6" fontWeight="500">
+                        Venda
                     </Typography>
                 </TableCell>
                 <TableCell sx={{ backgroundColor: "#282C34" }}>
-                    <Typography variant="h6" fontWeight="500">
-                        Venda
+                    <Typography variant="h6" fontWeight="500" >
+                        Vol. Venda
                     </Typography>
                 </TableCell>
                 <TableCell>
@@ -272,12 +272,13 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options, deleteItens, selec
                                                     <TableCell>
                                                         <Typography variant="h6" fontWeight="600">
                                                             <Autocomplete
+                                                                defaultValue={option.activeName}
                                                                 onChange={(event, newValue) => getValueFromAutocomplete(newValue as string, option.id)}
                                                                 onClick={(event) => event.stopPropagation()}
                                                                 options={stockList}
                                                                 sx={{ width: 145 }}
                                                                 size="small"
-                                                                renderInput={(params) => <TextField {...params} label="Ativo" />}
+                                                                renderInput={(params) => <TextField {...params} label="Ativo" value={"alo"} />}
                                                             />
                                                         </Typography>
                                                     </TableCell>
@@ -334,6 +335,9 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options, deleteItens, selec
                                                         <Typography variant="h6">{option.costValue}</Typography>
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
+                                                        <Typography variant="h6">{option.salesValue}</Typography>
+                                                    </TableCell>
+                                                    <TableCell sx={{ backgroundColor: "#282C34" }}>
                                                         <Box display="flex" alignItems="center">
                                                             <Box
                                                                 sx={{
@@ -346,11 +350,8 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options, deleteItens, selec
                                                                 </Typography>
                                                             </Box>
                                                         </Box>
+                                                    </TableCell>
 
-                                                    </TableCell>
-                                                    <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6">{option.salesValue}</Typography>
-                                                    </TableCell>
                                                     <TableCell>
                                                         <Typography variant="h6">{option.result}</Typography>
                                                     </TableCell>

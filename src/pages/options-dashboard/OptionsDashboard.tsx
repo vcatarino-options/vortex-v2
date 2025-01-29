@@ -103,6 +103,10 @@ const OptionsDashboard = () => {
         setOperationKeyValue(clonedOperationsKeyValue)
     }
 
+    // const unsubscribeTicker = (ticker: string) {
+    //     console.log("Deixar de observar: ")
+    // }
+
     const findActiveData = (value: string, id: string) => {
         try {
             const operation = getOperationById(id)
@@ -113,7 +117,8 @@ const OptionsDashboard = () => {
                 type: operationType,
 
             }
-            webSocketService.getTickerChangeData(tickerData, (r: unknown) => getTicker(r, id))
+
+            webSocketService.getTickerChangeData(tickerData, (r: unknown) => getTicker(r, id, value))
 
         } catch (e) {
             console.error("OptionsDashboard - findActiveData", e)
@@ -121,7 +126,7 @@ const OptionsDashboard = () => {
         }
     }
 
-    const getTicker = (r: any, opId: string) => {
+    const getTicker = (r: any, opId: string, activeName: string) => {
         try {
             checkTickerReceivedFromWebSocket(r)
             const updatedOp: OptionTable = getOperationById(opId)
@@ -130,6 +135,7 @@ const OptionsDashboard = () => {
             updatedOp.strikes = r.options
             updatedOp.serie = r.serie
             updatedOp.series = r.series
+            updatedOp.activeName = activeName
 
             const key = strategies[tabIndex].id
             const clonedOperationsKeyValue = JSON.parse(JSON.stringify(operationKeyValue))

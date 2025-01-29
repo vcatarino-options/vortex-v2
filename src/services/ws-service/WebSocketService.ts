@@ -23,4 +23,9 @@ export default class WebSocketService {
         this.socket.emit('get_ticker_change_data', tickerData.rowId, tickerData.ticker, tickerData.type, tickerData.series, null);
         this.socket.on('ticker_change', (r) => { callback(r) })
     }
+
+    public unsubscribeTicker = (ticker: string) => {
+        if (!this.socket) return;
+        this.socket.emit('unsubscribe_ticker', ticker);
+    };
 }

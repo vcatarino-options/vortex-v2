@@ -18,6 +18,7 @@ export const createEmptyStrategy = () => {
 
 export interface OptionTable {
     id: string,
+    activeName: string,
     strategyId: string,
     stockName: string,
     orderType: "buy" | "sell",
