@@ -287,10 +287,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options, deleteItens, selec
                                                         </Typography>
                                                     </TableCell>
                                                     <TableCell>
-                                                        <Typography color="textSecondary" variant="h6" fontWeight="400">
-                                                            <SwitchTextTrack />
-                                                            {option.type}
-                                                        </Typography>
+                                                        <SwitchTextTrack />
                                                     </TableCell>
                                                     <TableCell>
                                                         <Typography color="textSecondary" variant="h6" fontWeight="400">
@@ -299,13 +296,16 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options, deleteItens, selec
                                                     </TableCell>
                                                     <TableCell>
                                                         <Autocomplete
-                                                            value={option.serie || null}
-                                                            // onChange={(event, newValue) => getValueFromAutocomplete(newValue as string, option.id)}
+                                                            value={option.serie}
+                                                            onChange={(e) => {
+                                                                const value = e.target.value
+                                                                updateOption(option.id, { serie: value })
+                                                            }}
                                                             onClick={(event) => event.stopPropagation()}
                                                             options={option.series}
-                                                            sx={{ width: 145 }}
+                                                            sx={{ width: 165 }}
                                                             size="small"
-                                                            renderInput={(params) => <TextField {...params} label={option.serie || "Série"} />}
+                                                            renderInput={(params) => <TextField {...params} />}
                                                         />
                                                     </TableCell>
                                                     <TableCell>
