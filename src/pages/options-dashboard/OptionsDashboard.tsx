@@ -155,6 +155,25 @@ const OptionsDashboard = () => {
         }
     }
 
+
+
+    const updateOption = (optId: string, data?: Partial<OptionTable>) => {
+        try {
+            const operation = getOperationById(optId)
+            const key = strategies[tabIndex].id
+            const clonedOperationsKeyValue = JSON.parse(JSON.stringify(operationKeyValue))
+
+            operation.workingDays = data?.workingDays !== undefined ? data.workingDays : operation.workingDays;
+
+            const updatedList = clonedOperationsKeyValue[key].map((op: OptionTable) => op.id === operation.id ? operation : op)
+            clonedOperationsKeyValue[key] = updatedList
+            setOperationKeyValue(clonedOperationsKeyValue)
+
+        } catch (e) {
+
+        }
+    }
+
     const getOperationById = (id: string) => {
         const strategy = strategies[tabIndex]
         const operations = operationKeyValue[strategy.id]
@@ -272,6 +291,7 @@ const OptionsDashboard = () => {
                                             operationKeyValue[strategy.id] &&
                                             operationKeyValue[strategy.id].length > 0 &&
                                             <OptionsTable
+                                                updateOption={updateOption}
                                                 getValueFromAutocomplete={findActiveData}
                                                 options={operationKeyValue[strategy.id]}
                                                 selecteds={selecteds}

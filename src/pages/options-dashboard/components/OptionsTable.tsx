@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { alpha } from '@mui/material/styles';
+import { NumberField } from '@base-ui-components/react/number-field';
+
 import {
     Box,
     Table,
@@ -17,6 +19,7 @@ import {
     Typography,
     Autocomplete,
     TextField,
+    InputBase,
 } from '@mui/material';
 import { SwitchTextTrack } from '../../../layouts/mui-treasury/layout-core-v6';
 import FeatherIcon from 'feather-icons-react';
@@ -190,12 +193,11 @@ interface OptionsTableProps {
     deleteItens: (e: any) => void,
     setSelecteds: (e: any) => void
     getValueFromAutocomplete: (a: string, b: string) => void
+    updateOption: (a: string, opt?: Partial<OptionTable>) => void
 
 }
 
-const OptionsTable: React.FC<OptionsTableProps> = ({ options, deleteItens, selecteds, setSelecteds, getValueFromAutocomplete }: OptionsTableProps) => {
-    // const [selecteds, setSelecteds] = React.useState<string[]>([]);
-
+const OptionsTable: React.FC<OptionsTableProps> = ({ options, deleteItens, selecteds, setSelecteds, getValueFromAutocomplete, updateOption }: OptionsTableProps) => {
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
             const newSelecteds = options.map((n) => n.id);
@@ -278,7 +280,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options, deleteItens, selec
                                                             options={stockList}
                                                             sx={{ width: 145 }}
                                                             size="small"
-                                                            renderInput={(params) => <TextField {...params} label="Ativo" value={"alo"} />}
+                                                            renderInput={(params) => <TextField {...params} label={option.activeName || "Ativo"} />}
                                                         />
                                                     </TableCell>
                                                     <TableCell>
@@ -298,17 +300,70 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options, deleteItens, selec
                                                         </Typography>
                                                     </TableCell>
                                                     <TableCell>
-                                                        <Typography color="textSecondary" variant="h6" fontWeight="400">
-                                                            {option.serie}
-                                                        </Typography>
+                                                        <Autocomplete
+                                                            value={option.serie || null}
+                                                            // onChange={(event, newValue) => getValueFromAutocomplete(newValue as string, option.id)}
+                                                            onClick={(event) => event.stopPropagation()}
+                                                            options={option.series}
+                                                            sx={{ width: 145 }}
+                                                            size="small"
+                                                            renderInput={(params) => <TextField {...params} label={option.serie || "Série"} />}
+                                                        />
                                                     </TableCell>
                                                     <TableCell>
-                                                        <Typography color="textSecondary" variant="body1" fontWeight="400">
-                                                            {option.workingDays}
-                                                        </Typography>
+                                                        <InputBase
+                                                            type="number"
+                                                            size="small"
+                                                            value={option.workingDays}
+                                                            onChange={(e) => {
+                                                                const value = e.target.value
+                                                                updateOption(option.id, { workingDays: value })
+                                                            }}
+                                                            inputProps={{ min: 0 }}
+                                                            sx={{
+                                                                width: 90,
+                                                                fontSize: "0.875rem",
+                                                                padding: "5px 12px",
+                                                                border: "1px solid #767e89",
+                                                                borderRadius: "4px",
+                                                                transition: "border-color 0.2s ease-in-out",
+                                                                "&:hover": {
+                                                                    borderColor: "#ccc", // Cor da borda ao passar o mouse
+                                                                },
+                                                                // "&:focus": {
+                                                                //     borderColor: "#1976d2",
+                                                                //     outline: "none",
+                                                                // },
+                                                            }}
+                                                        />
+                                                        {/* <input type="number" /> */}
+                                                        {/* <TextField
+                                                            name="workingDays"
+                                                            type='number'
+                                                            size="small"
+                                                            value={option.workingDays}
+                                                            onChange={(e) => {
+                                                                const value = e.target.value
+                                                                updateOption(option.id, { workingDays: value })
+                                                            }}
+                                                            sx={{ width: 90 }}
+                                                            slotProps={{
+                                                                inputLabel: {
+                                                                    shrink: true,
+                                                                }
+                                                            }}
+                                                        />*/}
                                                     </TableCell>
                                                     <TableCell>
-                                                        <Typography variant="h6">{option.strike}</Typography>
+                                                        <Autocomplete
+                                                            value={option.strike || null}
+                                                            // onChange={(event, newValue) => getValueFromAutocomplete(newValue as string, option.id)}
+                                                            onClick={(event) => event.stopPropagation()}
+                                                            options={option.strikes}
+                                                            sx={{ width: 200 }}
+                                                            size="small"
+                                                            renderInput={(params) => <TextField {...params} label={option.strike || "Strike"} />}
+                                                        />
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
                                                         <Typography variant="h6">{option.volatility}</Typography>
