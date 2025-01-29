@@ -21,3 +21,4 @@ export * from "./InsetSidebar";
 export { default as InsetSidebarContent } from "./InsetSidebarContent";
 export * from "./InsetSidebarContent";
 export { layoutClasses, layoutAttrs } from "./layoutClasses";
+export {default as SwitchTextTrack } from "./SwitchTextTrack";
