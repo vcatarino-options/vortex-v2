@@ -271,7 +271,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options, deleteItens, selec
                                                     </TableCell>
                                                     <TableCell>
                                                         <Autocomplete
-                                                            value={option.activeName || null} // Controlado com estado
+                                                            value={option.activeName || null}
                                                             onChange={(event, newValue) => getValueFromAutocomplete(newValue as string, option.id)}
                                                             onInputChange={(event, newInputValue) => getValueFromAutocomplete(newInputValue, option.id)}
                                                             onClick={(event) => event.stopPropagation()}
@@ -296,20 +296,21 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options, deleteItens, selec
                                                     </TableCell>
                                                     <TableCell>
                                                         <Autocomplete
+                                                            disabled={!option.activeName}
                                                             value={option.serie}
-                                                            onChange={(e) => {
-                                                                const value = e.target.value
-                                                                updateOption(option.id, { serie: value })
+                                                            onChange={(e, newValue) => {
+                                                                updateOption(option.id, { serie: newValue || option.serie })
                                                             }}
                                                             onClick={(event) => event.stopPropagation()}
                                                             options={option.series}
-                                                            sx={{ width: 165 }}
+                                                            sx={{ width: 200 }}
                                                             size="small"
                                                             renderInput={(params) => <TextField {...params} />}
                                                         />
                                                     </TableCell>
                                                     <TableCell>
                                                         <InputBase
+                                                            disabled={!option.activeName}
                                                             type="number"
                                                             size="small"
                                                             value={option.workingDays}
@@ -337,16 +338,18 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options, deleteItens, selec
                                                     </TableCell>
                                                     <TableCell>
                                                         <Autocomplete
+                                                            disabled={!option.activeName}
                                                             value={option.strike}
-                                                            onChange={(e) => {
-                                                                const value = e.target.value
-                                                                updateOption(option.id, { strike: value })
+                                                            onChange={(e, newValue) => {
+                                                                const newStrike = newValue || option.strike
+                                                                updateOption(option.id, { strike: newStrike })
                                                             }}
                                                             onClick={(event) => event.stopPropagation()}
                                                             options={option.strikes}
+                                                            getOptionLabel={(option) => String(option)}
                                                             sx={{ width: 200 }}
                                                             size="small"
-                                                            renderInput={(params) => <TextField {...params}/>}
+                                                            renderInput={(params) => <TextField {...params} />}
                                                         />
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>

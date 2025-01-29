@@ -157,17 +157,18 @@ const OptionsDashboard = () => {
 
 
 
-    const updateOption = (optId: string, data?: Partial<OptionTable>) => {
+    const updateOption = (optId: string, data: Partial<OptionTable>) => {
         try {
             const operation = getOperationById(optId)
             const key = strategies[tabIndex].id
             const clonedOperationsKeyValue = JSON.parse(JSON.stringify(operationKeyValue))
-
-            operation.workingDays = data?.workingDays !== undefined ? data.workingDays : operation.workingDays;
-            operation.serie = data?.serie !== undefined ? data.serie : operation.serie;
-            operation.strike = data?.strike !== undefined ? data.strike : operation.strike;
+            console.log("keys: ", Object.keys(data))
+            const _key = Object.keys(data)[0]
+            operation[_key] = data?.[_key] !== undefined ? data[_key]! : operation[_key];
+            
             const updatedList = clonedOperationsKeyValue[key].map((op: OptionTable) => op.id === operation.id ? operation : op)
             clonedOperationsKeyValue[key] = updatedList
+            console.log("OP: ", operation)
             setOperationKeyValue(clonedOperationsKeyValue)
 
         } catch (e) {
