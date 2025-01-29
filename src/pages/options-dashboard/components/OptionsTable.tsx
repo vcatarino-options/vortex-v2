@@ -18,9 +18,11 @@ import {
     Autocomplete,
     TextField,
 } from '@mui/material';
+import { SwitchTextTrack } from '../../../layouts/mui-treasury/layout-core-v6';
 import FeatherIcon from 'feather-icons-react';
 import CustomCheckbox from '../../../components/custom-elements/CustomCheckbox';
 import { OptionTable } from '../../../models/strategy';
+import { stockList } from '../../../utils/stockList';
 
 interface EnhancedTableHeadProps {
     numSelected: number,
@@ -187,10 +189,11 @@ interface OptionsTableProps {
     selecteds: string[],
     deleteItens: (e: any) => void,
     setSelecteds: (e: any) => void
+    getValueFromAutocomplete: (a: string, b: string) => void
 
 }
 
-const OptionsTable: React.FC<OptionsTableProps> = ({ options, deleteItens, selecteds, setSelecteds }: OptionsTableProps) => {
+const OptionsTable: React.FC<OptionsTableProps> = ({ options, deleteItens, selecteds, setSelecteds, getValueFromAutocomplete }: OptionsTableProps) => {
     // const [selecteds, setSelecteds] = React.useState<string[]>([]);
 
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -269,9 +272,9 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options, deleteItens, selec
                                                     <TableCell>
                                                         <Typography variant="h6" fontWeight="600">
                                                             <Autocomplete
-                                                                // onChange={(event, newValue) => props.getValue(newValue)}
+                                                                onChange={(event, newValue) => getValueFromAutocomplete(newValue as string, option.id)}
                                                                 onClick={(event) => event.stopPropagation()}
-                                                                options={["PETR4", "BOVA11", "CCCC34"]}
+                                                                options={stockList}
                                                                 sx={{ width: 145 }}
                                                                 size="small"
                                                                 renderInput={(params) => <TextField {...params} label="Ativo" />}
@@ -285,6 +288,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options, deleteItens, selec
                                                     </TableCell>
                                                     <TableCell>
                                                         <Typography color="textSecondary" variant="h6" fontWeight="400">
+                                                            <SwitchTextTrack />
                                                             {option.type}
                                                         </Typography>
                                                     </TableCell>

@@ -16,15 +16,6 @@ export const createEmptyStrategy = () => {
     return strategy
 }
 
-export interface TradeSetupWizard {
-    id: string,
-    strategyId: string,
-    stockName?: string,
-    rate?: string,
-    price?: string,
-    estimatedMargin?: string
-}
-
 export interface OptionTable {
     id: string,
     strategyId: string,
@@ -34,12 +25,15 @@ export interface OptionTable {
     quantity: string,
     workingDays: string,
     strike: string,
+    strikes: string[]
     volatility: string,
     price: string,
     optionIn: OptionIn,
     optionOut: OptionOut,
     result: string,
     optionGreek: OptionGreek
+    serie: string
+    series: string[]
 }
 
 export interface OptionIn {
@@ -60,6 +54,14 @@ export interface OptionGreek {
     theta: string,
     vega: string,
     rho: string,
+}
+
+export interface TickerData {
+    rowId: string,
+    ticker: string,
+    type: OptionType,
+    series?: string,
+    price?: string
 }
 
 export const createOptionIn = (data?: Partial<OptionIn>): OptionIn => {
@@ -94,7 +96,7 @@ export const createOptionTable = (data?: Partial<OptionTable>): OptionTable => {
         strategyId: data?.strategyId || "",
         stockName: data?.stockName || "",
         orderType: data?.orderType || "buy",
-        optionType: data?.optionType || "call",
+        optionType: data?.optionType || "CALL",
         quantity: data?.quantity || "0",
         workingDays: data?.workingDays || "0",
         strike: data?.strike || "0.0",
@@ -107,5 +109,5 @@ export const createOptionTable = (data?: Partial<OptionTable>): OptionTable => {
     };
 }
 
-export type OptionType = "call" | "put" | "active";
+export type OptionType = "CALL" | "PUT" | "ACTIVE";
 

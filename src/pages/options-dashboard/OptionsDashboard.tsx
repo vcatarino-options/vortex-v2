@@ -6,7 +6,7 @@ import { UnderlineTabs } from "../../layouts/mui-treasury/mockup-tabs";
 import CloseIcon from "@mui/icons-material/Close";
 import { ButtonGroupOperation } from "./components/ButtonGroupOperation";
 import OptionsTable from "./components/OptionsTable";
-import { Strategy, createEmptyStrategy, createOptionTable, OptionType, OptionTable } from "../../models/strategy";
+import { Strategy, createEmptyStrategy, createOptionTable, OptionType, OptionTable, TickerData } from "../../models/strategy";
 import { v4 as uuidv4 } from 'uuid';
 import useForm from "../../hooks/useForm"
 import { FinancialSummary } from "./components/FinancialSummary";
@@ -31,7 +31,6 @@ const OptionsDashboard = () => {
     const [selecteds, setSelecteds] = React.useState<string[]>([]);
 
     useEffect(() => {
-        console.log()
         webSocketService.getRiskFree((r: unknown) => {
             getFee(r)
         })
@@ -100,6 +99,44 @@ const OptionsDashboard = () => {
         const intersections = clonedOperationsKeyValue[key].filter((option: OptionTable) => !selecteds.includes(option.id));
         clonedOperationsKeyValue[key] = intersections
         setOperationKeyValue(clonedOperationsKeyValue)
+    }
+
+    const findActiveData = (value: string, id: string) => {
+        const operation = getOperationById(id)
+        const operationType = operation.optionType
+        const tickerData: TickerData = {
+            rowId: id,
+            ticker: value,
+            type: operationType,
+
+        }
+        webSocketService.getTickerChangeData(tickerData, (r: unknown) => getTicker(r, id))
+    }
+
+    const getTicker = (r: any, opId: string) => {
+        const updatedOp: OptionTable = getOperationById(opId)
+        updatedOp.workingDays = r.du
+        updatedOp.strike = r.option
+        updatedOp.strikes = r.options
+        updatedOp.serie = r.serie
+        updatedOp.series = r.series
+
+        const key = strategies[tabIndex].id
+        const clonedOperationsKeyValue = JSON.parse(JSON.stringify(operationKeyValue))
+
+        const updatedList = clonedOperationsKeyValue[key].map((op: OptionTable) => op.id === updatedOp.id ? updatedOp : op)
+        clonedOperationsKeyValue[key] = updatedList
+        setOperationKeyValue(clonedOperationsKeyValue)
+    }
+
+    const getOperationById = (id: string) => {
+        const strategy = strategies[tabIndex]
+        const operations = operationKeyValue[strategy.id]
+        const operation = operations.find(op => op.id === id)
+        if (!operation) {
+            throw new Error("OptionsDashboard: Não existe uma operação válida.");
+        }
+        return JSON.parse(JSON.stringify(operation))
     }
 
     return (
@@ -209,6 +246,7 @@ const OptionsDashboard = () => {
                                             operationKeyValue[strategy.id] &&
                                             operationKeyValue[strategy.id].length > 0 &&
                                             <OptionsTable
+                                                getValueFromAutocomplete={findActiveData}
                                                 options={operationKeyValue[strategy.id]}
                                                 selecteds={selecteds}
                                                 setSelecteds={setSelecteds}

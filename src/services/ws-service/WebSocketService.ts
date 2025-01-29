@@ -1,10 +1,11 @@
 import { Socket } from 'socket.io-client'
+import { TickerData } from '../../models/strategy';
 export default class WebSocketService {
     readonly socket: Socket | null = null;
 
     public constructor(socket: Socket | null) {
         if (!socket) return
-        
+
         this.socket = socket
     }
 
@@ -16,4 +17,10 @@ export default class WebSocketService {
         this.socket.emit('get_risk_free');
         this.socket.once('risk_free', r => callback(r));
     };
+
+    public getTickerChangeData(tickerData: TickerData, callback: any) {
+        if (!this.socket) return;
+        this.socket.emit('get_ticker_change_data', tickerData.rowId, tickerData.ticker, tickerData.type, tickerData.series, null);
+        this.socket.on('ticker_change', (r) => { callback(r) })
+    }
 }

@@ -15,7 +15,7 @@ export default class AuthService {
         };
 
         try {
-            const response = await axios.post("http://34.151.227.146:8000/user_login/", data, {
+            const response = await axios.post("http://34.121.205.167/user_login/", data, {
                 headers: {
                     'accept': 'application/json',
                     'Content-Type': 'application/json'
