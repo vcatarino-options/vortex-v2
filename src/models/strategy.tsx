@@ -8,6 +8,11 @@ export interface FinancialSummary {
     estimatedMargin: string | null
 }
 
+export interface TickerMonitorData {
+    operationsWatchingTicker: number,
+    operationsId: string[]
+}
+
 export const createEmptyStrategy = () => {
     const strategy: Strategy = {
         id: "",

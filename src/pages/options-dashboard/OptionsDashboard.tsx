@@ -6,13 +6,14 @@ import { UnderlineTabs } from "../../layouts/mui-treasury/mockup-tabs";
 import CloseIcon from "@mui/icons-material/Close";
 import { ButtonGroupOperation } from "./components/ButtonGroupOperation";
 import OptionsTable from "./components/OptionsTable";
-import { Strategy, createEmptyStrategy, createOptionTable, OptionType, OptionTable, TickerData } from "../../models/strategy";
+import { Strategy, createEmptyStrategy, createOptionTable, OptionType, OptionTable, TickerData, TickerMonitorData } from "../../models/strategy";
 import { v4 as uuidv4 } from 'uuid';
 import useForm from "../../hooks/useForm"
 import { FinancialSummary } from "./components/FinancialSummary";
 import WebSocketConnection from "../../services/ws-connection/WebSocketConnection";
 import WebSocketService from "../../services/ws-service/WebSocketService";
 import { useSnackbar } from 'notistack';
+import ManagerTickerMonitor from "../../services/manager-ticker-monitor/ManagerTickerMonitor";
 
 const webSocketConnection = WebSocketConnection.getInstance()
 webSocketConnection.connect()
@@ -30,6 +31,7 @@ const OptionsDashboard = () => {
     const [strategies, setStrategies] = useState<Strategy[]>([])
     const [operationKeyValue, setOperationKeyValue] = useState<Record<string, OptionTable[]>>({})
     const [selecteds, setSelecteds] = React.useState<string[]>([]);
+    const [tickerMonitor, setTickerMonitor] = useState<Record<string, TickerMonitorData>>({})
     const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
@@ -142,11 +144,17 @@ const OptionsDashboard = () => {
 
             const updatedList = clonedOperationsKeyValue[key].map((op: OptionTable) => op.id === updatedOp.id ? updatedOp : op)
             clonedOperationsKeyValue[key] = updatedList
+            observerTicker(activeName, opId)
             setOperationKeyValue(clonedOperationsKeyValue)
         } catch (e) {
             console.error("OptionsDashboard - getTicker", e)
             enqueueSnackbar('Não foi possível carregar os dados solicitados. O ticker é válido?', { variant: "error", preventDuplicate: true });
         }
+    }
+
+    const observerTicker = (ticker: string, operationId: string) => {
+       const tickerMonitorAdd =  ManagerTickerMonitor.addTickerOnTheMonitor(ticker, operationId )
+       console.log("TICKER ADICIONADO: ", tickerMonitorAdd)
     }
 
     const checkTickerReceivedFromWebSocket = (r: any) => {
@@ -165,7 +173,7 @@ const OptionsDashboard = () => {
             console.log("keys: ", Object.keys(data))
             const _key = Object.keys(data)[0]
             operation[_key] = data?.[_key] !== undefined ? data[_key]! : operation[_key];
-            
+
             const updatedList = clonedOperationsKeyValue[key].map((op: OptionTable) => op.id === operation.id ? operation : op)
             clonedOperationsKeyValue[key] = updatedList
             console.log("OP: ", operation)

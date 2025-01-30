@@ -1,6 +1,7 @@
 export default class StorageService {
     static KEYS = {
         USERTOKEN: "userToken",
+        TOKENMONITOR: "tokenMonitor"
     }
 
     static set(index: string, value: string) {
@@ -17,6 +18,16 @@ export default class StorageService {
             return token
         } catch (error: unknown) {
             console.error("Não foi possível recuperar o token do usuário.", error)
+            throw error
+        }
+    }
+
+    static get(key: string) {
+        try {
+            const item = localStorage.getItem(key)
+            return item
+        } catch (error: unknown) {
+            console.error(`Não foi possível recuperar o item [${key}].`, error)
             throw error
         }
     }
