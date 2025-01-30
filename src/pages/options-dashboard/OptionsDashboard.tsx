@@ -45,9 +45,15 @@ const OptionsDashboard = () => {
         setFee(response)
     }
 
-    const handleCloseTab = (value: string) => {
-        console.log(`Fechar a tabela de id ${value}`)
-        const updatedStrategies = strategies.filter((strategy: Strategy) => strategy.id !== value);
+    const handleCloseTab = (strategyId: string) => {
+        const updatedStrategies = strategies.filter((strategy: Strategy) => strategy.id !== strategyId);
+        const operationsToUnsubscribe = operationKeyValue[strategyId]
+        operationsToUnsubscribe.forEach(op => {
+            const stock = op.activeName
+            ManagerTickerMonitor.deleteTickerOnTheMonitor(stock, op.id)
+            const isOkKeepObserveTicker = ManagerTickerMonitor.shouldKeepObservingTicker(stock)
+            if (!isOkKeepObserveTicker) webSocketService.unsubscribeTicker(stock)
+        })
         setStrategies(updatedStrategies)
         const listSize = updatedStrategies.length
         if (listSize > 0) {
@@ -107,7 +113,7 @@ const OptionsDashboard = () => {
         console.log("D: ", listToDelete)
         clonedOperationsKeyValue[key] = intersections
         setOperationKeyValue(clonedOperationsKeyValue)
-        listToDelete.forEach((op:OptionTable) =>{ 
+        listToDelete.forEach((op: OptionTable) => {
             const stock = op.activeName
             ManagerTickerMonitor.deleteTickerOnTheMonitor(stock, op.id)
             const isOkKeepObserveTicker = ManagerTickerMonitor.shouldKeepObservingTicker(stock)
