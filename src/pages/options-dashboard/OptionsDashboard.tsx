@@ -100,9 +100,19 @@ const OptionsDashboard = () => {
     const deletingOptionFromTable = () => {
         const key = strategies[tabIndex].id
         const clonedOperationsKeyValue = JSON.parse(JSON.stringify(operationKeyValue))
+        console.log(clonedOperationsKeyValue[key])
         const intersections = clonedOperationsKeyValue[key].filter((option: OptionTable) => !selecteds.includes(option.id));
+        const listToDelete = clonedOperationsKeyValue[key].filter((option: OptionTable) => selecteds.includes(option.id));
+        console.log("I: ", intersections)
+        console.log("D: ", listToDelete)
         clonedOperationsKeyValue[key] = intersections
         setOperationKeyValue(clonedOperationsKeyValue)
+        listToDelete.forEach((op:OptionTable) =>{ 
+            const stock = op.activeName
+            ManagerTickerMonitor.deleteTickerOnTheMonitor(stock, op.id)
+            const isOkKeepObserveTicker = ManagerTickerMonitor.shouldKeepObservingTicker(stock)
+            if (!isOkKeepObserveTicker) webSocketService.unsubscribeTicker(stock)
+        })
     }
 
     const findActiveData = (newValue: string, currentValue: string, id: string) => {
