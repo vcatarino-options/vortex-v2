@@ -190,7 +190,7 @@ interface OptionsTableProps {
     selecteds: string[],
     deleteItens: (e: any) => void,
     setSelecteds: (e: any) => void
-    getValueFromAutocomplete: (a: string, b: string) => void
+    getValueFromAutocomplete: (a: string, b: string, c: string) => void
     updateOption: (a: string, opt?: Partial<OptionTable>) => void
 
 }
@@ -272,8 +272,8 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options, deleteItens, selec
                                                     <TableCell>
                                                         <Autocomplete
                                                             value={option.activeName || null}
-                                                            onChange={(event, newValue) => getValueFromAutocomplete(newValue as string, option.id)}
-                                                            onInputChange={(event, newInputValue) => getValueFromAutocomplete(newInputValue, option.id)}
+                                                            onChange={(event, newValue) => getValueFromAutocomplete(newValue as string, option.activeName, option.id)}
+                                                            onInputChange={(event, newInputValue) => getValueFromAutocomplete(newInputValue, option.activeName, option.id)}
                                                             onClick={(event) => event.stopPropagation()}
                                                             options={stockList}
                                                             sx={{ width: 145 }}
