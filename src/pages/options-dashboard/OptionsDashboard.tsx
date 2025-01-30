@@ -14,7 +14,6 @@ import WebSocketConnection from "../../services/ws-connection/WebSocketConnectio
 import WebSocketService from "../../services/ws-service/WebSocketService";
 import { useSnackbar } from 'notistack';
 import ManagerTickerMonitor from "../../services/manager-ticker-monitor/ManagerTickerMonitor";
-import { stockList } from '../../utils/stockList';
 
 const webSocketConnection = WebSocketConnection.getInstance()
 webSocketConnection.connect()
@@ -106,14 +105,8 @@ const OptionsDashboard = () => {
         setOperationKeyValue(clonedOperationsKeyValue)
     }
 
-    // const unsubscribeTicker = (ticker: string) {
-    //     console.log("Deixar de observar: ")
-    // }
-
     const findActiveData = (newValue: string, currentValue: string, id: string) => {
         try {
-            console.log("CURRENT VALUE: ", currentValue)
-            console.log("NEW VALUE: ", newValue)
             const operation = getOperationById(id)
             const operationType = operation.optionType
             const tickerData: TickerData = {
@@ -125,7 +118,11 @@ const OptionsDashboard = () => {
 
             webSocketService.getTickerChangeData(tickerData, (r: unknown) => {
                 getTicker(r, id, newValue)
-                observerTicker(currentValue, newValue, id)
+                ManagerTickerMonitor.updateTickerMonitorData(currentValue, newValue, id)
+                if (currentValue && newValue) {
+                    const isOkKeepObserveTicker = ManagerTickerMonitor.shouldKeepObservingTicker(currentValue)
+                    if (!isOkKeepObserveTicker) webSocketService.unsubscribeTicker(currentValue)
+                }
             })
 
         } catch (e) {
@@ -157,28 +154,11 @@ const OptionsDashboard = () => {
         }
     }
 
-    const observerTicker = (currentTicker: string, newTicker: string, operationId: string) => {
-        if (stockList.includes(newTicker)) {
-            if (!currentTicker && newTicker) {
-                const tickerMonitorAdd = ManagerTickerMonitor.addTickerOnTheMonitor(newTicker, operationId)
-                console.log("TICKER ADICIONADO: ", tickerMonitorAdd)
-                return
-            }
-
-
-            if (currentTicker && newTicker) {
-                console.log(`NESSE CASO O TICKER [${currentTicker}] deve ser substituído pelo ticker [${newTicker}]`)
-            }
-        }
-    }
-
     const checkTickerReceivedFromWebSocket = (r: any) => {
         if (!r.du || !r.option || !r.options || !r.serie || !r.series) {
             throw new Error("Dados recebidos do WebSocket estão incompletos");
         }
     }
-
-
 
     const updateOption = (optId: string, data: Partial<OptionTable>) => {
         try {

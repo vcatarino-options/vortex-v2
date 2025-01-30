@@ -1,15 +1,30 @@
 import { TickerMonitorData } from "../../models/strategy";
 import StorageService from "../storage/StorageService";
-
+import { stockList } from "../../utils/stockList";
 export default class ManagerTickerMonitor {
-    static isTickerObserved = (ticker: string) => {
+
+    static updateTickerMonitorData = (currentTicker: string, newTicker: string, operationId: string) => {
+        if (!stockList.includes(newTicker)) return;
+
+        if (currentTicker) {
+            ManagerTickerMonitor.deleteTickerOnTheMonitor(currentTicker, operationId);
+        }
+        ManagerTickerMonitor.addTickerOnTheMonitor(newTicker, operationId);
+    }
+
+
+
+    static deleteTickerOnTheMonitor = (ticker: string, operationId: string) => {
         const strTickerMonitor: string | null = StorageService.get(StorageService.KEYS.TOKENMONITOR)
-        const tickerMonitor: Record<string, TickerMonitorData> | null = JSON.parse(strTickerMonitor as string)
+        const tickerMonitor: Record<string, TickerMonitorData> = JSON.parse(strTickerMonitor as string)
+        const opsId = tickerMonitor[ticker].operationsId
+        const updatedOperations = opsId.filter(id => id !== operationId)
+        tickerMonitor[ticker].operationsWatchingTicker = updatedOperations.length
+        tickerMonitor[ticker].operationsId = updatedOperations
 
-        if (!tickerMonitor) return false
-
-        const keys: string[] = Object.keys(tickerMonitor)
-        return keys.includes(ticker)
+        const str = JSON.stringify(tickerMonitor)
+        StorageService.set(StorageService.KEYS.TOKENMONITOR, str)
+        return tickerMonitor
     }
 
     static addTickerOnTheMonitor = (ticker: string, operationId: string) => {
@@ -36,20 +51,30 @@ export default class ManagerTickerMonitor {
         StorageService.set(StorageService.KEYS.TOKENMONITOR, str)
         return updatedTickerMonitor
     }
+
+    static isTickerObserved = (ticker: string) => {
+        const strTickerMonitor: string | null = StorageService.get(StorageService.KEYS.TOKENMONITOR)
+        const tickerMonitor: Record<string, TickerMonitorData> | null = JSON.parse(strTickerMonitor as string)
+
+        if (!tickerMonitor) return false
+
+        const keys: string[] = Object.keys(tickerMonitor)
+        return keys.includes(ticker)
+    }
+
     static isOperationIncluded = (operationId: string, operationIdList: string[]) => {
         return operationIdList.includes(operationId)
     }
 
-    static deleteTickerOnTheMonitor = (ticker: string, operationId: string, tickerMonitor: Record<string, TickerMonitorData>) => {
-        const opsId = tickerMonitor[ticker].operationsId
-        let clonedTickerMonitor = JSON.parse(JSON.stringify(tickerMonitor))
-        const updatedOperations = opsId.filter(id => id !== operationId)
-        clonedTickerMonitor[ticker].operationsWatchingTicker--
-        clonedTickerMonitor[ticker].operationsId = updatedOperations
-        return clonedTickerMonitor
-    }
 
-    static shouldKeepObservingTicker = (ticker: string, tickerMonitor: Record<string, TickerMonitorData>) => {
+
+    static shouldKeepObservingTicker = (ticker: string) => {
+        const strTickerMonitor: string | null = StorageService.get(StorageService.KEYS.TOKENMONITOR)
+        if (!strTickerMonitor) return false
+
+        const tickerMonitor: Record<string, TickerMonitorData> = JSON.parse(strTickerMonitor)
+        if (Object.keys(tickerMonitor).length === 0) return false
+
         const stock = tickerMonitor[ticker]
         return stock.operationsWatchingTicker > 0 && stock.operationsId.length > 0
     }
