@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import FormDialog from "../../components/dialogs/FormDialog";
 import { Box, Button, IconButton, Tab, TextField } from "@mui/material";
 import { TabContext, TabPanel } from "@mui/lab";
@@ -33,6 +33,9 @@ const OptionsDashboard = () => {
     const [stockDataKeyValue, setStockDataKeyValue] = useState<Record<string, StockData[]>>({})
     const [optionDataKeyValue, setOptionDataKeyValue] = useState<Record<string, OptionData[]>>({})
     const [stockQtdFromRow, setStockQtdFromRow] = React.useState<Record<string, number>>({});
+    const stockDataRef = useRef(stockDataKeyValue);
+    const optionDataRef = useRef(optionDataKeyValue);
+
     const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
@@ -40,6 +43,11 @@ const OptionsDashboard = () => {
             getFee(r)
         })
     }, [])
+
+    useEffect(() => {
+        stockDataRef.current = stockDataKeyValue;
+        optionDataRef.current = optionDataKeyValue;
+    }, [stockDataKeyValue, optionDataKeyValue]);
 
     const getFee = (r: unknown) => {
         const response: string = r as string
@@ -98,27 +106,39 @@ const OptionsDashboard = () => {
         let updatedStockDataKeyValue = {}
         let updatedOptionDataKeyValue = {}
 
-        if (!stockDataKeyValue.hasOwnProperty(operationKey)) {
-            const operations = [emptyStockDataRow]
-            const newOperation = { [operationKey]: operations }
-            updatedStockDataKeyValue = { ...clonedStockDataKeyValue, ...newOperation }
-        } else {
-            clonedStockDataKeyValue[operationKey].push(emptyStockDataRow)
-            updatedStockDataKeyValue = clonedStockDataKeyValue
-        }
+        // if (!stockDataKeyValue.hasOwnProperty(operationKey)) {
+        //     const operations = [emptyStockDataRow]
+        //     const newOperation = { [operationKey]: operations }
+        //     updatedStockDataKeyValue = { ...clonedStockDataKeyValue, ...newOperation }
+        // } else {
+        //     clonedStockDataKeyValue[operationKey].push(emptyStockDataRow)
+        //     updatedStockDataKeyValue = clonedStockDataKeyValue
+        // }
 
-        if (!optionDataKeyValue.hasOwnProperty(operationKey)) {
-            const options = [emptyOptionDataRow]
-            const newOption = { [operationKey]: options }
-            updatedOptionDataKeyValue = { ...clonedOperationsKeyValue, ...newOption }
-        } else {
-            clonedOperationsKeyValue[operationKey].push(emptyOptionDataRow)
-            updatedOptionDataKeyValue = clonedOperationsKeyValue
-        }
+        // if (!optionDataKeyValue.hasOwnProperty(operationKey)) {
+        //     const options = [emptyOptionDataRow]
+        //     const newOption = { [operationKey]: options }
+        //     updatedOptionDataKeyValue = { ...clonedOperationsKeyValue, ...newOption }
+        // } else {
+        //     clonedOperationsKeyValue[operationKey].push(emptyOptionDataRow)
+        //     updatedOptionDataKeyValue = clonedOperationsKeyValue
+        // }
+
+        // Atualizando StockData
+        setStockDataKeyValue(prevStockData => ({
+            ...prevStockData,
+            [operationKey]: prevStockData[operationKey] ? [...prevStockData[operationKey], emptyStockDataRow] : [emptyStockDataRow]
+        }));
+
+        // Atualizando OptionData
+        setOptionDataKeyValue(prevOptionData => ({
+            ...prevOptionData,
+            [operationKey]: prevOptionData[operationKey] ? [...prevOptionData[operationKey], emptyOptionDataRow] : [emptyOptionDataRow]
+        }));
 
         inicializeStockQtdFromRow(operationId)
-        setStockDataKeyValue(updatedStockDataKeyValue)
-        setOptionDataKeyValue(updatedOptionDataKeyValue)
+        // setStockDataKeyValue(updatedStockDataKeyValue)
+        // setOptionDataKeyValue(updatedOptionDataKeyValue)
     }
 
     const inicializeStockQtdFromRow = (operationId: string) => {
@@ -150,7 +170,6 @@ const OptionsDashboard = () => {
                 rowId: id,
                 ticker: newValue,
                 type: operationType,
-
             }
 
             webSocketService.getTickerChangeData(tickerData, (r: unknown) => {
@@ -162,33 +181,29 @@ const OptionsDashboard = () => {
                 }
             })
 
-            webSocketService.listenBookInfo(newValue, (r: any) => {
-                const optionIn: OptionIn = {
-                    cost: r[3],
-                    bandCost: r[149]
-                }
-                const optionOut: OptionOut = {
-                    sales: r[4],
-                    bandSales: r[148]
-                }
-
+            //montar a alteração
+            // const index = optionDataKeyValue[key].findIndex(op => op.id === option.id)
+            webSocketService.listenBookInfo(newValue, (d: any) => {
                 const option: OptionData = getOptionDataById(id)
-                option.optionIn = optionIn
-                option.optionOut = optionOut
-
+                option.optionIn.cost = d[3]
+                option.optionOut.sales = d[4]
                 const key = strategies[tabIndex].id
-                const clonedOptionKeyValue = JSON.parse(JSON.stringify(optionDataKeyValue))
+                const clonedOptionsKeyValue = JSON.parse(JSON.stringify(optionDataRef.current))
+                const updatedList = clonedOptionsKeyValue[key].map((op: OptionData) => op.id === option.id ? option : op)
+                clonedOptionsKeyValue[key] = updatedList
+                setOptionDataKeyValue(clonedOptionsKeyValue)
 
-                const options = clonedOptionKeyValue[key].map((op: OptionData) => op.id === option.id ? option : op)
-                clonedOptionKeyValue[key] = options
-                setOptionDataKeyValue(clonedOptionKeyValue)
             })
-
+            // console.log("option", option, "index: ", index)
         } catch (e) {
             console.error("OptionsDashboard - findActiveData", e)
             enqueueSnackbar('Não foi possível carregar os dados solicitados. O ticker é válido?', { variant: "error", preventDuplicate: true });
         }
     }
+
+    useEffect(() => {
+        console.log("Estado atualizado:", optionDataKeyValue);
+    }, [optionDataKeyValue]);
 
     const getTicker = (r: any, opId: string, activeName: string) => {
         try {
@@ -207,6 +222,7 @@ const OptionsDashboard = () => {
             const updatedList = clonedOperationsKeyValue[key].map((op: StockData) => op.id === updatedOp.id ? updatedOp : op)
             clonedOperationsKeyValue[key] = updatedList
             setStockDataKeyValue(clonedOperationsKeyValue)
+
         } catch (e) {
             console.error("OptionsDashboard - getTicker", e)
             enqueueSnackbar('Não foi possível carregar os dados solicitados. O ticker é válido?', { variant: "error", preventDuplicate: true });
@@ -248,7 +264,9 @@ const OptionsDashboard = () => {
 
     const getOptionDataById = (id: string) => {
         const strategy = strategies[tabIndex]
-        const options = optionDataKeyValue[strategy.id]
+        const options = optionDataRef.current[strategy.id]
+        console.log("strategy: ", strategy)
+        console.log("options: ", options)
         const option = options.find(op => op.id === id)
         if (!option) {
             throw new Error("OptionsDashboard: Não existe uma opção válida.");
