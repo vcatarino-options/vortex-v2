@@ -21,7 +21,7 @@ export const createEmptyStrategy = () => {
     return strategy
 }
 
-export interface OptionTable {
+export interface StockData {
     id: string,
     activeName: string,
     strategyId: string,
@@ -96,7 +96,7 @@ export const createOptionGreek = (data?: Partial<OptionGreek>): OptionGreek => {
     };
 }
 
-export const createOptionTable = (data?: Partial<OptionTable>): OptionTable => {
+export const createOptionTable = (data?: Partial<StockData>): StockData => {
     return {
         id: data?.id || "",
         strategyId: data?.strategyId || "",

@@ -6,7 +6,7 @@ import { UnderlineTabs } from "../../layouts/mui-treasury/mockup-tabs";
 import CloseIcon from "@mui/icons-material/Close";
 import { ButtonGroupOperation } from "./components/ButtonGroupOperation";
 import OptionsTable from "./components/OptionsTable";
-import { Strategy, createEmptyStrategy, createOptionTable, OptionType, OptionTable, TickerData, TickerMonitorData } from "../../models/strategy";
+import { Strategy, createEmptyStrategy, createOptionTable, OptionType, StockData, TickerData, TickerMonitorData } from "../../models/strategy";
 import { v4 as uuidv4 } from 'uuid';
 import useForm from "../../hooks/useForm"
 import { FinancialSummary } from "./components/FinancialSummary";
@@ -29,7 +29,7 @@ const OptionsDashboard = () => {
     const { formValue, setFormData } = useForm({ rate: "", price: "", estimatedMargin: "" })
 
     const [strategies, setStrategies] = useState<Strategy[]>([])
-    const [operationKeyValue, setOperationKeyValue] = useState<Record<string, OptionTable[]>>({})
+    const [operationKeyValue, setOperationKeyValue] = useState<Record<string, StockData[]>>({})
     const [selecteds, setSelecteds] = React.useState<string[]>([]);
     const [stockQtdFromRow, setStockQtdFromRow] = React.useState<Record<string, number>>({});
     const { enqueueSnackbar } = useSnackbar();
@@ -109,21 +109,17 @@ const OptionsDashboard = () => {
         setOperationKeyValue(updatedOperationKeyValue)
     }
 
-    useEffect(() => {
-        console.log("STOCK QTD FROM ROW: ", stockQtdFromRow)
-    }, [stockQtdFromRow])
-
     const deletingOptionFromTable = () => {
         const key = strategies[tabIndex].id
         const clonedOperationsKeyValue = JSON.parse(JSON.stringify(operationKeyValue))
         console.log(clonedOperationsKeyValue[key])
-        const intersections = clonedOperationsKeyValue[key].filter((option: OptionTable) => !selecteds.includes(option.id));
-        const listToDelete = clonedOperationsKeyValue[key].filter((option: OptionTable) => selecteds.includes(option.id));
+        const intersections = clonedOperationsKeyValue[key].filter((option: StockData) => !selecteds.includes(option.id));
+        const listToDelete = clonedOperationsKeyValue[key].filter((option: StockData) => selecteds.includes(option.id));
         console.log("I: ", intersections)
         console.log("D: ", listToDelete)
         clonedOperationsKeyValue[key] = intersections
         setOperationKeyValue(clonedOperationsKeyValue)
-        listToDelete.forEach((op: OptionTable) => {
+        listToDelete.forEach((op: StockData) => {
             const stock = op.activeName
             ManagerTickerMonitor.deleteTickerOnTheMonitor(stock, op.id)
             const isOkKeepObserveTicker = ManagerTickerMonitor.shouldKeepObservingTicker(stock)
@@ -160,7 +156,7 @@ const OptionsDashboard = () => {
     const getTicker = (r: any, opId: string, activeName: string) => {
         try {
             checkTickerReceivedFromWebSocket(r)
-            const updatedOp: OptionTable = getOperationById(opId)
+            const updatedOp: StockData = getOperationById(opId)
             updatedOp.workingDays = r.du
             updatedOp.strike = r.option
             updatedOp.strikes = r.options
@@ -171,7 +167,7 @@ const OptionsDashboard = () => {
             const key = strategies[tabIndex].id
             const clonedOperationsKeyValue = JSON.parse(JSON.stringify(operationKeyValue))
 
-            const updatedList = clonedOperationsKeyValue[key].map((op: OptionTable) => op.id === updatedOp.id ? updatedOp : op)
+            const updatedList = clonedOperationsKeyValue[key].map((op: StockData) => op.id === updatedOp.id ? updatedOp : op)
             clonedOperationsKeyValue[key] = updatedList
             setOperationKeyValue(clonedOperationsKeyValue)
         } catch (e) {
@@ -186,18 +182,16 @@ const OptionsDashboard = () => {
         }
     }
 
-    const updateOption = (optId: string, data: Partial<OptionTable>) => {
+    const updateOption = (optId: string, data: Partial<StockData>) => {
         try {
             const operation = getOperationById(optId)
             const key = strategies[tabIndex].id
             const clonedOperationsKeyValue = JSON.parse(JSON.stringify(operationKeyValue))
-            console.log("keys: ", Object.keys(data))
             const _key = Object.keys(data)[0]
             operation[_key] = data?.[_key] !== undefined ? data[_key]! : operation[_key];
 
-            const updatedList = clonedOperationsKeyValue[key].map((op: OptionTable) => op.id === operation.id ? operation : op)
+            const updatedList = clonedOperationsKeyValue[key].map((op: StockData) => op.id === operation.id ? operation : op)
             clonedOperationsKeyValue[key] = updatedList
-            console.log("OP: ", operation)
             setOperationKeyValue(clonedOperationsKeyValue)
 
         } catch (e) {

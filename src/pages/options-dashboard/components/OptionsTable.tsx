@@ -22,7 +22,7 @@ import {
 import { SwitchTextTrack } from '../../../layouts/mui-treasury/layout-core-v6';
 import FeatherIcon from 'feather-icons-react';
 import CustomCheckbox from '../../../components/custom-elements/CustomCheckbox';
-import { OptionTable } from '../../../models/strategy';
+import { StockData } from '../../../models/strategy';
 import { stockList } from '../../../utils/stockList';
 
 interface EnhancedTableHeadProps {
@@ -186,12 +186,12 @@ const EnhancedTableToolbar: React.FC<EnhancedTableToolbarProps> = ({ numSelected
 };
 
 interface OptionsTableProps {
-    options: OptionTable[],
+    options: StockData[],
     selecteds: string[],
     deleteItens: (e: any) => void,
     setSelecteds: (e: any) => void
     getValueFromAutocomplete: (a: string, b: string, c: string) => void
-    updateOption: (a: string, opt?: Partial<OptionTable>) => void
+    updateOption: (a: string, opt?: Partial<StockData>) => void
     stockQtd: Record<string, number>,
     setStockQtd: (e: any) => void
 }
