@@ -276,8 +276,9 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ stockDataList, optionDataLi
                                                         <Autocomplete
                                                             value={option.activeName || null}
                                                             onChange={(event, newValue) => {
-                                                                if()
-                                                                getValueFromAutocomplete(newValue as string, option.activeName, option.id)
+                                                                if (newValue && stockList.includes(newValue)) {
+                                                                    getValueFromAutocomplete(newValue as string, option.activeName, option.id)
+                                                                }
                                                             }}
                                                             onInputChange={(event, newInputValue) => getValueFromAutocomplete(newInputValue, option.activeName, option.id)}
                                                             onClick={(event) => event.stopPropagation()}
@@ -307,7 +308,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ stockDataList, optionDataLi
                                                                     [option.id]: e.target.value
                                                                 }));
                                                             }}
-                                                            inputProps={{ min: 0 }}
+                                                            inputProps={{ min: 0, step: 100 }}
                                                             sx={{
                                                                 width: 90,
                                                                 fontSize: "0.875rem",

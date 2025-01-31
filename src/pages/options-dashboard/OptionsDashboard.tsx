@@ -122,7 +122,7 @@ const OptionsDashboard = () => {
     }
 
     const inicializeStockQtdFromRow = (operationId: string) => {
-        const newStockQtd = { [operationId]: 1000 }
+        const newStockQtd = { [operationId]: 100 }
         let hashedStockQtd = { ...stockQtdFromRow, ...newStockQtd }
         setStockQtdFromRow(hashedStockQtd)
     }
