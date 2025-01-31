@@ -32,14 +32,14 @@ export interface OptionTable {
     workingDays: string,
     strike: string,
     strikes: string[]
-    volatility: string,
-    price: string,
-    optionIn: OptionIn,
-    optionOut: OptionOut,
-    result: string,
-    optionGreek: OptionGreek
-    serie: string
-    series: string[]
+    // volatility: string, 
+    // price: string,
+    // optionIn: OptionIn,
+    // optionOut: OptionOut,
+    // result: string,
+    // optionGreek: OptionGreek
+    // serie: string
+    // series: string[]
 }
 
 export interface OptionIn {

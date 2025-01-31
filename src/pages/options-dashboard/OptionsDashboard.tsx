@@ -31,7 +31,7 @@ const OptionsDashboard = () => {
     const [strategies, setStrategies] = useState<Strategy[]>([])
     const [operationKeyValue, setOperationKeyValue] = useState<Record<string, OptionTable[]>>({})
     const [selecteds, setSelecteds] = React.useState<string[]>([]);
-    const [tickerMonitor, setTickerMonitor] = useState<Record<string, TickerMonitorData>>({})
+    const [stockQtdFromRow, setStockQtdFromRow] = React.useState<Record<string, number>>({});
     const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
@@ -89,7 +89,9 @@ const OptionsDashboard = () => {
         const strategy = strategies[tabIndex]
         const operationKey = strategy.id
         const clonedOperationsKeyValue = JSON.parse(JSON.stringify(operationKeyValue))
-        const emptyOptionRow = createOptionTable({ id: uuidv4(), optionType: optiontype })
+        const operationId = uuidv4()
+        const emptyOptionRow = createOptionTable({ id: operationId, optionType: optiontype })
+        let hashedStockQtd = {}
         let updatedOperationKeyValue = {}
 
         if (!operationKeyValue.hasOwnProperty(operationKey)) {
@@ -100,8 +102,16 @@ const OptionsDashboard = () => {
             clonedOperationsKeyValue[operationKey].push(emptyOptionRow)
             updatedOperationKeyValue = clonedOperationsKeyValue
         }
+
+        const newStockQtd = { [operationId]: 1000 }
+        hashedStockQtd = { ...stockQtdFromRow, ...newStockQtd }
+        setStockQtdFromRow(hashedStockQtd)
         setOperationKeyValue(updatedOperationKeyValue)
     }
+
+    useEffect(() => {
+        console.log("STOCK QTD FROM ROW: ", stockQtdFromRow)
+    }, [stockQtdFromRow])
 
     const deletingOptionFromTable = () => {
         const key = strategies[tabIndex].id
@@ -317,6 +327,8 @@ const OptionsDashboard = () => {
                                                 options={operationKeyValue[strategy.id]}
                                                 selecteds={selecteds}
                                                 setSelecteds={setSelecteds}
+                                                stockQtd={stockQtdFromRow}
+                                                setStockQtd={setStockQtdFromRow}
                                                 deleteItens={deletingOptionFromTable} />
                                         }
                                     </TabPanel>

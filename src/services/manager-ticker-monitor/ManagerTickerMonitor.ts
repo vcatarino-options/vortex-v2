@@ -25,28 +25,6 @@ export default class ManagerTickerMonitor {
         return tickerMonitor
     }
 
-    // static deleteTickerOnTheMonitor = (ticker: string, operationIds: string | string[]) => {
-    //     const strTickerMonitor: string | null = StorageService.get(StorageService.KEYS.TOKENMONITOR);
-    //     if (!strTickerMonitor) return;
-
-    //     const tickerMonitor: Record<string, TickerMonitorData> = JSON.parse(strTickerMonitor);
-    //     if (!tickerMonitor[ticker]) return;
-
-    //     const opsId = tickerMonitor[ticker].operationsId;
-    //     const idsToRemove = Array.isArray(operationIds) ? operationIds : [operationIds];
-
-    //     // Filtra os operationIds removendo os informados
-    //     const updatedOperations = opsId.filter(id => !idsToRemove.includes(id));
-
-    //     tickerMonitor[ticker].operationsWatchingTicker = updatedOperations.length;
-    //     tickerMonitor[ticker].operationsId = updatedOperations;
-
-    //     // Atualiza o Storage
-    //     StorageService.set(StorageService.KEYS.TOKENMONITOR, JSON.stringify(tickerMonitor));
-    //     return tickerMonitor;
-    // };
-
-
     static addTickerOnTheMonitor = (ticker: string, operationId: string) => {
         const strTickerMonitor: string | null = StorageService.get(StorageService.KEYS.TOKENMONITOR)
         const tickerMonitor: Record<string, TickerMonitorData> | null = JSON.parse(strTickerMonitor as string)

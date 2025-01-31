@@ -192,10 +192,11 @@ interface OptionsTableProps {
     setSelecteds: (e: any) => void
     getValueFromAutocomplete: (a: string, b: string, c: string) => void
     updateOption: (a: string, opt?: Partial<OptionTable>) => void
-
+    stockQtd: Record<string, number>,
+    setStockQtd: (e: any) => void
 }
 
-const OptionsTable: React.FC<OptionsTableProps> = ({ options, deleteItens, selecteds, setSelecteds, getValueFromAutocomplete, updateOption }: OptionsTableProps) => {
+const OptionsTable: React.FC<OptionsTableProps> = ({ options, selecteds, stockQtd, setStockQtd, deleteItens, setSelecteds, getValueFromAutocomplete, updateOption, }: OptionsTableProps) => {
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
             const newSelecteds = options.map((n) => n.id);
@@ -290,9 +291,30 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options, deleteItens, selec
                                                         <SwitchTextTrack />
                                                     </TableCell>
                                                     <TableCell>
-                                                        <Typography color="textSecondary" variant="h6" fontWeight="400">
-                                                            {option.qtd}
-                                                        </Typography>
+                                                        <InputBase
+                                                            disabled={!option.activeName}
+                                                            type="number"
+                                                            size="small"
+                                                            value={stockQtd[option.id]}
+                                                            onChange={(e) => {
+                                                                setStockQtd((prevStockQtd: Record<string, number>) => ({
+                                                                    ...prevStockQtd,
+                                                                    [option.id]: e.target.value
+                                                                }));
+                                                            }}
+                                                            inputProps={{ min: 0 }}
+                                                            sx={{
+                                                                width: 90,
+                                                                fontSize: "0.875rem",
+                                                                padding: "5px 12px",
+                                                                border: "1px solid #767e89",
+                                                                borderRadius: "4px",
+                                                                transition: "border-color 0.2s ease-in-out",
+                                                                "&:hover": {
+                                                                    borderColor: "#ccc", // Cor da borda ao passar o mouse
+                                                                }
+                                                            }}
+                                                        />
                                                     </TableCell>
                                                     <TableCell>
                                                         <Autocomplete
@@ -328,11 +350,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options, deleteItens, selec
                                                                 transition: "border-color 0.2s ease-in-out",
                                                                 "&:hover": {
                                                                     borderColor: "#ccc", // Cor da borda ao passar o mouse
-                                                                },
-                                                                // "&:focus": {
-                                                                //     borderColor: "#1976d2",
-                                                                //     outline: "none",
-                                                                // },
+                                                                }
                                                             }}
                                                         />
                                                     </TableCell>
@@ -353,10 +371,10 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options, deleteItens, selec
                                                         />
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6">{option.volatility}</Typography>
+                                                        <Typography variant="h6">volatiliy</Typography>
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6">{option.price}</Typography>
+                                                        <Typography variant="h6">price</Typography>
                                                     </TableCell>
                                                     <TableCell>
                                                         <Box display="flex" alignItems="center">
@@ -365,7 +383,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options, deleteItens, selec
                                                                     ml: 2,
                                                                 }}
                                                             >
-                                                                <Typography variant="h6">{option.costVolatility}</Typography>
+                                                                <Typography variant="h6">costVolatility</Typography>
                                                                 <Typography color="textSecondary" variant="h6" fontWeight="400">
                                                                     bandCost
                                                                 </Typography>
@@ -373,10 +391,10 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options, deleteItens, selec
                                                         </Box>
                                                     </TableCell>
                                                     <TableCell>
-                                                        <Typography variant="h6">{option.costValue}</Typography>
+                                                        <Typography variant="h6">costValue</Typography>
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6">{option.salesValue}</Typography>
+                                                        <Typography variant="h6">salesValue</Typography>
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
                                                         <Box display="flex" alignItems="center">
@@ -385,7 +403,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options, deleteItens, selec
                                                                     ml: 2,
                                                                 }}
                                                             >
-                                                                <Typography variant="h6">{option.salesVolatility}</Typography>
+                                                                <Typography variant="h6">salesVolatility</Typography>
                                                                 <Typography color="textSecondary" variant="h6" fontWeight="400">
                                                                     bandSales
                                                                 </Typography>
@@ -394,22 +412,22 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options, deleteItens, selec
                                                     </TableCell>
 
                                                     <TableCell>
-                                                        <Typography variant="h6">{option.result}</Typography>
+                                                        <Typography variant="h6">result</Typography>
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6">{option.delta}</Typography>
+                                                        <Typography variant="h6">delta</Typography>
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6">{option.gama}</Typography>
+                                                        <Typography variant="h6">gama</Typography>
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6">{option.theta}</Typography>
+                                                        <Typography variant="h6">theta</Typography>
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6">{option.vega}</Typography>
+                                                        <Typography variant="h6">vega</Typography>
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6">{option.rho}</Typography>
+                                                        <Typography variant="h6">rho</Typography>
                                                     </TableCell>
                                                 </TableRow>
                                             );
