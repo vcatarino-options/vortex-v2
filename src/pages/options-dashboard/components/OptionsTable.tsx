@@ -191,7 +191,7 @@ interface OptionsTableProps {
     selecteds: string[],
     deleteItens: (e: any) => void,
     setSelecteds: (e: any) => void
-    getValueFromAutocomplete: (a: string, b: string, c: string) => void
+    getValueFromAutocomplete: (a: string, b: string, c: string, d: string) => void
     updateOption: (a: string, opt?: Partial<StockData>) => void
     stockQtd: Record<string, number>,
     setStockQtd: (e: any) => void
@@ -277,10 +277,14 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ stockDataList, optionDataLi
                                                             value={option.activeName || null}
                                                             onChange={(event, newValue) => {
                                                                 if (newValue && stockList.includes(newValue)) {
-                                                                    getValueFromAutocomplete(newValue as string, option.activeName, option.id)
+                                                                    getValueFromAutocomplete(newValue as string, option.activeName, option.id, option.serie)
                                                                 }
                                                             }}
-                                                            onInputChange={(event, newInputValue) => getValueFromAutocomplete(newInputValue, option.activeName, option.id)}
+                                                            onInputChange={(event, newInputValue) => {
+                                                                if (newInputValue && stockList.includes(newInputValue)) {
+                                                                    getValueFromAutocomplete(newInputValue as string, option.activeName, option.id, option.serie)
+                                                                }
+                                                            }}
                                                             onClick={(event) => event.stopPropagation()}
                                                             options={stockList}
                                                             sx={{ width: 145 }}
