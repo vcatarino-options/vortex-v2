@@ -45,6 +45,7 @@ const OptionsDashboard = () => {
     }, [])
 
     useEffect(() => {
+        console.debug("Ref atualizada.");
         stockDataRef.current = stockDataKeyValue;
         optionDataRef.current = optionDataKeyValue;
     }, [stockDataKeyValue, optionDataKeyValue]);
@@ -97,32 +98,9 @@ const OptionsDashboard = () => {
     const addingOperation = (optiontype: OptionType) => {
         const strategy = strategies[tabIndex]
         const operationKey = strategy.id
-        const clonedStockDataKeyValue = JSON.parse(JSON.stringify(stockDataKeyValue))
-        const clonedOperationsKeyValue = JSON.parse(JSON.stringify(optionDataKeyValue))
         const operationId = uuidv4()
         const emptyStockDataRow = createStockData({ id: operationId, optionType: optiontype })
         const emptyOptionDataRow = createOptionData({ id: operationId })
-
-        let updatedStockDataKeyValue = {}
-        let updatedOptionDataKeyValue = {}
-
-        // if (!stockDataKeyValue.hasOwnProperty(operationKey)) {
-        //     const operations = [emptyStockDataRow]
-        //     const newOperation = { [operationKey]: operations }
-        //     updatedStockDataKeyValue = { ...clonedStockDataKeyValue, ...newOperation }
-        // } else {
-        //     clonedStockDataKeyValue[operationKey].push(emptyStockDataRow)
-        //     updatedStockDataKeyValue = clonedStockDataKeyValue
-        // }
-
-        // if (!optionDataKeyValue.hasOwnProperty(operationKey)) {
-        //     const options = [emptyOptionDataRow]
-        //     const newOption = { [operationKey]: options }
-        //     updatedOptionDataKeyValue = { ...clonedOperationsKeyValue, ...newOption }
-        // } else {
-        //     clonedOperationsKeyValue[operationKey].push(emptyOptionDataRow)
-        //     updatedOptionDataKeyValue = clonedOperationsKeyValue
-        // }
 
         // Atualizando StockData
         setStockDataKeyValue(prevStockData => ({
@@ -137,8 +115,6 @@ const OptionsDashboard = () => {
         }));
 
         inicializeStockQtdFromRow(operationId)
-        // setStockDataKeyValue(updatedStockDataKeyValue)
-        // setOptionDataKeyValue(updatedOptionDataKeyValue)
     }
 
     const inicializeStockQtdFromRow = (operationId: string) => {
@@ -181,29 +157,27 @@ const OptionsDashboard = () => {
                 }
             })
 
-            //montar a alteração
-            // const index = optionDataKeyValue[key].findIndex(op => op.id === option.id)
             webSocketService.listenBookInfo(newValue, (d: any) => {
-                const option: OptionData = getOptionDataById(id)
-                option.optionIn.cost = d[3]
-                option.optionOut.sales = d[4]
-                const key = strategies[tabIndex].id
-                const clonedOptionsKeyValue = JSON.parse(JSON.stringify(optionDataRef.current))
-                const updatedList = clonedOptionsKeyValue[key].map((op: OptionData) => op.id === option.id ? option : op)
-                clonedOptionsKeyValue[key] = updatedList
-                setOptionDataKeyValue(clonedOptionsKeyValue)
-
+                updateOptionData(id, d)
             })
-            // console.log("option", option, "index: ", index)
         } catch (e) {
             console.error("OptionsDashboard - findActiveData", e)
             enqueueSnackbar('Não foi possível carregar os dados solicitados. O ticker é válido?', { variant: "error", preventDuplicate: true });
         }
     }
 
-    useEffect(() => {
-        console.log("Estado atualizado:", optionDataKeyValue);
-    }, [optionDataKeyValue]);
+    const updateOptionData = (id: string, d: any) => {
+        const option: OptionData = getOptionDataById(id)
+        option.optionIn.cost = d[3]
+        option.optionOut.sales = d[4]
+        const key = strategies[tabIndex].id
+        const clonedOptionsKeyValue = JSON.parse(JSON.stringify(optionDataRef.current))
+        const updatedList = clonedOptionsKeyValue[key].map((op: OptionData) => op.id === option.id ? option : op)
+        clonedOptionsKeyValue[key] = updatedList
+        setOptionDataKeyValue(clonedOptionsKeyValue)
+    }
+
+
 
     const getTicker = (r: any, opId: string, activeName: string) => {
         try {
@@ -265,8 +239,6 @@ const OptionsDashboard = () => {
     const getOptionDataById = (id: string) => {
         const strategy = strategies[tabIndex]
         const options = optionDataRef.current[strategy.id]
-        console.log("strategy: ", strategy)
-        console.log("options: ", options)
         const option = options.find(op => op.id === id)
         if (!option) {
             throw new Error("OptionsDashboard: Não existe uma opção válida.");
