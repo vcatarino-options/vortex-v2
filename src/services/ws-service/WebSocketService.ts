@@ -29,4 +29,9 @@ export default class WebSocketService {
         if (!this.socket) return;
         this.socket.emit('unsubscribe_ticker', ticker);
     };
+
+    public listenBookInfo = (ticker: string, callback: (r: unknown) => void) => {
+        if (!this.socket) return;
+        this.socket.on(`book_info/${ticker}`, r => callback(r));
+    }
 }
