@@ -29,7 +29,7 @@ const OptionsDashboard = () => {
     const { formValue, setFormData } = useForm({ rate: "", price: "", estimatedMargin: "" })
 
     const [strategies, setStrategies] = useState<Strategy[]>([])
-    const [operationKeyValue, setOperationKeyValue] = useState<Record<string, StockData[]>>({})
+    const [stockDataKeyValue, setStockDataKeyValue] = useState<Record<string, StockData[]>>({})
     const [selecteds, setSelecteds] = React.useState<string[]>([]);
     const [stockQtdFromRow, setStockQtdFromRow] = React.useState<Record<string, number>>({});
     const { enqueueSnackbar } = useSnackbar();
@@ -47,7 +47,7 @@ const OptionsDashboard = () => {
 
     const handleCloseTab = (strategyId: string) => {
         const updatedStrategies = strategies.filter((strategy: Strategy) => strategy.id !== strategyId);
-        const operationsToUnsubscribe = operationKeyValue[strategyId]
+        const operationsToUnsubscribe = stockDataKeyValue[strategyId]
         operationsToUnsubscribe.forEach(op => {
             const stock = op.activeName
             ManagerTickerMonitor.deleteTickerOnTheMonitor(stock, op.id)
@@ -88,13 +88,13 @@ const OptionsDashboard = () => {
     const addingOperation = (optiontype: OptionType) => {
         const strategy = strategies[tabIndex]
         const operationKey = strategy.id
-        const clonedOperationsKeyValue = JSON.parse(JSON.stringify(operationKeyValue))
+        const clonedOperationsKeyValue = JSON.parse(JSON.stringify(stockDataKeyValue))
         const operationId = uuidv4()
         const emptyOptionRow = createStockData({ id: operationId, optionType: optiontype })
-        let hashedStockQtd = {}
+
         let updatedOperationKeyValue = {}
 
-        if (!operationKeyValue.hasOwnProperty(operationKey)) {
+        if (!stockDataKeyValue.hasOwnProperty(operationKey)) {
             const operations = [emptyOptionRow]
             const newOperation = { [operationKey]: operations }
             updatedOperationKeyValue = { ...clonedOperationsKeyValue, ...newOperation }
@@ -103,22 +103,26 @@ const OptionsDashboard = () => {
             updatedOperationKeyValue = clonedOperationsKeyValue
         }
 
+        inicializeStockQtdFromRow(operationId)
+        setStockDataKeyValue(updatedOperationKeyValue)
+    }
+
+    const inicializeStockQtdFromRow = (operationId: string) => {
         const newStockQtd = { [operationId]: 1000 }
-        hashedStockQtd = { ...stockQtdFromRow, ...newStockQtd }
+        let hashedStockQtd = { ...stockQtdFromRow, ...newStockQtd }
         setStockQtdFromRow(hashedStockQtd)
-        setOperationKeyValue(updatedOperationKeyValue)
     }
 
     const deletingOptionFromTable = () => {
         const key = strategies[tabIndex].id
-        const clonedOperationsKeyValue = JSON.parse(JSON.stringify(operationKeyValue))
+        const clonedOperationsKeyValue = JSON.parse(JSON.stringify(stockDataKeyValue))
         console.log(clonedOperationsKeyValue[key])
         const intersections = clonedOperationsKeyValue[key].filter((option: StockData) => !selecteds.includes(option.id));
         const listToDelete = clonedOperationsKeyValue[key].filter((option: StockData) => selecteds.includes(option.id));
         console.log("I: ", intersections)
         console.log("D: ", listToDelete)
         clonedOperationsKeyValue[key] = intersections
-        setOperationKeyValue(clonedOperationsKeyValue)
+        setStockDataKeyValue(clonedOperationsKeyValue)
         listToDelete.forEach((op: StockData) => {
             const stock = op.activeName
             ManagerTickerMonitor.deleteTickerOnTheMonitor(stock, op.id)
@@ -165,11 +169,11 @@ const OptionsDashboard = () => {
             updatedOp.activeName = activeName
 
             const key = strategies[tabIndex].id
-            const clonedOperationsKeyValue = JSON.parse(JSON.stringify(operationKeyValue))
+            const clonedOperationsKeyValue = JSON.parse(JSON.stringify(stockDataKeyValue))
 
             const updatedList = clonedOperationsKeyValue[key].map((op: StockData) => op.id === updatedOp.id ? updatedOp : op)
             clonedOperationsKeyValue[key] = updatedList
-            setOperationKeyValue(clonedOperationsKeyValue)
+            setStockDataKeyValue(clonedOperationsKeyValue)
         } catch (e) {
             console.error("OptionsDashboard - getTicker", e)
             enqueueSnackbar('Não foi possível carregar os dados solicitados. O ticker é válido?', { variant: "error", preventDuplicate: true });
@@ -186,13 +190,13 @@ const OptionsDashboard = () => {
         try {
             const operation = getOperationById(optId)
             const key = strategies[tabIndex].id
-            const clonedOperationsKeyValue = JSON.parse(JSON.stringify(operationKeyValue))
+            const clonedOperationsKeyValue = JSON.parse(JSON.stringify(stockDataKeyValue))
             const _key = Object.keys(data)[0]
             operation[_key] = data?.[_key] !== undefined ? data[_key]! : operation[_key];
 
             const updatedList = clonedOperationsKeyValue[key].map((op: StockData) => op.id === operation.id ? operation : op)
             clonedOperationsKeyValue[key] = updatedList
-            setOperationKeyValue(clonedOperationsKeyValue)
+            setStockDataKeyValue(clonedOperationsKeyValue)
 
         } catch (e) {
 
@@ -201,7 +205,7 @@ const OptionsDashboard = () => {
 
     const getOperationById = (id: string) => {
         const strategy = strategies[tabIndex]
-        const operations = operationKeyValue[strategy.id]
+        const operations = stockDataKeyValue[strategy.id]
         const operation = operations.find(op => op.id === id)
         if (!operation) {
             throw new Error("OptionsDashboard: Não existe uma operação válida.");
@@ -313,12 +317,12 @@ const OptionsDashboard = () => {
                                 strategies.map((strategy: Strategy, id) => (
                                     <TabPanel sx={{ padding: 0 }} key={strategy.id} value={id}>
                                         {
-                                            operationKeyValue[strategy.id] &&
-                                            operationKeyValue[strategy.id].length > 0 &&
+                                            stockDataKeyValue[strategy.id] &&
+                                            stockDataKeyValue[strategy.id].length > 0 &&
                                             <OptionsTable
                                                 updateOption={updateOption}
                                                 getValueFromAutocomplete={findActiveData}
-                                                options={operationKeyValue[strategy.id]}
+                                                stockDataList={stockDataKeyValue[strategy.id]}
                                                 selecteds={selecteds}
                                                 setSelecteds={setSelecteds}
                                                 stockQtd={stockQtdFromRow}

@@ -186,7 +186,7 @@ const EnhancedTableToolbar: React.FC<EnhancedTableToolbarProps> = ({ numSelected
 };
 
 interface OptionsTableProps {
-    options: StockData[],
+    stockDataList: StockData[],
     selecteds: string[],
     deleteItens: (e: any) => void,
     setSelecteds: (e: any) => void
@@ -196,10 +196,10 @@ interface OptionsTableProps {
     setStockQtd: (e: any) => void
 }
 
-const OptionsTable: React.FC<OptionsTableProps> = ({ options, selecteds, stockQtd, setStockQtd, deleteItens, setSelecteds, getValueFromAutocomplete, updateOption, }: OptionsTableProps) => {
+const OptionsTable: React.FC<OptionsTableProps> = ({ stockDataList, selecteds, stockQtd, setStockQtd, deleteItens, setSelecteds, getValueFromAutocomplete, updateOption, }: OptionsTableProps) => {
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
-            const newSelecteds = options.map((n) => n.id);
+            const newSelecteds = stockDataList.map((n) => n.id);
             setSelecteds(newSelecteds);
             return;
         }
@@ -244,10 +244,10 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ options, selecteds, stockQt
                                     <EnhancedTableHead
                                         numSelected={selecteds.length}
                                         onSelectAllClick={handleSelectAllClick}
-                                        rowCount={options.length}
+                                        rowCount={stockDataList.length}
                                     />
                                     <TableBody>
-                                        {options.map((option, index) => {
+                                        {stockDataList.map((option, index) => {
                                             const isItemSelected = isSelected(option.id);
                                             const labelId = `enhanced-table-checkbox-${index}`;
 
