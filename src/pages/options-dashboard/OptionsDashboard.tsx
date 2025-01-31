@@ -6,7 +6,7 @@ import { UnderlineTabs } from "../../layouts/mui-treasury/mockup-tabs";
 import CloseIcon from "@mui/icons-material/Close";
 import { ButtonGroupOperation } from "./components/ButtonGroupOperation";
 import OptionsTable from "./components/OptionsTable";
-import { Strategy, createEmptyStrategy, createStockData, OptionType, StockData, TickerData, TickerMonitorData } from "../../models/strategy";
+import { Strategy, createEmptyStrategy, createStockData, OptionType, StockData, TickerData, TickerMonitorData, OptionData, createOptionData } from "../../models/strategy";
 import { v4 as uuidv4 } from 'uuid';
 import useForm from "../../hooks/useForm"
 import { FinancialSummary } from "./components/FinancialSummary";
@@ -27,10 +27,11 @@ const OptionsDashboard = () => {
     const [stockName, setStockName] = useState<string | null>("")
     const [tabIndex, setTabIndex] = React.useState(0);
     const { formValue, setFormData } = useForm({ rate: "", price: "", estimatedMargin: "" })
-
     const [strategies, setStrategies] = useState<Strategy[]>([])
-    const [stockDataKeyValue, setStockDataKeyValue] = useState<Record<string, StockData[]>>({})
     const [selecteds, setSelecteds] = React.useState<string[]>([]);
+
+    const [stockDataKeyValue, setStockDataKeyValue] = useState<Record<string, StockData[]>>({})
+    const [optionDataKeyValue, setOptionDataKeyValue] = useState<Record<string, OptionData[]>>({})
     const [stockQtdFromRow, setStockQtdFromRow] = React.useState<Record<string, number>>({});
     const { enqueueSnackbar } = useSnackbar();
 
@@ -88,24 +89,43 @@ const OptionsDashboard = () => {
     const addingOperation = (optiontype: OptionType) => {
         const strategy = strategies[tabIndex]
         const operationKey = strategy.id
-        const clonedOperationsKeyValue = JSON.parse(JSON.stringify(stockDataKeyValue))
+        const clonedStockDataKeyValue = JSON.parse(JSON.stringify(stockDataKeyValue))
+        const clonedOperationsKeyValue = JSON.parse(JSON.stringify(optionDataKeyValue))
         const operationId = uuidv4()
-        const emptyOptionRow = createStockData({ id: operationId, optionType: optiontype })
+        const emptyStockDataRow = createStockData({ id: operationId, optionType: optiontype })
+        const emptyOptionDataRow = createOptionData({ id: operationId })
 
-        let updatedOperationKeyValue = {}
+        let updatedStockDataKeyValue = {}
+        let updatedOptionDataKeyValue = {}
 
         if (!stockDataKeyValue.hasOwnProperty(operationKey)) {
-            const operations = [emptyOptionRow]
+            const operations = [emptyStockDataRow]
             const newOperation = { [operationKey]: operations }
-            updatedOperationKeyValue = { ...clonedOperationsKeyValue, ...newOperation }
+            updatedStockDataKeyValue = { ...clonedStockDataKeyValue, ...newOperation }
         } else {
-            clonedOperationsKeyValue[operationKey].push(emptyOptionRow)
-            updatedOperationKeyValue = clonedOperationsKeyValue
+            clonedStockDataKeyValue[operationKey].push(emptyStockDataRow)
+            updatedStockDataKeyValue = clonedStockDataKeyValue
         }
 
+        if (!optionDataKeyValue.hasOwnProperty(operationKey)) {
+            const options = [emptyOptionDataRow]
+            const newOption = { [operationKey]: options }
+            updatedOptionDataKeyValue = { ...clonedOperationsKeyValue, ...newOption }
+        } else {
+            clonedOperationsKeyValue[operationKey].push(emptyOptionDataRow)
+            updatedOptionDataKeyValue = clonedOperationsKeyValue
+        }
+        
         inicializeStockQtdFromRow(operationId)
-        setStockDataKeyValue(updatedOperationKeyValue)
+        setStockDataKeyValue(updatedStockDataKeyValue)
+        setOptionDataKeyValue(updatedOptionDataKeyValue)
     }
+
+    // useEffect(() => {
+    //     console.log("STRATEGIES: ", strategies)
+    //     console.log("STOCK DATA VALUE: ", stockDataKeyValue)
+    //     console.log("OPTION DATA VALUE: ", optionDataKeyValue)
+    // }, [stockDataKeyValue, strategies, optionDataKeyValue])
 
     const inicializeStockQtdFromRow = (operationId: string) => {
         const newStockQtd = { [operationId]: 1000 }
@@ -323,6 +343,7 @@ const OptionsDashboard = () => {
                                                 updateOption={updateOption}
                                                 getValueFromAutocomplete={findActiveData}
                                                 stockDataList={stockDataKeyValue[strategy.id]}
+                                                optionDataList={optionDataKeyValue[strategy.id]}
                                                 selecteds={selecteds}
                                                 setSelecteds={setSelecteds}
                                                 stockQtd={stockQtdFromRow}

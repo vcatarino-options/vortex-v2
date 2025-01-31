@@ -43,6 +43,7 @@ export interface StockData {
 }
 
 export interface OptionData {
+    id: string,
     optionIn: OptionIn,
     optionOut: OptionOut
 }
@@ -124,6 +125,7 @@ export const createStockData = (data?: Partial<StockData>): StockData => {
 
 export const createOptionData = (data?: Partial<OptionData>): OptionData => {
     return {
+        id: data?.id || "",
         optionIn: createOptionIn(data?.optionIn),
         optionOut: createOptionOut(data?.optionOut)
     }

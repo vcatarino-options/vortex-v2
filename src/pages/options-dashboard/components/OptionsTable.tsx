@@ -22,7 +22,7 @@ import {
 import { SwitchTextTrack } from '../../../layouts/mui-treasury/layout-core-v6';
 import FeatherIcon from 'feather-icons-react';
 import CustomCheckbox from '../../../components/custom-elements/CustomCheckbox';
-import { StockData } from '../../../models/strategy';
+import { OptionData, StockData } from '../../../models/strategy';
 import { stockList } from '../../../utils/stockList';
 
 interface EnhancedTableHeadProps {
@@ -187,6 +187,7 @@ const EnhancedTableToolbar: React.FC<EnhancedTableToolbarProps> = ({ numSelected
 
 interface OptionsTableProps {
     stockDataList: StockData[],
+    optionDataList: OptionData[],
     selecteds: string[],
     deleteItens: (e: any) => void,
     setSelecteds: (e: any) => void
@@ -196,7 +197,7 @@ interface OptionsTableProps {
     setStockQtd: (e: any) => void
 }
 
-const OptionsTable: React.FC<OptionsTableProps> = ({ stockDataList, selecteds, stockQtd, setStockQtd, deleteItens, setSelecteds, getValueFromAutocomplete, updateOption, }: OptionsTableProps) => {
+const OptionsTable: React.FC<OptionsTableProps> = ({ stockDataList, optionDataList, selecteds, stockQtd, setStockQtd, deleteItens, setSelecteds, getValueFromAutocomplete, updateOption, }: OptionsTableProps) => {
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
             const newSelecteds = stockDataList.map((n) => n.id);
@@ -248,6 +249,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ stockDataList, selecteds, s
                                     />
                                     <TableBody>
                                         {stockDataList.map((option, index) => {
+                                            const optionItem = optionDataList?.[index];
                                             const isItemSelected = isSelected(option.id);
                                             const labelId = `enhanced-table-checkbox-${index}`;
 
@@ -385,16 +387,16 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ stockDataList, selecteds, s
                                                             >
                                                                 <Typography variant="h6">costVolatility</Typography>
                                                                 <Typography color="textSecondary" variant="h6" fontWeight="400">
-                                                                    bandCost
+                                                                    {optionItem.optionIn.bandCost}
                                                                 </Typography>
                                                             </Box>
                                                         </Box>
                                                     </TableCell>
                                                     <TableCell>
-                                                        <Typography variant="h6">costValue</Typography>
+                                                        <Typography variant="h6">{optionItem.optionIn.cost}</Typography>
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6">salesValue</Typography>
+                                                        <Typography variant="h6">{optionItem.optionOut.sales}</Typography>
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
                                                         <Box display="flex" alignItems="center">
@@ -404,8 +406,8 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ stockDataList, selecteds, s
                                                                 }}
                                                             >
                                                                 <Typography variant="h6">salesVolatility</Typography>
-                                                                <Typography color="textSecondary" variant="h6" fontWeight="400">
-                                                                    bandSales
+                                                                <Typography color="textSecondary" variant="h6" fontWeight="400" align="right">
+                                                                    {optionItem.optionOut.bandSales}
                                                                 </Typography>
                                                             </Box>
                                                         </Box>
@@ -429,6 +431,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ stockDataList, selecteds, s
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
                                                         <Typography variant="h6">rho</Typography>
                                                     </TableCell>
+
                                                 </TableRow>
                                             );
                                         })}
