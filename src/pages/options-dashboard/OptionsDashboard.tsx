@@ -6,7 +6,7 @@ import { UnderlineTabs } from "../../layouts/mui-treasury/mockup-tabs";
 import CloseIcon from "@mui/icons-material/Close";
 import { ButtonGroupOperation } from "./components/ButtonGroupOperation";
 import OptionsTable from "./components/OptionsTable";
-import { Strategy, createEmptyStrategy, createStockData, OptionType, StockData, TickerData, TickerMonitorData, OptionData, createOptionData } from "../../models/strategy";
+import { Strategy, createEmptyStrategy, createStockData, OptionType, StockData, TickerData, TickerMonitorData, OptionData, createOptionData, OptionIn, OptionOut } from "../../models/strategy";
 import { v4 as uuidv4 } from 'uuid';
 import useForm from "../../hooks/useForm"
 import { FinancialSummary } from "./components/FinancialSummary";
@@ -115,17 +115,11 @@ const OptionsDashboard = () => {
             clonedOperationsKeyValue[operationKey].push(emptyOptionDataRow)
             updatedOptionDataKeyValue = clonedOperationsKeyValue
         }
-        
+
         inicializeStockQtdFromRow(operationId)
         setStockDataKeyValue(updatedStockDataKeyValue)
         setOptionDataKeyValue(updatedOptionDataKeyValue)
     }
-
-    // useEffect(() => {
-    //     console.log("STRATEGIES: ", strategies)
-    //     console.log("STOCK DATA VALUE: ", stockDataKeyValue)
-    //     console.log("OPTION DATA VALUE: ", optionDataKeyValue)
-    // }, [stockDataKeyValue, strategies, optionDataKeyValue])
 
     const inicializeStockQtdFromRow = (operationId: string) => {
         const newStockQtd = { [operationId]: 1000 }
@@ -136,11 +130,8 @@ const OptionsDashboard = () => {
     const deletingOptionFromTable = () => {
         const key = strategies[tabIndex].id
         const clonedOperationsKeyValue = JSON.parse(JSON.stringify(stockDataKeyValue))
-        console.log(clonedOperationsKeyValue[key])
         const intersections = clonedOperationsKeyValue[key].filter((option: StockData) => !selecteds.includes(option.id));
         const listToDelete = clonedOperationsKeyValue[key].filter((option: StockData) => selecteds.includes(option.id));
-        console.log("I: ", intersections)
-        console.log("D: ", listToDelete)
         clonedOperationsKeyValue[key] = intersections
         setStockDataKeyValue(clonedOperationsKeyValue)
         listToDelete.forEach((op: StockData) => {
@@ -153,7 +144,7 @@ const OptionsDashboard = () => {
 
     const findActiveData = (newValue: string, currentValue: string, id: string) => {
         try {
-            const operation = getOperationById(id)
+            const operation = getStockDataById(id)
             const operationType = operation.optionType
             const tickerData: TickerData = {
                 rowId: id,
@@ -171,6 +162,28 @@ const OptionsDashboard = () => {
                 }
             })
 
+            webSocketService.listenBookInfo(newValue, (r: any) => {
+                const optionIn: OptionIn = {
+                    cost: r[3],
+                    bandCost: r[149]
+                }
+                const optionOut: OptionOut = {
+                    sales: r[4],
+                    bandSales: r[148]
+                }
+
+                const option: OptionData = getOptionDataById(id)
+                option.optionIn = optionIn
+                option.optionOut = optionOut
+
+                const key = strategies[tabIndex].id
+                const clonedOptionKeyValue = JSON.parse(JSON.stringify(optionDataKeyValue))
+
+                const options = clonedOptionKeyValue[key].map((op: OptionData) => op.id === option.id ? option : op)
+                clonedOptionKeyValue[key] = options
+                setOptionDataKeyValue(clonedOptionKeyValue)
+            })
+
         } catch (e) {
             console.error("OptionsDashboard - findActiveData", e)
             enqueueSnackbar('Não foi possível carregar os dados solicitados. O ticker é válido?', { variant: "error", preventDuplicate: true });
@@ -180,7 +193,7 @@ const OptionsDashboard = () => {
     const getTicker = (r: any, opId: string, activeName: string) => {
         try {
             checkTickerReceivedFromWebSocket(r)
-            const updatedOp: StockData = getOperationById(opId)
+            const updatedOp: StockData = getStockDataById(opId)
             updatedOp.workingDays = r.du
             updatedOp.strike = r.option
             updatedOp.strikes = r.options
@@ -206,9 +219,9 @@ const OptionsDashboard = () => {
         }
     }
 
-    const updateOption = (optId: string, data: Partial<StockData>) => {
+    const updateStock = (optId: string, data: Partial<StockData>) => {
         try {
-            const operation = getOperationById(optId)
+            const operation = getStockDataById(optId)
             const key = strategies[tabIndex].id
             const clonedOperationsKeyValue = JSON.parse(JSON.stringify(stockDataKeyValue))
             const _key = Object.keys(data)[0]
@@ -223,7 +236,7 @@ const OptionsDashboard = () => {
         }
     }
 
-    const getOperationById = (id: string) => {
+    const getStockDataById = (id: string) => {
         const strategy = strategies[tabIndex]
         const operations = stockDataKeyValue[strategy.id]
         const operation = operations.find(op => op.id === id)
@@ -231,6 +244,16 @@ const OptionsDashboard = () => {
             throw new Error("OptionsDashboard: Não existe uma operação válida.");
         }
         return JSON.parse(JSON.stringify(operation))
+    }
+
+    const getOptionDataById = (id: string) => {
+        const strategy = strategies[tabIndex]
+        const options = optionDataKeyValue[strategy.id]
+        const option = options.find(op => op.id === id)
+        if (!option) {
+            throw new Error("OptionsDashboard: Não existe uma opção válida.");
+        }
+        return JSON.parse(JSON.stringify(option))
     }
 
     return (
@@ -340,7 +363,7 @@ const OptionsDashboard = () => {
                                             stockDataKeyValue[strategy.id] &&
                                             stockDataKeyValue[strategy.id].length > 0 &&
                                             <OptionsTable
-                                                updateOption={updateOption}
+                                                updateOption={updateStock}
                                                 getValueFromAutocomplete={findActiveData}
                                                 stockDataList={stockDataKeyValue[strategy.id]}
                                                 optionDataList={optionDataKeyValue[strategy.id]}

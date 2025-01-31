@@ -275,7 +275,10 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ stockDataList, optionDataLi
                                                     <TableCell>
                                                         <Autocomplete
                                                             value={option.activeName || null}
-                                                            onChange={(event, newValue) => getValueFromAutocomplete(newValue as string, option.activeName, option.id)}
+                                                            onChange={(event, newValue) => {
+                                                                if()
+                                                                getValueFromAutocomplete(newValue as string, option.activeName, option.id)
+                                                            }}
                                                             onInputChange={(event, newInputValue) => getValueFromAutocomplete(newInputValue, option.activeName, option.id)}
                                                             onClick={(event) => event.stopPropagation()}
                                                             options={stockList}
@@ -387,16 +390,16 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ stockDataList, optionDataLi
                                                             >
                                                                 <Typography variant="h6">costVolatility</Typography>
                                                                 <Typography color="textSecondary" variant="h6" fontWeight="400">
-                                                                    {optionItem.optionIn.bandCost}
+                                                                    {optionItem?.optionIn?.bandCost || 0.0}
                                                                 </Typography>
                                                             </Box>
                                                         </Box>
                                                     </TableCell>
                                                     <TableCell>
-                                                        <Typography variant="h6">{optionItem.optionIn.cost}</Typography>
+                                                        <Typography variant="h6">{optionItem?.optionIn?.cost || 0.0}</Typography>
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6">{optionItem.optionOut.sales}</Typography>
+                                                        <Typography variant="h6">{optionItem?.optionOut?.sales || 0.0}</Typography>
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
                                                         <Box display="flex" alignItems="center">
@@ -407,7 +410,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ stockDataList, optionDataLi
                                                             >
                                                                 <Typography variant="h6">salesVolatility</Typography>
                                                                 <Typography color="textSecondary" variant="h6" fontWeight="400" align="right">
-                                                                    {optionItem.optionOut.bandSales}
+                                                                    {optionItem?.optionOut?.bandSales || 0.0}
                                                                 </Typography>
                                                             </Box>
                                                         </Box>

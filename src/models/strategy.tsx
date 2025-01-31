@@ -49,13 +49,13 @@ export interface OptionData {
 }
 
 export interface OptionIn {
-    costVolatility: string,
+    costVolatility?: string,
     bandCost: string,
     cost: string,
 }
 
 export interface OptionOut {
-    salesVolatility: string,
+    salesVolatility?: string,
     bandSales: string,
     sales: string,
 }
