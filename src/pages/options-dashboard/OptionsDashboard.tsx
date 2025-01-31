@@ -6,7 +6,7 @@ import { UnderlineTabs } from "../../layouts/mui-treasury/mockup-tabs";
 import CloseIcon from "@mui/icons-material/Close";
 import { ButtonGroupOperation } from "./components/ButtonGroupOperation";
 import OptionsTable from "./components/OptionsTable";
-import { Strategy, createEmptyStrategy, createOptionTable, OptionType, StockData, TickerData, TickerMonitorData } from "../../models/strategy";
+import { Strategy, createEmptyStrategy, createStockData, OptionType, StockData, TickerData, TickerMonitorData } from "../../models/strategy";
 import { v4 as uuidv4 } from 'uuid';
 import useForm from "../../hooks/useForm"
 import { FinancialSummary } from "./components/FinancialSummary";
@@ -90,7 +90,7 @@ const OptionsDashboard = () => {
         const operationKey = strategy.id
         const clonedOperationsKeyValue = JSON.parse(JSON.stringify(operationKeyValue))
         const operationId = uuidv4()
-        const emptyOptionRow = createOptionTable({ id: operationId, optionType: optiontype })
+        const emptyOptionRow = createStockData({ id: operationId, optionType: optiontype })
         let hashedStockQtd = {}
         let updatedOperationKeyValue = {}
 

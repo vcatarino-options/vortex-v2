@@ -32,14 +32,19 @@ export interface StockData {
     workingDays: string,
     strike: string,
     strikes: string[]
+    serie: string
+    series: string[]
     // volatility: string, 
     // price: string,
     // optionIn: OptionIn,
     // optionOut: OptionOut,
     // result: string,
     // optionGreek: OptionGreek
-    // serie: string
-    // series: string[]
+}
+
+export interface OptionData {
+    optionIn: OptionIn,
+    optionOut: OptionOut
 }
 
 export interface OptionIn {
@@ -96,9 +101,10 @@ export const createOptionGreek = (data?: Partial<OptionGreek>): OptionGreek => {
     };
 }
 
-export const createOptionTable = (data?: Partial<StockData>): StockData => {
+export const createStockData = (data?: Partial<StockData>): StockData => {
     return {
         id: data?.id || "",
+        activeName: data?.activeName || "",
         strategyId: data?.strategyId || "",
         stockName: data?.stockName || "",
         orderType: data?.orderType || "buy",
@@ -107,13 +113,20 @@ export const createOptionTable = (data?: Partial<StockData>): StockData => {
         workingDays: data?.workingDays || "0",
         strike: data?.strike || "",
         serie: data?.serie || "",
-        volatility: data?.volatility || "0.0",
-        price: data?.price || "0.0",
-        optionIn: createOptionIn(data?.optionIn),
-        optionOut: createOptionOut(data?.optionOut),
-        result: data?.result || "0.0",
-        optionGreek: createOptionGreek(data?.optionGreek),
+        strikes: data?.strikes || [],
+        series: data?.series || [],
+        // volatility: data?.volatility || "0.0",
+        // price: data?.price || "0.0",
+        // result: data?.result || "0.0",
+        // optionGreek: createOptionGreek(data?.optionGreek),
     };
+}
+
+export const createOptionData = (data?: Partial<OptionData>): OptionData => {
+    return {
+        optionIn: createOptionIn(data?.optionIn),
+        optionOut: createOptionOut(data?.optionOut)
+    }
 }
 
 export type OptionType = "CALL" | "PUT" | "ACTIVE";
