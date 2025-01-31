@@ -169,7 +169,10 @@ const OptionsDashboard = () => {
     const updateOptionData = (id: string, d: any) => {
         const option: OptionData = getOptionDataById(id)
         option.optionIn.cost = d[3]
+        option.optionIn.bandCost = d[149]
         option.optionOut.sales = d[4]
+        option.optionOut.bandSales = d[148]
+        option.price = d[2]
         const key = strategies[tabIndex].id
         const clonedOptionsKeyValue = JSON.parse(JSON.stringify(optionDataRef.current))
         const updatedList = clonedOptionsKeyValue[key].map((op: OptionData) => op.id === option.id ? option : op)

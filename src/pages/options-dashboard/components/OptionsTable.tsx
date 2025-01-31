@@ -293,7 +293,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ stockDataList, optionDataLi
                                                     </TableCell>
                                                     <TableCell>
                                                         <Typography color="textSecondary" variant="h6" fontWeight="400">
-                                                            145,00
+                                                            {optionItem.price}
                                                         </Typography>
                                                     </TableCell>
                                                     <TableCell>

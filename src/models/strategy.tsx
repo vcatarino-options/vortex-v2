@@ -46,6 +46,7 @@ export interface OptionData {
     id: string,
     optionIn: OptionIn,
     optionOut: OptionOut
+    price: string
 }
 
 export interface OptionIn {
@@ -127,7 +128,8 @@ export const createOptionData = (data?: Partial<OptionData>): OptionData => {
     return {
         id: data?.id || "",
         optionIn: createOptionIn(data?.optionIn),
-        optionOut: createOptionOut(data?.optionOut)
+        optionOut: createOptionOut(data?.optionOut),
+        price: data?.price || "0"
     }
 }
 
