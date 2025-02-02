@@ -194,10 +194,12 @@ interface OptionsTableProps {
     getValueFromAutocomplete: (a: string, b: string, c: string) => void
     updateOption: (a: string, opt?: Partial<StockData>) => void
     stockQtd: Record<string, number>,
-    setStockQtd: (e: any) => void
+    setStockQtd: (e: any) => void,
+    orderType: boolean,
+    setOrderType: (b: boolean) => void
 }
 
-const OptionsTable: React.FC<OptionsTableProps> = ({ stockDataList, optionDataList, selecteds, stockQtd, setStockQtd, deleteItens, setSelecteds, getValueFromAutocomplete, updateOption, }: OptionsTableProps) => {
+const OptionsTable: React.FC<OptionsTableProps> = ({ stockDataList, optionDataList, selecteds, stockQtd, orderType, setOrderType, setStockQtd, deleteItens, setSelecteds, getValueFromAutocomplete, updateOption, }: OptionsTableProps) => {
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
             const newSelecteds = stockDataList.map((n) => n.id);
@@ -297,7 +299,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ stockDataList, optionDataLi
                                                         </Typography>
                                                     </TableCell>
                                                     <TableCell>
-                                                        <SwitchTextTrack />
+                                                        <SwitchTextTrack checked={orderType} onChange={(e) => setOrderType(e.target.checked)} />
                                                     </TableCell>
                                                     <TableCell>
                                                         <InputBase

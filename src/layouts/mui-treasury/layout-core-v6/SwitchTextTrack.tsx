@@ -16,7 +16,7 @@ export const SwitchTextTrack = styled(Switch)({
     backgroundColor: "#fff",
   },
   [`& .${switchClasses.track}`]: {
-    background: "linear-gradient(to right, #FF0000, #FF0000)",
+    background:" #FF0000",
     opacity: "1 !important",
     borderRadius: 20,
     position: "relative",

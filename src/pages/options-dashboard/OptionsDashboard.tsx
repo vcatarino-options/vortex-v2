@@ -24,7 +24,7 @@ const OptionsDashboard = () => {
     const [fee, setFee] = useState<string>("")
     const [open, setOpen] = useState(false);
     const [strategyName, setStrategyName] = useState("")
-    const [stockName, setStockName] = useState<string | null>("")
+    const [orderType, setOrderType] = React.useState(true);
     const [tabIndex, setTabIndex] = React.useState(0);
     const { formValue, setFormData } = useForm({ rate: "", price: "", estimatedMargin: "" })
     const [strategies, setStrategies] = useState<Strategy[]>([])
@@ -364,7 +364,10 @@ const OptionsDashboard = () => {
                                                 setSelecteds={setSelecteds}
                                                 stockQtd={stockQtdFromRow}
                                                 setStockQtd={setStockQtdFromRow}
-                                                deleteItens={deletingOptionFromTable} />
+                                                deleteItens={deletingOptionFromTable}
+                                                orderType={orderType}
+                                                setOrderType={setOrderType}
+                                            />
                                         }
                                     </TabPanel>
                                 ))
