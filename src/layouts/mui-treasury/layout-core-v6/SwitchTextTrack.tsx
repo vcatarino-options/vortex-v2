@@ -1,7 +1,8 @@
 import { styled } from "@mui/material/styles";
 import Switch, { switchClasses } from "@mui/material/Switch";
 
-const SwitchTextTrack = styled(Switch)({
+
+export const SwitchTextTrack = styled(Switch)({
   width: 100,
   height: 48,
   padding: 8,
@@ -12,11 +13,10 @@ const SwitchTextTrack = styled(Switch)({
   [`& .${switchClasses.thumb}`]: {
     width: 26,
     height: 26,
-    backgroundColor: "#355E3b",
+    backgroundColor: "#fff",
   },
   [`& .${switchClasses.track}`]: {
-    background: "#43cea2",
-    // background: "#f55d5d",
+    background: "linear-gradient(to right, #FF0000, #FF0000)",
     opacity: "1 !important",
     borderRadius: 20,
     position: "relative",
@@ -32,29 +32,28 @@ const SwitchTextTrack = styled(Switch)({
       fontWeight: 500,
     },
     "&:before": {
-      content: '"Venda"',
-      left: 10,
+      content: '"compra"',
+      left: 8,
       opacity: 0,
     },
     "&:after": {
-      content: '"Compra"',
-      right: 10,
+      content: '"venda"',
+      right: 9,
     },
   },
   [`& .${switchClasses.checked}`]: {
     [`&.${switchClasses.switchBase}`]: {
-      color: "#111",
+      color: "#185a9d",
       transform: "translateX(52px)",
       "&:hover": {
-        backgroundColor: (theme) => theme.palette.primary.dark,
+        backgroundColor: "rgba(24,90,257,0.08)",
       },
     },
     [`& .${switchClasses.thumb}`]: {
-      backgroundColor: "#e01212",
+      backgroundColor: "#fff",
     },
     [`& + .${switchClasses.track}`]: {
-      background: "#f55d5d",
-      // background: "#43cea2",
+      background: "#50C878",
       "&:before": {
         opacity: 1,
       },
