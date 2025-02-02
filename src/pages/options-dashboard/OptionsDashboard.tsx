@@ -33,6 +33,7 @@ const OptionsDashboard = () => {
     const [stockDataKeyValue, setStockDataKeyValue] = useState<Record<string, StockData[]>>({})
     const [optionDataKeyValue, setOptionDataKeyValue] = useState<Record<string, OptionData[]>>({})
     const [stockQtdFromRow, setStockQtdFromRow] = React.useState<Record<string, number>>({});
+    const [stockVolatitlyFromRow, setStockVolatitlyFromRow] = React.useState<Record<string, number>>({});
     const stockDataRef = useRef(stockDataKeyValue);
     const optionDataRef = useRef(optionDataKeyValue);
 
@@ -367,6 +368,8 @@ const OptionsDashboard = () => {
                                                 deleteItens={deletingOptionFromTable}
                                                 orderType={orderType}
                                                 setOrderType={setOrderType}
+                                                setStockVol={setStockVolatitlyFromRow}
+                                                stockVol={stockVolatitlyFromRow}
                                             />
                                         }
                                     </TabPanel>

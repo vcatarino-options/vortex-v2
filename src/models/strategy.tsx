@@ -26,7 +26,7 @@ export interface StockData {
     activeName: string,
     strategyId: string,
     stockName: string,
-    orderType: "buy" | "sell",
+    orderType: OrderType,
     optionType: OptionType,
     quantity: string,
     workingDays: string,
@@ -109,7 +109,7 @@ export const createStockData = (data?: Partial<StockData>): StockData => {
         activeName: data?.activeName || "",
         strategyId: data?.strategyId || "",
         stockName: data?.stockName || "",
-        orderType: data?.orderType || "buy",
+        orderType: data?.orderType || OrderTypeName.BUY,
         optionType: data?.optionType || "CALL",
         quantity: data?.quantity || "0",
         workingDays: data?.workingDays || "0",
@@ -134,4 +134,16 @@ export const createOptionData = (data?: Partial<OptionData>): OptionData => {
 }
 
 export type OptionType = "CALL" | "PUT" | "ACTIVE";
+export type OrderType = OrderTypeName.BUY | OrderTypeName.SELL
+
+export enum OrderTypeName {
+    BUY = 'BUY',
+    SELL = "SELL",
+};
+
+export enum OptionTypeName {
+    CALL = "CALL",
+    PUT = "PUT",
+    ACTIVE = "ACTIVE"
+}
 

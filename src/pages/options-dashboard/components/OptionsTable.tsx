@@ -196,10 +196,26 @@ interface OptionsTableProps {
     stockQtd: Record<string, number>,
     setStockQtd: (e: any) => void,
     orderType: boolean,
-    setOrderType: (b: boolean) => void
+    setOrderType: (b: boolean) => void,
+    setStockVol: (e: any) => void,
+    stockVol: Record<string, number>
 }
 
-const OptionsTable: React.FC<OptionsTableProps> = ({ stockDataList, optionDataList, selecteds, stockQtd, orderType, setOrderType, setStockQtd, deleteItens, setSelecteds, getValueFromAutocomplete, updateOption, }: OptionsTableProps) => {
+const OptionsTable: React.FC<OptionsTableProps> = ({
+    stockDataList,
+    optionDataList,
+    selecteds,
+    stockQtd,
+    orderType,
+    stockVol,
+    setStockVol,
+    setOrderType,
+    setStockQtd,
+    deleteItens,
+    setSelecteds,
+    getValueFromAutocomplete,
+    updateOption,
+}: OptionsTableProps) => {
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
             const newSelecteds = stockDataList.map((n) => n.id);
@@ -382,7 +398,30 @@ const OptionsTable: React.FC<OptionsTableProps> = ({ stockDataList, optionDataLi
                                                         />
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6">volatiliy</Typography>
+                                                        <InputBase
+                                                            disabled={!option.activeName}
+                                                            type="number"
+                                                            size="small"
+                                                            value={stockVol[option.id]}
+                                                            onChange={(e) => {
+                                                                setStockVol((prevStockVol: Record<string, number>) => ({
+                                                                    ...prevStockVol,
+                                                                    [option.id]: e.target.value
+                                                                }));
+                                                            }}
+                                                            inputProps={{ min: 0, step: 0.01 }}
+                                                            sx={{
+                                                                width: 90,
+                                                                fontSize: "0.875rem",
+                                                                padding: "5px 12px",
+                                                                border: "1px solid #767e89",
+                                                                borderRadius: "4px",
+                                                                transition: "border-color 0.2s ease-in-out",
+                                                                "&:hover": {
+                                                                    borderColor: "#ccc", // Cor da borda ao passar o mouse
+                                                                }
+                                                            }}
+                                                        />
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
                                                         <Typography variant="h6">price</Typography>
