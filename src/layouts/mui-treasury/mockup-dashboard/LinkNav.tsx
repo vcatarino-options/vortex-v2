@@ -1,4 +1,3 @@
-import React from "react";
 import List, { ListProps } from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import { alpha } from "@mui/material/styles";
@@ -25,7 +24,7 @@ export const LinkNavMockup = ({
       }}
     >
       {[...Array(lineCount).fill(undefined)].map((_, index) => (
-        <ListItem key={index} button>
+        <ListItem key={index}>
           <Word sx={{ my: 1 }} />
         </ListItem>
       ))}

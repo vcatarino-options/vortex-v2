@@ -1,5 +1,4 @@
 import React from "react";
-import { BoxProps } from "@mui/material/Box";
 import { Breakpoint } from "@mui/material/styles";
 import { layoutClasses } from "./layoutClasses";
 import { styled } from "./zero-styled";
@@ -17,6 +16,19 @@ export function applyRootStyles(params?: {
       maxHeight: "var(--Root-height)",
     }),
   };
+}
+
+declare module "@mui/material/styles" {
+  interface Theme {
+    vars?: {
+      palette: {
+        divider: string;
+        background: {
+          paper: string;
+        };
+      };
+    };
+  }
 }
 
 const StyledRoot = styled("div")(({ theme }) => ({
@@ -47,13 +59,12 @@ const StyledRoot = styled("div")(({ theme }) => ({
   },
 }));
 
-const Root = React.forwardRef<HTMLDivElement, BoxProps>(function Root(
+const Root = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(function Root(
   { className, ...props },
   ref,
 ) {
   return (
     <StyledRoot
-      // @ts-expect-error Material UI issue
       ref={ref}
       className={`${layoutClasses.Root} ${className || ""}`}
       {...props}

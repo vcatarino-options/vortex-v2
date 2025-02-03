@@ -12,7 +12,7 @@ interface FormDialogProps {
     btCancelLabel: string
     btContinueLabel: string
     value: string
-    onChange: (event: React.FormEvent<HTMLInputElement>) => void
+    onChange: React.ChangeEventHandler<HTMLInputElement>
     onSubmit: (event: React.FormEvent<HTMLFormElement>) => void
     open: boolean
     handleClose: () => void

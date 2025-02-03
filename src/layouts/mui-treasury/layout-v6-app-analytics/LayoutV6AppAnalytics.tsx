@@ -1,32 +1,6 @@
-import React from "react";
-import ChevronLeftRounded from "@mui/icons-material/ChevronLeftRounded";
-import MenuRounded from "@mui/icons-material/MenuRounded";
-import { Tab, Typography, Box, Grid, Grid2, IconButton, TextField, Button } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import { Typography, Box } from "@mui/material";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
-import {
-  applyEdgeSidebarStyles,
-  Content,
-  EdgeSidebar,
-  EdgeSidebarContent,
-  EdgeTemporaryClose,
-  Header,
-  layoutClasses,
-  Root,
-  toggleEdgeSidebarCollapse,
-  toggleTemporaryEdgeSidebar,
-} from "../layout-core-v6";
-import {
-  IconNavMockup,
-  LinkNavMockup,
-  SideNavUserInfoMockup,
-  StatCardMockup,
-  TopUsersCardMockup,
-  UserActiveCardMockup,
-} from "../mockup-dashboard";
-import { UnderlineTabs } from "../mockup-tabs";
-import EnhancedTable from "../../../pages/options-dashboard/EnhancedTable"
-import { ButtonGroupOperation } from "../../../pages/options-dashboard/components/ButtonGroupOperation";
+import { Content, Header, Root } from "../layout-core-v6";
 import { Outlet } from "react-router";
 
 export function LayoutV6AppAnalytics() {

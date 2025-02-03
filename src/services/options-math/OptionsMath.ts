@@ -52,7 +52,7 @@ export default class OptionsMath {
         return { delta, gamma, theta, vega, rho }
     }
 
-    static _stdNormal(z) {
+    static _stdNormal(z: number) {
         var k, m, values, total, item, z2, z4, a, b;
         if (z < -6) { return 0; }
         if (z > 6) { return 1; }

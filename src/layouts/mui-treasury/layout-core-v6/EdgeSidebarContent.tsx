@@ -30,19 +30,18 @@ const StyledEdgeSidebarContent = styled("div")(({ theme }) => ({
     opacity: 0,
   },
   [`[${layoutAttrs.isTemporaryEdgeSidebarOpen}] &, [${layoutAttrs.isTemporaryEdgeSidebarClosing}] &`]:
-    {
-      visibility: "visible",
-    },
+  {
+    visibility: "visible",
+  },
   [`[${layoutAttrs.isTemporaryEdgeSidebarClosing}] &`]: {
     transition: "transform 0.3s, visibility 0.3s, opacity 0.3s",
   },
 }));
 
-const EdgeSidebarContent = React.forwardRef<HTMLDivElement, BoxProps>(
+const EdgeSidebarContent = React.forwardRef<HTMLDivElement, Omit<BoxProps, "color">>(
   function EdgeSidebarContent({ className, ...props }, ref) {
     return (
       <StyledEdgeSidebarContent
-        // @ts-expect-error Material UI issue
         ref={ref}
         className={`${layoutClasses.EdgeSidebarContent} ${className || ""}`}
         {...props}

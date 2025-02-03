@@ -25,9 +25,9 @@ function applyTemporaryStyles(params: Omit<TemporaryConfig, "variant">) {
       },
     },
     [`&[${layoutAttrs.isTemporaryEdgeSidebarOpen}], &[${layoutAttrs.isTemporaryEdgeSidebarClosing}]`]:
-      {
-        "--EdgeSidebar-temporaryWidth": width,
-      },
+    {
+      "--EdgeSidebar-temporaryWidth": width,
+    },
     ...(fullHeight
       ? { zIndex: 5 }
       : { "--SidebarContent-offset": "var(--Header-height)" }),
@@ -51,13 +51,13 @@ function applyPersistentStyles(params: Omit<PersistentConfig, "variant">) {
       "--EdgeSidebar-collapsedWidth": "0px",
       ...(persistentBehavior === "none"
         ? {
-            "--EdgeSidebar-permanentWidth": "0px",
-          }
+          "--EdgeSidebar-permanentWidth": "0px",
+        }
         : {
-            ...(width && {
-              "--EdgeSidebar-permanentWidth": width,
-            }),
+          ...(width && {
+            "--EdgeSidebar-permanentWidth": width,
           }),
+        }),
       "--EdgeSidebar-collapsible": "var(--collapsed)",
       [`.${layoutClasses.EdgeSidebarCollapser}`]: {
         display: "var(--display, inline-flex)",
@@ -67,9 +67,9 @@ function applyPersistentStyles(params: Omit<PersistentConfig, "variant">) {
       },
     },
     [`.${layoutClasses.Root}:has(&[${layoutAttrs.isEdgeSidebarUncollapsed}])`]:
-      {
-        "--EdgeSidebar-collapsible": "var(--uncollapsed)",
-      },
+    {
+      "--EdgeSidebar-collapsible": "var(--uncollapsed)",
+    },
   };
 }
 
@@ -146,9 +146,9 @@ export function applyEdgeSidebarStyles(params: {
             ) {
               nextBreakpoint =
                 theme.breakpoints.keys[
-                  theme.breakpoints.keys.indexOf(
-                    variantConfig.autoCollapse as Breakpoint,
-                  ) + 1
+                theme.breakpoints.keys.indexOf(
+                  variantConfig.autoCollapse as Breakpoint,
+                ) + 1
                 ];
             }
             if (!nextBreakpoint) {
@@ -173,13 +173,13 @@ export function applyEdgeSidebarStyles(params: {
                   nextBreakpoint,
                 )]: {
                   [`.${layoutClasses.Root}:has(&[${layoutAttrs.isAutoCollapseOff}])`]:
-                    {
-                      "--EdgeSidebar-collapsible": "var(--uncollapsed)",
-                    },
+                  {
+                    "--EdgeSidebar-collapsible": "var(--uncollapsed)",
+                  },
                   [`.${layoutClasses.Root}:has(&) .${layoutClasses.EdgeSidebarCollapser}`]:
-                    {
-                      "--_autoCollapse": "1",
-                    },
+                  {
+                    "--_autoCollapse": "1",
+                  },
                 },
               };
             }
@@ -284,16 +284,15 @@ const StyledEdgeSidebarLeft = styled(EdgeSidebarRoot)({
               var(--permanent, none)`,
   },
   [`&:not([${layoutAttrs.isTemporaryEdgeSidebarOpen}], [${layoutAttrs.isTemporaryEdgeSidebarClosing}])`]:
-    {
-      overflow: "var(--temporary, hidden)",
-    },
+  {
+    overflow: "var(--temporary, hidden)",
+  },
 });
 
-const EdgeSidebar = React.forwardRef<HTMLDivElement, BoxProps>(
+const EdgeSidebar = React.forwardRef<HTMLDivElement, Omit<BoxProps, "color">>(
   function EdgeSidebar({ className, ...props }, ref) {
     return (
       <StyledEdgeSidebarLeft
-        // @ts-expect-error Material UI issue
         ref={ref}
         {...props}
         className={`${layoutClasses.EdgeSidebar} ${className || ""}`}

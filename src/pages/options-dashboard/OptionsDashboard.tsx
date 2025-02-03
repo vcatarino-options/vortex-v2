@@ -6,7 +6,7 @@ import { UnderlineTabs } from "../../layouts/mui-treasury/mockup-tabs";
 import CloseIcon from "@mui/icons-material/Close";
 import { ButtonGroupOperation } from "./components/ButtonGroupOperation";
 import OptionsTable from "./components/OptionsTable";
-import { Strategy, createEmptyStrategy, createStockData, OptionType, StockData, TickerData, TickerMonitorData, OptionData, createOptionData, OptionIn, OptionOut } from "../../models/strategy";
+import { Strategy, createEmptyStrategy, createStockData, OptionType, StockData, TickerData, OptionData, createOptionData } from "../../models/strategy";
 import { v4 as uuidv4 } from 'uuid';
 import useForm from "../../hooks/useForm"
 import { FinancialSummary } from "./components/FinancialSummary";
@@ -26,7 +26,7 @@ const OptionsDashboard = () => {
     const [strategyName, setStrategyName] = useState("")
     const [orderType, setOrderType] = React.useState(true);
     const [tabIndex, setTabIndex] = React.useState(0);
-    const { formValue, setFormData } = useForm({ rate: "", price: "", estimatedMargin: "" })
+    const { setFormData } = useForm({ rate: "", price: "", estimatedMargin: "" })
     const [strategies, setStrategies] = useState<Strategy[]>([])
     const [selecteds, setSelecteds] = React.useState<string[]>([]);
 
@@ -92,7 +92,7 @@ const OptionsDashboard = () => {
     }
 
     const onchange = (event: React.FormEvent<HTMLInputElement>) => {
-        const value = event.target.value
+        const value = (event.target as HTMLInputElement).value
         setStrategyName(value)
     }
 
@@ -218,7 +218,7 @@ const OptionsDashboard = () => {
             const operation = getStockDataById(optId)
             const key = strategies[tabIndex].id
             const clonedOperationsKeyValue = JSON.parse(JSON.stringify(stockDataKeyValue))
-            const _key = Object.keys(data)[0]
+            const _key = Object.keys(data)[0] as keyof StockData;
             operation[_key] = data?.[_key] !== undefined ? data[_key]! : operation[_key];
 
             const updatedList = clonedOperationsKeyValue[key].map((op: StockData) => op.id === operation.id ? operation : op)
@@ -300,7 +300,7 @@ const OptionsDashboard = () => {
                             {/* INÍCIO TABS */}
                             <UnderlineTabs
                                 value={tabIndex}
-                                onChange={(event, index) => setTabIndex(index)}
+                                onChange={(_, index) => setTabIndex(index)}
                                 sx={{
                                     ...(strategies.length === 0 && { display: "none" }),
                                     minHeight: { xs: 44, md: 48 },

@@ -1,4 +1,3 @@
-import React from "react";
 import Box, { BoxProps } from "@mui/material/Box";
 import { Circle } from "../mockup-shape";
 import { Word } from "../mockup-typography";

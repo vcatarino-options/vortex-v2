@@ -1,4 +1,3 @@
-import React from "react";
 import Avatar from "@mui/material/Avatar";
 import Box, { BoxProps } from "@mui/material/Box";
 import Divider from "@mui/material/Divider";

@@ -14,13 +14,12 @@ const StyledContent = styled("main")({
   marginBottom: "var(--Content-insetBottom)",
 });
 
-const Content = React.forwardRef<HTMLElement, BoxProps>(function Content(
+const Content = React.forwardRef<HTMLElement, Omit<BoxProps, "color">>(function Content(
   { className, ...props },
   ref,
 ) {
   return (
     <StyledContent
-      // @ts-expect-error Material UI issue
       ref={ref}
       className={`${layoutClasses.Content} ${className || ""}`}
       {...props}

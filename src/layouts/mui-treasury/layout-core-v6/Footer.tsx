@@ -10,13 +10,12 @@ const StyledFooter = styled("footer")(({ theme }) => ({
   borderTop: `1px solid ${(theme.vars || theme).palette.divider}`,
 }));
 
-const Footer = React.forwardRef<HTMLElement, BoxProps>(function Footer(
+const Footer = React.forwardRef<HTMLElement, Omit<BoxProps, "color">>(function Footer(
   { className, ...props },
   ref,
 ) {
   return (
     <StyledFooter
-      // @ts-expect-error Material UI issue
       ref={ref}
       className={`${layoutClasses.Footer} ${className || ""}`}
       {...props}

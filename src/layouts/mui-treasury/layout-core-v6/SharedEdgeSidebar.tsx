@@ -94,7 +94,7 @@ export function internalToggleSidebar(options: {
     if (nextOpen) {
       sidebar.setAttribute(layoutAttrs.isTemporaryEdgeSidebarOpen, "");
       sidebar.style.setProperty("--EdgeSidebar-temporaryOpen", "1");
-      // @ts-expect-error Material UI issue
+      
       function handleOutsideClick(event: MouseEvent) {
         const closer = doc.querySelector(
           `.${layoutClasses.TemporaryEdgeSidebarClose}`,

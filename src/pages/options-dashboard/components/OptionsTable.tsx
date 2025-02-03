@@ -177,7 +177,7 @@ const EnhancedTableToolbar: React.FC<EnhancedTableToolbarProps> = ({ numSelected
             {numSelected > 0 && (
                 <Tooltip title="Delete">
                     <IconButton onClick={deleteItens}>
-                        <FeatherIcon icon="trash-2" width="18" />
+                        <FeatherIcon icon="trash-2" size="18" />
                     </IconButton>
                 </Tooltip>
             )}
@@ -192,7 +192,7 @@ interface OptionsTableProps {
     deleteItens: (e: any) => void,
     setSelecteds: (e: any) => void
     getValueFromAutocomplete: (a: string, b: string, c: string) => void
-    updateOption: (a: string, opt?: Partial<StockData>) => void
+    updateOption: (a: string, opt: Partial<StockData>) => void
     stockQtd: Record<string, number>,
     setStockQtd: (e: any) => void,
     orderType: boolean,
@@ -292,12 +292,12 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                     <TableCell>
                                                         <Autocomplete
                                                             value={option.activeName || null}
-                                                            onChange={(event, newValue) => {
+                                                            onChange={(_, newValue) => {
                                                                 if (newValue && stockList.includes(newValue)) {
                                                                     getValueFromAutocomplete(newValue as string, option.activeName, option.id)
                                                                 }
                                                             }}
-                                                            onInputChange={(event, newInputValue) => {
+                                                            onInputChange={(_, newInputValue) => {
                                                                 if (newInputValue && stockList.includes(newInputValue)) {
                                                                     getValueFromAutocomplete(newInputValue as string, option.activeName, option.id)
                                                                 }
@@ -347,7 +347,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                         <Autocomplete
                                                             disabled={!option.activeName}
                                                             value={option.serie}
-                                                            onChange={(e, newValue) => {
+                                                            onChange={(_, newValue) => {
                                                                 updateOption(option.id, { serie: newValue || option.serie })
                                                             }}
                                                             onClick={(event) => event.stopPropagation()}
@@ -385,7 +385,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                         <Autocomplete
                                                             disabled={!option.activeName}
                                                             value={option.strike}
-                                                            onChange={(e, newValue) => {
+                                                            onChange={(_, newValue) => {
                                                                 const newStrike = newValue || option.strike
                                                                 updateOption(option.id, { strike: newStrike })
                                                             }}

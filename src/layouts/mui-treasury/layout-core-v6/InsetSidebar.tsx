@@ -1,5 +1,5 @@
 import React from "react";
-import { BoxProps } from "@mui/material/Box";
+import { BoxProps } from "@mui/material";
 import { Breakpoint } from "@mui/material/styles";
 import { layoutClasses } from "./layoutClasses";
 import { styled } from "./zero-styled";
@@ -11,10 +11,10 @@ export function applyInsetSidebarStyles(params: {
    * @default "sticky"
    */
   position?:
-    | "fixed"
-    | "absolute"
-    | "sticky"
-    | Record<Breakpoint, "fixed" | "absolute" | "sticky">;
+  | "fixed"
+  | "absolute"
+  | "sticky"
+  | Record<Breakpoint, "fixed" | "absolute" | "sticky">;
 }) {
   const { width, position = "sticky" } = params;
   let positionStyles: Record<string, string> = {};
@@ -72,11 +72,10 @@ const InsetSidebarRoot = styled("aside")({
   },
 });
 
-const InsetSidebar = React.forwardRef<HTMLDivElement, BoxProps>(
+const InsetSidebar = React.forwardRef<HTMLDivElement, Omit<BoxProps, "color">>(
   function InsetSidebar({ className, children, ...props }, ref) {
     return (
       <InsetSidebarRoot
-        // @ts-expect-error Material UI issue
         ref={ref}
         className={`${layoutClasses.InsetSidebar} ${className || ""}`}
         {...props}

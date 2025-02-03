@@ -1,4 +1,4 @@
-import { Grid, Box, Typography, Button, OutlinedInput, InputAdornment } from '@mui/material';
+import { Grid, Box, Typography, Button, OutlinedInput } from '@mui/material';
 import { Link, useNavigate } from 'react-router';
 
 // import PageContainer from '../../components/container/PageContainer';
@@ -14,7 +14,7 @@ function Login() {
     const { formValue, setFormData } = useForm({ email: "", password: "" });
     // const [isLoading, setIsLoading] = useState(false)
     // // const { enqueueSnackbar } = useSnackbar();
-    const [inputError, setInputErro] = useState(false)
+    const [_, setInputErro] = useState(false)
     let navigate = useNavigate();
 
     async function doLogin() {

@@ -49,13 +49,12 @@ const StyledHeader = styled("header")(({ theme }) => ({
   borderBottom: `1px solid ${(theme.vars || theme).palette.divider}`,
 }));
 
-const Header = React.forwardRef<HTMLElement, BoxProps>(function Header(
+const Header = React.forwardRef<HTMLElement, Omit<BoxProps, "color">>(function Header(
   { className, ...props },
   ref,
 ) {
   return (
     <StyledHeader
-      // @ts-expect-error Material UI issue
       ref={ref}
       className={`${layoutClasses.Header} ${className || ""}`}
       {...props}

@@ -8,11 +8,10 @@ const StyledInsetAvoidingView = styled("div")({
   marginLeft: "var(--InsetSidebarL-width)",
 });
 
-const InsetAvoidingView = React.forwardRef<HTMLDivElement, BoxProps>(
+const InsetAvoidingView = React.forwardRef<HTMLDivElement,  Omit<BoxProps, "color">>(
   function InsetAvoidingView({ className, ...props }, ref) {
     return (
       <StyledInsetAvoidingView
-        // @ts-expect-error Material UI issue
         ref={ref}
         className={`${layoutClasses.InsetAvoidingView} ${className || ""}`}
         {...props}

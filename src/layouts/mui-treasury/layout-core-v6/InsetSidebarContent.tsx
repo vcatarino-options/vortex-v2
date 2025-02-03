@@ -1,9 +1,10 @@
 import React from "react";
-import { BoxProps } from "@mui/material/Box";
+import { ComponentProps } from "react";
+import { Box } from "@mui/material";
 import { layoutClasses } from "./layoutClasses";
 import { styled } from "./zero-styled";
 
-const InsetSidebarContentRoot = styled("div")(({ theme }) => ({
+const InsetSidebarContentRoot = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   backgroundColor: "inherit",
@@ -28,11 +29,10 @@ const InsetSidebarContentRoot = styled("div")(({ theme }) => ({
   marginTop: "var(--fixed, var(--Header-height))",
 }));
 
-const InsetSidebarContent = React.forwardRef<HTMLDivElement, BoxProps>(
+const InsetSidebarContent = React.forwardRef<HTMLDivElement, ComponentProps<typeof Box>>(
   function InsetSidebarContent({ className, children, ...props }, ref) {
     return (
       <InsetSidebarContentRoot
-        // @ts-expect-error Material UI issue
         ref={ref}
         className={`${layoutClasses.InsetSidebarContent} ${className || ""}`}
         {...props}
