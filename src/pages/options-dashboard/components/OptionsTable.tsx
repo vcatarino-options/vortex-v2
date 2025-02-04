@@ -271,219 +271,233 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                             const labelId = `enhanced-table-checkbox-${index}`;
 
                                             return (
-                                                <TableRow
-                                                    hover
-                                                    // role="checkbox"
-                                                    aria-checked={isItemSelected}
-                                                    tabIndex={-1}
-                                                    key={option.id}
-                                                    selected={isItemSelected}
-                                                >
-                                                    <TableCell padding="checkbox">
-                                                        <Box display="flex" alignItems={"center"}>
-                                                            <CustomCheckbox
-                                                                onClick={(event: React.ChangeEvent<HTMLInputElement>) => handleClick(event, option.id)}
-                                                                color="primary"
-                                                                checked={isItemSelected}
-                                                                inputprops={{
-                                                                    'aria-labelledby': labelId,
+                                                <>
+                                                    <TableRow
+                                                        hover
+                                                        // role="checkbox"
+                                                        aria-checked={isItemSelected}
+                                                        tabIndex={-1}
+                                                        key={option.id}
+                                                        selected={isItemSelected}
+                                                    >
+                                                        <TableCell padding="checkbox">
+                                                            <Box display="flex" alignItems={"center"}>
+                                                                <CustomCheckbox
+                                                                    onClick={(event: React.ChangeEvent<HTMLInputElement>) => handleClick(event, option.id)}
+                                                                    color="primary"
+                                                                    checked={isItemSelected}
+                                                                    inputprops={{
+                                                                        'aria-labelledby': labelId,
+                                                                    }}
+                                                                />
+                                                                <Typography variant="h6" fontWeight="700">{option.optionType.charAt(0)}</Typography>
+                                                            </Box>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <Autocomplete
+                                                                value={option.activeName || null}
+                                                                onChange={(_, newValue) => {
+                                                                    if (newValue && stockList.includes(newValue)) {
+                                                                        getValueFromAutocomplete(newValue as string, option.activeName, option.id)
+                                                                    }
+                                                                }}
+                                                                onInputChange={(_, newInputValue) => {
+                                                                    if (newInputValue && stockList.includes(newInputValue)) {
+                                                                        getValueFromAutocomplete(newInputValue as string, option.activeName, option.id)
+                                                                    }
+                                                                }}
+                                                                onClick={(event) => event.stopPropagation()}
+                                                                options={stockList}
+                                                                sx={{ width: 145 }}
+                                                                size="small"
+                                                                renderInput={(params) => <TextField {...params} label={option.activeName || "Ativo"} />}
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <Typography color="textSecondary" variant="h6" fontWeight="400">
+                                                                {optionItem.price}
+                                                            </Typography>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <SwitchTextTrack checked={orderType} onChange={(e) => setOrderType(e.target.checked)} />
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <InputBase
+                                                                disabled={!option.activeName}
+                                                                type="number"
+                                                                size="small"
+                                                                value={stockQtd[option.id]}
+                                                                onChange={(e) => {
+                                                                    setStockQtd((prevStockQtd: Record<string, number>) => ({
+                                                                        ...prevStockQtd,
+                                                                        [option.id]: e.target.value
+                                                                    }));
+                                                                }}
+                                                                inputProps={{ min: 0, step: 100 }}
+                                                                sx={{
+                                                                    width: 90,
+                                                                    fontSize: "0.875rem",
+                                                                    padding: "5px 12px",
+                                                                    border: "1px solid #767e89",
+                                                                    borderRadius: "4px",
+                                                                    transition: "border-color 0.2s ease-in-out",
+                                                                    "&:hover": {
+                                                                        borderColor: "#ccc", // Cor da borda ao passar o mouse
+                                                                    }
                                                                 }}
                                                             />
-                                                            <Typography variant="h6" fontWeight="700">{option.optionType.charAt(0)}</Typography>
-                                                        </Box>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Autocomplete
-                                                            value={option.activeName || null}
-                                                            onChange={(_, newValue) => {
-                                                                if (newValue && stockList.includes(newValue)) {
-                                                                    getValueFromAutocomplete(newValue as string, option.activeName, option.id)
-                                                                }
-                                                            }}
-                                                            onInputChange={(_, newInputValue) => {
-                                                                if (newInputValue && stockList.includes(newInputValue)) {
-                                                                    getValueFromAutocomplete(newInputValue as string, option.activeName, option.id)
-                                                                }
-                                                            }}
-                                                            onClick={(event) => event.stopPropagation()}
-                                                            options={stockList}
-                                                            sx={{ width: 145 }}
-                                                            size="small"
-                                                            renderInput={(params) => <TextField {...params} label={option.activeName || "Ativo"} />}
-                                                        />
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Typography color="textSecondary" variant="h6" fontWeight="400">
-                                                            {optionItem.price}
-                                                        </Typography>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <SwitchTextTrack checked={orderType} onChange={(e) => setOrderType(e.target.checked)} />
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <InputBase
-                                                            disabled={!option.activeName}
-                                                            type="number"
-                                                            size="small"
-                                                            value={stockQtd[option.id]}
-                                                            onChange={(e) => {
-                                                                setStockQtd((prevStockQtd: Record<string, number>) => ({
-                                                                    ...prevStockQtd,
-                                                                    [option.id]: e.target.value
-                                                                }));
-                                                            }}
-                                                            inputProps={{ min: 0, step: 100 }}
-                                                            sx={{
-                                                                width: 90,
-                                                                fontSize: "0.875rem",
-                                                                padding: "5px 12px",
-                                                                border: "1px solid #767e89",
-                                                                borderRadius: "4px",
-                                                                transition: "border-color 0.2s ease-in-out",
-                                                                "&:hover": {
-                                                                    borderColor: "#ccc", // Cor da borda ao passar o mouse
-                                                                }
-                                                            }}
-                                                        />
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Autocomplete
-                                                            disabled={!option.activeName}
-                                                            value={option.serie}
-                                                            onChange={(_, newValue) => {
-                                                                updateOption(option.id, { serie: newValue || option.serie })
-                                                            }}
-                                                            onClick={(event) => event.stopPropagation()}
-                                                            options={option.series}
-                                                            sx={{ width: 200 }}
-                                                            size="small"
-                                                            renderInput={(params) => <TextField {...params} />}
-                                                        />
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <InputBase
-                                                            disabled={!option.activeName}
-                                                            type="number"
-                                                            size="small"
-                                                            value={option.workingDays}
-                                                            onChange={(e) => {
-                                                                const value = e.target.value
-                                                                updateOption(option.id, { workingDays: value })
-                                                            }}
-                                                            inputProps={{ min: 0 }}
-                                                            sx={{
-                                                                width: 90,
-                                                                fontSize: "0.875rem",
-                                                                padding: "5px 12px",
-                                                                border: "1px solid #767e89",
-                                                                borderRadius: "4px",
-                                                                transition: "border-color 0.2s ease-in-out",
-                                                                "&:hover": {
-                                                                    borderColor: "#ccc", // Cor da borda ao passar o mouse
-                                                                }
-                                                            }}
-                                                        />
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Autocomplete
-                                                            disabled={!option.activeName}
-                                                            value={option.strike}
-                                                            onChange={(_, newValue) => {
-                                                                const newStrike = newValue || option.strike
-                                                                updateOption(option.id, { strike: newStrike })
-                                                            }}
-                                                            onClick={(event) => event.stopPropagation()}
-                                                            options={option.strikes}
-                                                            getOptionLabel={(option) => String(option)}
-                                                            sx={{ width: 200 }}
-                                                            size="small"
-                                                            renderInput={(params) => <TextField {...params} />}
-                                                        />
-                                                    </TableCell>
-                                                    <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <InputBase
-                                                            disabled={!option.activeName}
-                                                            type="number"
-                                                            size="small"
-                                                            value={stockVol[option.id]}
-                                                            onChange={(e) => {
-                                                                setStockVol((prevStockVol: Record<string, number>) => ({
-                                                                    ...prevStockVol,
-                                                                    [option.id]: e.target.value
-                                                                }));
-                                                            }}
-                                                            inputProps={{ min: 0, step: 0.01 }}
-                                                            sx={{
-                                                                width: 90,
-                                                                fontSize: "0.875rem",
-                                                                padding: "5px 12px",
-                                                                border: "1px solid #767e89",
-                                                                borderRadius: "4px",
-                                                                transition: "border-color 0.2s ease-in-out",
-                                                                "&:hover": {
-                                                                    borderColor: "#ccc", // Cor da borda ao passar o mouse
-                                                                }
-                                                            }}
-                                                        />
-                                                    </TableCell>
-                                                    <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6">price</Typography>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Box display="flex" alignItems="center">
-                                                            <Box
-                                                                sx={{
-                                                                    ml: 2,
-                                                                }}
-                                                            >
-                                                                <Typography variant="h6">costVolatility</Typography>
-                                                                <Typography color="textSecondary" variant="h6" fontWeight="400">
-                                                                    {optionItem?.optionIn?.bandCost || 0.0}
-                                                                </Typography>
-                                                            </Box>
-                                                        </Box>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Typography variant="h6">{optionItem?.optionIn?.cost || 0.0}</Typography>
-                                                    </TableCell>
-                                                    <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6">{optionItem?.optionOut?.sales || 0.0}</Typography>
-                                                    </TableCell>
-                                                    <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Box display="flex" alignItems="center">
-                                                            <Box
-                                                                sx={{
-                                                                    ml: 2,
-                                                                }}
-                                                            >
-                                                                <Typography variant="h6">salesVolatility</Typography>
-                                                                <Typography color="textSecondary" variant="h6" fontWeight="400" align="right">
-                                                                    {optionItem?.optionOut?.bandSales || 0.0}
-                                                                </Typography>
-                                                            </Box>
-                                                        </Box>
-                                                    </TableCell>
+                                                        </TableCell>
 
-                                                    <TableCell>
-                                                        <Typography variant="h6">result</Typography>
-                                                    </TableCell>
-                                                    <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6">delta</Typography>
-                                                    </TableCell>
-                                                    <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6">gama</Typography>
-                                                    </TableCell>
-                                                    <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6">theta</Typography>
-                                                    </TableCell>
-                                                    <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6">vega</Typography>
-                                                    </TableCell>
-                                                    <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6">rho</Typography>
-                                                    </TableCell>
+                                                        {
+                                                            option.optionType === OptionTypeName.ACTIVE ?
+                                                                (
+                                                                    <TableCell colSpan={3} />
+                                                                ) : (
+                                                                    <>
+                                                                        <TableCell>
+                                                                            <Autocomplete
+                                                                                disabled={!option.activeName}
+                                                                                value={option.serie}
+                                                                                onChange={(_, newValue) => {
+                                                                                    updateOption(option.id, { serie: newValue || option.serie })
+                                                                                }}
+                                                                                onClick={(event) => event.stopPropagation()}
+                                                                                options={option.series}
+                                                                                sx={{ width: 200 }}
+                                                                                size="small"
+                                                                                renderInput={(params) => <TextField {...params} />}
+                                                                            />
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            <InputBase
+                                                                                disabled={!option.activeName}
+                                                                                type="number"
+                                                                                size="small"
+                                                                                value={option.workingDays}
+                                                                                onChange={(e) => {
+                                                                                    const value = e.target.value
+                                                                                    updateOption(option.id, { workingDays: value })
+                                                                                }}
+                                                                                inputProps={{ min: 0 }}
+                                                                                sx={{
+                                                                                    width: 90,
+                                                                                    fontSize: "0.875rem",
+                                                                                    padding: "5px 12px",
+                                                                                    border: "1px solid #767e89",
+                                                                                    borderRadius: "4px",
+                                                                                    transition: "border-color 0.2s ease-in-out",
+                                                                                    "&:hover": {
+                                                                                        borderColor: "#ccc", // Cor da borda ao passar o mouse
+                                                                                    }
+                                                                                }}
+                                                                            />
+                                                                        </TableCell>
+                                                                        <TableCell>
+                                                                            <Autocomplete
+                                                                                disabled={!option.activeName}
+                                                                                value={option.strike}
+                                                                                onChange={(_, newValue) => {
+                                                                                    const newStrike = newValue || option.strike
+                                                                                    updateOption(option.id, { strike: newStrike })
+                                                                                }}
+                                                                                onClick={(event) => event.stopPropagation()}
+                                                                                options={option.strikes}
+                                                                                getOptionLabel={(option) => String(option)}
+                                                                                sx={{ width: 200 }}
+                                                                                size="small"
+                                                                                renderInput={(params) => <TextField {...params} />}
+                                                                            />
+                                                                        </TableCell>
+                                                                    </>
+                                                                )
 
-                                                </TableRow>
+                                                        }
+
+
+                                                        <TableCell sx={{ backgroundColor: "#282C34" }}>
+                                                            <InputBase
+                                                                disabled={!option.activeName}
+                                                                type="number"
+                                                                size="small"
+                                                                value={stockVol[option.id]}
+                                                                onChange={(e) => {
+                                                                    setStockVol((prevStockVol: Record<string, number>) => ({
+                                                                        ...prevStockVol,
+                                                                        [option.id]: e.target.value
+                                                                    }));
+                                                                }}
+                                                                inputProps={{ min: 0, step: 0.01 }}
+                                                                sx={{
+                                                                    width: 90,
+                                                                    fontSize: "0.875rem",
+                                                                    padding: "5px 12px",
+                                                                    border: "1px solid #767e89",
+                                                                    borderRadius: "4px",
+                                                                    transition: "border-color 0.2s ease-in-out",
+                                                                    "&:hover": {
+                                                                        borderColor: "#ccc", // Cor da borda ao passar o mouse
+                                                                    }
+                                                                }}
+                                                            />
+                                                        </TableCell>
+                                                        <TableCell sx={{ backgroundColor: "#282C34" }}>
+                                                            <Typography variant="h6">price</Typography>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <Box display="flex" alignItems="center">
+                                                                <Box
+                                                                    sx={{
+                                                                        ml: 2,
+                                                                    }}
+                                                                >
+                                                                    <Typography variant="h6">costVolatility</Typography>
+                                                                    <Typography color="textSecondary" variant="h6" fontWeight="400">
+                                                                        {optionItem?.optionIn?.bandCost || 0.0}
+                                                                    </Typography>
+                                                                </Box>
+                                                            </Box>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <Typography variant="h6">{optionItem?.optionIn?.cost || 0.0}</Typography>
+                                                        </TableCell>
+                                                        <TableCell sx={{ backgroundColor: "#282C34" }}>
+                                                            <Typography variant="h6">{optionItem?.optionOut?.sales || 0.0}</Typography>
+                                                        </TableCell>
+                                                        <TableCell sx={{ backgroundColor: "#282C34" }}>
+                                                            <Box display="flex" alignItems="center">
+                                                                <Box
+                                                                    sx={{
+                                                                        ml: 2,
+                                                                    }}
+                                                                >
+                                                                    <Typography variant="h6">salesVolatility</Typography>
+                                                                    <Typography color="textSecondary" variant="h6" fontWeight="400" align="right">
+                                                                        {optionItem?.optionOut?.bandSales || 0.0}
+                                                                    </Typography>
+                                                                </Box>
+                                                            </Box>
+                                                        </TableCell>
+
+                                                        <TableCell>
+                                                            <Typography variant="h6">result</Typography>
+                                                        </TableCell>
+                                                        <TableCell sx={{ backgroundColor: "#282C34" }}>
+                                                            <Typography variant="h6">delta</Typography>
+                                                        </TableCell>
+                                                        <TableCell sx={{ backgroundColor: "#282C34" }}>
+                                                            <Typography variant="h6">gama</Typography>
+                                                        </TableCell>
+                                                        <TableCell sx={{ backgroundColor: "#282C34" }}>
+                                                            <Typography variant="h6">theta</Typography>
+                                                        </TableCell>
+                                                        <TableCell sx={{ backgroundColor: "#282C34" }}>
+                                                            <Typography variant="h6">vega</Typography>
+                                                        </TableCell>
+                                                        <TableCell sx={{ backgroundColor: "#282C34" }}>
+                                                            <Typography variant="h6">rho</Typography>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                </>
                                             );
                                         })}
                                     </TableBody>

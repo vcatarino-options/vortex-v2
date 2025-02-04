@@ -83,9 +83,9 @@ export default class OptionsMath {
     ) {
         return toggleSide === 'Compra'
             ? OptionsMath.formatNumber(
-                quantidade * calculateOptionPrice(volatility) * -1,
+                quantidade * OptionsMath.calculateOptionPrice(volatility) * -1,
             )
-            : OptionsMath.formatNumber(quantidade * calculateOptionPrice(volatility));
+            : OptionsMath.formatNumber(quantidade * OptionsMath.calculateOptionPrice(volatility));
     }
 
     static blackScholesOptionPrice(
