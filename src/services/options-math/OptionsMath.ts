@@ -75,4 +75,74 @@ export default class OptionsMath {
         }
         return 0.5 + 0.3989422804014327 * total;
     }
+
+    static calculateRowResultBasedOnVolToggleside(
+        toggleSide: string,
+        quantidade: number,
+        volatility: number,
+    ) {
+        return toggleSide === 'Compra'
+            ? OptionsMath.formatNumber(
+                quantidade * calculateOptionPrice(volatility) * -1,
+            )
+            : OptionsMath.formatNumber(quantidade * calculateOptionPrice(volatility));
+    }
+
+    static blackScholesOptionPrice(
+        volatility: number,
+        s: number,
+        k: number,
+        t: number,
+        r: number,
+        optionType: OptionType) {
+        const d1 = (Math.log(s / k) + (r + 0.5 * volatility ** 2) * t) / (volatility * Math.sqrt(t));
+        const d2 = d1 - volatility * Math.sqrt(t);
+
+        let optionPrice;
+        if (optionType.toUpperCase() === OptionTypeName.CALL) {
+            optionPrice = s * OptionsMath._stdNormal(d1) - k * Math.exp(-r * t) * OptionsMath._stdNormal(d2);
+        } else if (optionType.toUpperCase() === 'PUT') {
+            optionPrice = k * Math.exp(-r * t) * OptionsMath._stdNormal(-d2) - s * OptionsMath._stdNormal(-d1);
+        } else {
+            throw new Error("Invalid option_type. Use 'CALL' or 'PUT'.");
+        }
+
+        return optionPrice;
+    }
+
+    static calculateOptionPrice = (
+        volatility: number,
+        tickerPerson: string,
+        activePrice: number,
+        fees: number,
+        modifiedDu: number,
+        type: OptionType) => {
+        const option = tickerPerson || personOption || '';
+        return OptionsMath.blackScholesOptionPrice(
+            volatility / 100,
+            activePrice,
+            OptionsMath.parseNumber(option.split(' ')[0]),
+            modifiedDu / 252,
+            fees / 100,
+            type,
+        );
+    };
+
+    static parseNumber(text: string) {
+        if (typeof text !== 'string') {
+            return NaN;
+        }
+        return parseFloat(text.replace(/\./g, '').replace(',', '.'));
+    }
+
+    static formatNumber(number: number, locale = 'pt-BR') {
+        if (number === undefined || isNaN(number)) {
+            return '0,00'
+        }
+        const formatter = new Intl.NumberFormat(locale, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+        return formatter.format(number);
+    }
 }

@@ -22,7 +22,7 @@ import {
 import { SwitchTextTrack } from '../../../layouts/mui-treasury/layout-core-v6';
 import FeatherIcon from 'feather-icons-react';
 import CustomCheckbox from '../../../components/custom-elements/CustomCheckbox';
-import { OptionData, StockData } from '../../../models/strategy';
+import { OptionData, OptionTypeName, StockData } from '../../../models/strategy';
 import { stockList } from '../../../utils/stockList';
 
 interface EnhancedTableHeadProps {
@@ -280,14 +280,17 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                     selected={isItemSelected}
                                                 >
                                                     <TableCell padding="checkbox">
-                                                        <CustomCheckbox
-                                                            onClick={(event: React.ChangeEvent<HTMLInputElement>) => handleClick(event, option.id)}
-                                                            color="primary"
-                                                            checked={isItemSelected}
-                                                            inputprops={{
-                                                                'aria-labelledby': labelId,
-                                                            }}
-                                                        />
+                                                        <Box display="flex" alignItems={"center"}>
+                                                            <CustomCheckbox
+                                                                onClick={(event: React.ChangeEvent<HTMLInputElement>) => handleClick(event, option.id)}
+                                                                color="primary"
+                                                                checked={isItemSelected}
+                                                                inputprops={{
+                                                                    'aria-labelledby': labelId,
+                                                                }}
+                                                            />
+                                                            <Typography variant="h6" fontWeight="700">{option.optionType.charAt(0)}</Typography>
+                                                        </Box>
                                                     </TableCell>
                                                     <TableCell>
                                                         <Autocomplete
