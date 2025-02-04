@@ -39,8 +39,8 @@ const EnhancedTableHead: React.FC<EnhancedTableHeadProps> = ({ onSelectAllClick,
                 <TableCell colSpan={2} align={'center'} sx={{ backgroundColor: "#282C34" }}> Teórica</TableCell>
                 <TableCell colSpan={2} align={'center'}> Entrada</TableCell>
                 <TableCell colSpan={2} align={'center'} sx={{ backgroundColor: "#282C34" }}> Saída</TableCell>
-                <TableCell />
-                <TableCell colSpan={5} align={'center'} sx={{ backgroundColor: "#282C34" }}>Gregas</TableCell>
+                <TableCell colSpan={2} />
+                {/* <TableCell align={'center'} sx={{ backgroundColor: "#282C34" }}>Gregas</TableCell> */}
             </TableRow>
             <TableRow>
                 <TableCell padding="checkbox">
@@ -127,7 +127,7 @@ const EnhancedTableHead: React.FC<EnhancedTableHeadProps> = ({ onSelectAllClick,
                         Delta
                     </Typography>
                 </TableCell>
-                <TableCell sx={{ backgroundColor: "#282C34" }}>
+                {/* <TableCell sx={{ backgroundColor: "#282C34" }}>
                     <Typography variant="h6" fontWeight="500">
                         Gama
                     </Typography>
@@ -146,9 +146,9 @@ const EnhancedTableHead: React.FC<EnhancedTableHeadProps> = ({ onSelectAllClick,
                     <Typography variant="h6" fontWeight="500">
                         Rho
                     </Typography>
-                </TableCell>
+                </TableCell> */}
             </TableRow>
-        </TableHead>
+        </TableHead >
     );
 }
 
@@ -474,14 +474,13 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                             </Box>
                                                         </Box>
                                                     </TableCell>
-
                                                     <TableCell>
                                                         <Typography variant="h6">result</Typography>
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
                                                         <Typography variant="h6">delta</Typography>
                                                     </TableCell>
-                                                    <TableCell sx={{ backgroundColor: "#282C34" }}>
+                                                    {/* <TableCell sx={{ backgroundColor: "#282C34" }}>
                                                         <Typography variant="h6">gama</Typography>
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
@@ -492,7 +491,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
                                                         <Typography variant="h6">rho</Typography>
-                                                    </TableCell>
+                                                    </TableCell> */}
                                                 </TableRow>
                                             );
                                         })}
