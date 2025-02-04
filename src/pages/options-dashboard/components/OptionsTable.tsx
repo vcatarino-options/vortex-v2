@@ -198,7 +198,9 @@ interface OptionsTableProps {
     orderType: boolean,
     setOrderType: (b: boolean) => void,
     setStockVol: (e: any) => void,
-    stockVol: Record<string, number>
+    stockVol: Record<string, number>,
+    setStockToogleDir: (e: any) => void
+    stockToogleDir: Record<string, boolean>,
 }
 
 const OptionsTable: React.FC<OptionsTableProps> = ({
@@ -206,10 +208,10 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
     optionDataList,
     selecteds,
     stockQtd,
-    orderType,
     stockVol,
+    stockToogleDir,
+    setStockToogleDir,
     setStockVol,
-    setOrderType,
     setStockQtd,
     deleteItens,
     setSelecteds,
@@ -319,7 +321,14 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                             </Typography>
                                                         </TableCell>
                                                         <TableCell>
-                                                            <SwitchTextTrack checked={orderType} onChange={(e) => setOrderType(e.target.checked)} />
+                                                            <SwitchTextTrack
+                                                                checked={stockToogleDir[option.id]}
+                                                                onChange={(e) => {
+                                                                    setStockToogleDir((prevStockToogleDir: Record<string, boolean>) => ({
+                                                                        ...prevStockToogleDir,
+                                                                        [option.id]: !stockToogleDir[option.id]
+                                                                    }));
+                                                                }} />
                                                         </TableCell>
                                                         <TableCell>
                                                             <InputBase

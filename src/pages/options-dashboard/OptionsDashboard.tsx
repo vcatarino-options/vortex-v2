@@ -34,6 +34,8 @@ const OptionsDashboard = () => {
     const [optionDataKeyValue, setOptionDataKeyValue] = useState<Record<string, OptionData[]>>({})
     const [stockQtdFromRow, setStockQtdFromRow] = React.useState<Record<string, number>>({});
     const [stockVolatitlyFromRow, setStockVolatitlyFromRow] = React.useState<Record<string, number>>({});
+    const [stockToogleFromRow, setStockToogleFromRow] = React.useState<Record<string, boolean>>({});
+
     const stockDataRef = useRef(stockDataKeyValue);
     const optionDataRef = useRef(optionDataKeyValue);
 
@@ -72,6 +74,7 @@ const OptionsDashboard = () => {
             setTabIndex(newIndex);
         }
     };
+
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -180,8 +183,6 @@ const OptionsDashboard = () => {
         clonedOptionsKeyValue[key] = updatedList
         setOptionDataKeyValue(clonedOptionsKeyValue)
     }
-
-
 
     const getTicker = (r: any, opId: string, activeName: string) => {
         try {
@@ -370,6 +371,8 @@ const OptionsDashboard = () => {
                                                 setOrderType={setOrderType}
                                                 setStockVol={setStockVolatitlyFromRow}
                                                 stockVol={stockVolatitlyFromRow}
+                                                stockToogleDir={stockToogleFromRow}
+                                                setStockToogleDir={setStockToogleFromRow}
                                             />
                                         }
                                     </TabPanel>
