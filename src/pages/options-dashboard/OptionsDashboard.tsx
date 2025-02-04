@@ -24,7 +24,6 @@ const OptionsDashboard = () => {
     const [fee, setFee] = useState<string>("")
     const [open, setOpen] = useState(false);
     const [strategyName, setStrategyName] = useState("")
-    const [orderType, setOrderType] = React.useState(true);
     const [tabIndex, setTabIndex] = React.useState(0);
     const { setFormData } = useForm({ rate: "", price: "", estimatedMargin: "" })
     const [strategies, setStrategies] = useState<Strategy[]>([])
@@ -32,9 +31,8 @@ const OptionsDashboard = () => {
 
     const [stockDataKeyValue, setStockDataKeyValue] = useState<Record<string, StockData[]>>({})
     const [optionDataKeyValue, setOptionDataKeyValue] = useState<Record<string, OptionData[]>>({})
-    const [stockQtdFromRow, setStockQtdFromRow] = React.useState<Record<string, number>>({});
-    const [stockVolatitlyFromRow, setStockVolatitlyFromRow] = React.useState<Record<string, number>>({});
-    const [stockToogleFromRow, setStockToogleFromRow] = React.useState<Record<string, boolean>>({});
+
+    const [stockEditableData, setStockEditableData] = React.useState<Record<string, any>>({})
 
     const stockDataRef = useRef(stockDataKeyValue);
     const optionDataRef = useRef(optionDataKeyValue);
@@ -122,9 +120,10 @@ const OptionsDashboard = () => {
     }
 
     const inicializeStockQtdFromRow = (operationId: string) => {
-        const newStockQtd = { [operationId]: 100 }
-        let hashedStockQtd = { ...stockQtdFromRow, ...newStockQtd }
-        setStockQtdFromRow(hashedStockQtd)
+        setStockEditableData((prevStockEditableData: Record<string, any>) => ({
+            ...prevStockEditableData,
+            [operationId]: { ...stockEditableData[operationId], ...{ stockQtd: 100, direction: true, volatility: 0.0 } }
+        }));
     }
 
     const deletingOptionFromTable = () => {
@@ -364,15 +363,9 @@ const OptionsDashboard = () => {
                                                 optionDataList={optionDataKeyValue[strategy.id]}
                                                 selecteds={selecteds}
                                                 setSelecteds={setSelecteds}
-                                                stockQtd={stockQtdFromRow}
-                                                setStockQtd={setStockQtdFromRow}
                                                 deleteItens={deletingOptionFromTable}
-                                                orderType={orderType}
-                                                setOrderType={setOrderType}
-                                                setStockVol={setStockVolatitlyFromRow}
-                                                stockVol={stockVolatitlyFromRow}
-                                                stockToogleDir={stockToogleFromRow}
-                                                setStockToogleDir={setStockToogleFromRow}
+                                                stockEditableData={stockEditableData}
+                                                setStockEditableData={setStockEditableData}
                                             />
                                         }
                                     </TabPanel>
