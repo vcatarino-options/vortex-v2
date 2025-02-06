@@ -208,10 +208,12 @@ const OptionsDashboard = () => {
     }
 
     const checkTickerReceivedFromWebSocket = (r: any) => {
-        if (!r.du || !r.option || !r.options || !r.serie || !r.series) {
+        const requiredKeys = ['du', 'option', 'options', 'serie', 'series'];
+
+        if (requiredKeys.some(key => !Object.prototype.hasOwnProperty.call(r, key))) {
             throw new Error("Dados recebidos do WebSocket estão incompletos");
         }
-    }
+    };
 
     const updateStock = (optId: string, data: Partial<StockData>) => {
         try {
