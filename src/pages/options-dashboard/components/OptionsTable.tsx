@@ -22,8 +22,9 @@ import {
 import { SwitchTextTrack } from '../../../layouts/mui-treasury/layout-core-v6';
 import FeatherIcon from 'feather-icons-react';
 import CustomCheckbox from '../../../components/custom-elements/CustomCheckbox';
-import { OptionData, OptionTypeName, StockData } from '../../../models/strategy';
+import { OptionData, OptionTypeName, OrderTypeName, StockData } from '../../../models/strategy';
 import { stockList } from '../../../utils/stockList';
+import OptionsMath from '../../../services/options-math/OptionsMath';
 
 interface EnhancedTableHeadProps {
     numSelected: number,
@@ -195,6 +196,7 @@ interface OptionsTableProps {
     updateOption: (a: string, opt: Partial<StockData>) => void
     stockEditableData: Record<string, any>
     setStockEditableData: (e: any) => void
+    fee: number
 }
 
 const OptionsTable: React.FC<OptionsTableProps> = ({
@@ -202,6 +204,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
     optionDataList,
     selecteds,
     stockEditableData,
+    fee,
     deleteItens,
     setSelecteds,
     getValueFromAutocomplete,
@@ -325,10 +328,10 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                             type="number"
                                                             size="small"
                                                             value={stockEditableData[option.id]?.stockQtd}
-                                                            onChange={(_) => {
+                                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                                                                 setStockEditableData((prevStockEditableData: Record<string, any>) => ({
                                                                     ...prevStockEditableData,
-                                                                    [option.id]: { ...stockEditableData[option.id], "stockQtd": stockEditableData[option.id]?.stockQtd }
+                                                                    [option.id]: { ...stockEditableData[option.id], "stockQtd": e.target.value }
                                                                 }));
                                                             }}
                                                             inputProps={{ min: 0, step: 100 }}
@@ -417,10 +420,19 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                             type="number"
                                                             size="small"
                                                             value={stockEditableData[option.id]?.volatility}
-                                                            onChange={(_) => {
+                                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                                                const volatility = stockEditableData[option.id]?.volatility
+                                                                const price = parseFloat(optionItem.price)
+                                                                const strike = parseFloat(option.strike.split(' ')[0].replace(/\./g, '').replace(',', '.'));
+                                                                const daysPerYear = parseInt(option.workingDays) / 252
+                                                                const feePerCent = fee / 100
+                                                                const type = option.optionType
+                                                                const direction = stockEditableData[option.id]?.direction ? OrderTypeName.BUY : OrderTypeName.SELL
+                                                                const { delta } = OptionsMath.getOptionsGreeks(volatility, price, strike, daysPerYear, feePerCent, type, direction)
+                                                                console.log("DELTA: ", delta)
                                                                 setStockEditableData((prevStockEditableData: Record<string, any>) => ({
                                                                     ...prevStockEditableData,
-                                                                    [option.id]: { ...stockEditableData[option.id], "volatility": stockEditableData[option.id]?.volatility }
+                                                                    [option.id]: { ...stockEditableData[option.id], "volatility": e.target.value, "greekDictionary": { "delta": delta } }
                                                                 }));
                                                             }}
                                                             inputProps={{ min: 0, step: 0.01 }}
@@ -477,8 +489,10 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                     <TableCell>
                                                         <Typography variant="h6">result</Typography>
                                                     </TableCell>
-                                                    <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6">delta</Typography>
+                                                    <TableCell align="center" sx={{ backgroundColor: "#282C34" }}>
+                                                        <Typography variant="h6">
+                                                            {new Intl.NumberFormat('en-US', { signDisplay: "always" }).format(stockEditableData[option.id]?.greekDictionary.delta ?? 0)}
+                                                        </Typography>
                                                     </TableCell>
                                                     {/* <TableCell sx={{ backgroundColor: "#282C34" }}>
                                                         <Typography variant="h6">gama</Typography>

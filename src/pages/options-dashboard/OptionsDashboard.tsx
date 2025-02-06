@@ -51,6 +51,10 @@ const OptionsDashboard = () => {
         optionDataRef.current = optionDataKeyValue;
     }, [stockDataKeyValue, optionDataKeyValue]);
 
+    useEffect(() => {
+        console.log("ALTEROU STOCK EDITABLE DATA: ", stockEditableData)
+    }, [stockEditableData])
+
     const getFee = (r: unknown) => {
         const response: string = r as string
         setFee(response)
@@ -122,7 +126,7 @@ const OptionsDashboard = () => {
     const inicializeStockQtdFromRow = (operationId: string) => {
         setStockEditableData((prevStockEditableData: Record<string, any>) => ({
             ...prevStockEditableData,
-            [operationId]: { ...stockEditableData[operationId], ...{ stockQtd: 100, direction: true, volatility: 0.0 } }
+            [operationId]: { ...stockEditableData[operationId], ...{ stockQtd: 100, direction: true, volatility: 0.0, greekDictionary: { delta: 0.0 } } }
         }));
     }
 
@@ -368,6 +372,7 @@ const OptionsDashboard = () => {
                                                 deleteItens={deletingOptionFromTable}
                                                 stockEditableData={stockEditableData}
                                                 setStockEditableData={setStockEditableData}
+                                                fee={parseFloat(fee)}
                                             />
                                         }
                                     </TabPanel>
