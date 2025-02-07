@@ -410,10 +410,14 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                                         <Autocomplete
                                                                             disabled={!option.activeName}
                                                                             value={option.strike}
-                                                                            // onFocus={() => updateOptionPrice(option.id, optionsMath.getOrder())}
                                                                             onChange={(_, newValue) => {
                                                                                 const newStrike = newValue || option.strike
                                                                                 updateOption(option.id, { strike: newStrike })
+
+                                                                                optionsMath.setStrike(parseFloat(newStrike.split(' ')[0].replace(/\./g, '').replace(',', '.')))
+                                                                                const price = optionsMath.calculateOptionPrice()
+                                                                                const updatedObj = { price }
+                                                                                updateOptionPrice(option.id, updatedObj)
                                                                             }}
                                                                             onClick={(event) => event.stopPropagation()}
                                                                             options={option.strikes}
@@ -447,7 +451,6 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                                 const { delta } = OptionsMath.getOptionsGreeks(volatility, price, strike, daysPerYear, feePerCent, type, direction)
 
                                                                 const optionPrice = optionsMath.calculateOptionPrice()
-                                                                console.log("OPTON PRICE: ", optionPrice)
                                                                 const updatedObj = { volatility: e.target.value, price: optionPrice, "greekDictionary": { "delta": delta } }
                                                                 updateOptionPrice(option.id, updatedObj)
                                                             }}
