@@ -435,7 +435,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                             type="number"
                                                             size="small"
                                                             value={stockEditableData[option.id]?.volatility}
-                                                            // onFocus={() => updateOptionPrice(option.id, optionsMath.getOrder())}
+
                                                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                                                                 const volatility = stockEditableData[option.id]?.volatility
                                                                 const price = parseFloat(optionItem.price)
@@ -445,11 +445,11 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                                 const type = option.optionType
                                                                 const direction = stockEditableData[option.id]?.direction ? OrderTypeName.BUY : OrderTypeName.SELL
                                                                 const { delta } = OptionsMath.getOptionsGreeks(volatility, price, strike, daysPerYear, feePerCent, type, direction)
-                                                                console.log("DELTA: ", delta)
-                                                                setStockEditableData((prevStockEditableData: Record<string, any>) => ({
-                                                                    ...prevStockEditableData,
-                                                                    [option.id]: { ...stockEditableData[option.id], "volatility": e.target.value, "greekDictionary": { "delta": delta } }
-                                                                }));
+
+                                                                const optionPrice = optionsMath.calculateOptionPrice()
+                                                                console.log("OPTON PRICE: ", optionPrice)
+                                                                const updatedObj = { volatility: e.target.value, price: optionPrice, "greekDictionary": { "delta": delta } }
+                                                                updateOptionPrice(option.id, updatedObj)
                                                             }}
                                                             inputProps={{ min: 0, step: 0.01 }}
                                                             sx={{
