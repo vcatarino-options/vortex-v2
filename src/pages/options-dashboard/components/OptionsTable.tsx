@@ -22,9 +22,10 @@ import {
 import { SwitchTextTrack } from '../../../layouts/mui-treasury/layout-core-v6';
 import FeatherIcon from 'feather-icons-react';
 import CustomCheckbox from '../../../components/custom-elements/CustomCheckbox';
-import { OptionData, OptionTypeName, OrderTypeName, StockData } from '../../../models/strategy';
+import { OptionData, OptionTypeName, Order, OrderType, OrderTypeName, StockData } from '../../../models/strategy';
 import { stockList } from '../../../utils/stockList';
 import OptionsMath from '../../../services/options-math/OptionsMath';
+import OptionsMath2 from '../../../services/options-math/OptionsMath2';
 
 interface EnhancedTableHeadProps {
     numSelected: number,
@@ -197,6 +198,8 @@ interface OptionsTableProps {
     stockEditableData: Record<string, any>
     setStockEditableData: (e: any) => void
     fee: number
+    updateOptionPrice: (str: string, obj: OptionsMath2) => void
+    toggleDirection: (str: string) => void
 }
 
 const OptionsTable: React.FC<OptionsTableProps> = ({
@@ -209,7 +212,9 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
     setSelecteds,
     getValueFromAutocomplete,
     updateOption,
-    setStockEditableData
+    setStockEditableData,
+    updateOptionPrice,
+    toggleDirection
 }: OptionsTableProps) => {
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
@@ -264,6 +269,17 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                             const optionItem = optionDataList?.[index];
                                             const isItemSelected = isSelected(option.id);
                                             const labelId = `enhanced-table-checkbox-${index}`;
+                                            const order: Order = {
+                                                volatility: stockEditableData[option.id]?.volatility,
+                                                strPrice: optionItem.price,
+                                                strStrike: option.strike.split(' ')[0].replace(/\./g, '').replace(',', '.'),
+                                                workingDays: option.workingDays,
+                                                fee: fee,
+                                                type: option.optionType,
+                                                direction: stockEditableData[option.id]?.direction
+                                            }
+
+                                            const optionsMath: OptionsMath2 = new OptionsMath2(order)
 
                                             return (
                                                 <TableRow
@@ -316,10 +332,26 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                         <SwitchTextTrack
                                                             checked={stockEditableData[option.id]?.direction}
                                                             onChange={(_) => {
-                                                                setStockEditableData((prevStockEditableData: Record<string, any>) => ({
-                                                                    ...prevStockEditableData,
-                                                                    [option.id]: { ...stockEditableData[option.id], "direction": !stockEditableData[option.id]?.direction }
-                                                                }));
+                                                                toggleDirection(option.id)
+                                                                setStockEditableData((prevStockEditableData: Record<string, any>) => {
+                                                                    const editableData = stockEditableData[option.id]
+                                                                    let priceToManager = editableData.price
+
+                                                                    const updatedDir = !stockEditableData[option.id]?.direction
+                                                                    const strDirection: OrderType = updatedDir ? OrderTypeName.BUY : OrderTypeName.SELL
+                                                                    if (strDirection === OrderTypeName.BUY) {
+                                                                        priceToManager = Math.abs(priceToManager) * -1;
+                                                                    }
+
+                                                                    if (strDirection === OrderTypeName.SELL) {
+                                                                        priceToManager = Math.abs(priceToManager)
+                                                                    }
+
+                                                                    return {
+                                                                        ...prevStockEditableData,
+                                                                        [option.id]: { ...stockEditableData[option.id], "direction": updatedDir, price: priceToManager }
+                                                                    }
+                                                                });
                                                             }} />
                                                     </TableCell>
                                                     <TableCell>
@@ -376,6 +408,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                                             value={option.workingDays}
                                                                             onChange={(e) => {
                                                                                 const value = e.target.value
+                                                                                updateOptionPrice(option.id, optionsMath.getOrder())
                                                                                 updateOption(option.id, { workingDays: value })
                                                                             }}
                                                                             inputProps={{ min: 0 }}
@@ -396,6 +429,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                                         <Autocomplete
                                                                             disabled={!option.activeName}
                                                                             value={option.strike}
+                                                                            onFocus={() => updateOptionPrice(option.id, optionsMath.getOrder())}
                                                                             onChange={(_, newValue) => {
                                                                                 const newStrike = newValue || option.strike
                                                                                 updateOption(option.id, { strike: newStrike })
@@ -420,6 +454,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                             type="number"
                                                             size="small"
                                                             value={stockEditableData[option.id]?.volatility}
+                                                            onFocus={() => updateOptionPrice(option.id, optionsMath.getOrder())}
                                                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                                                                 const volatility = stockEditableData[option.id]?.volatility
                                                                 const price = parseFloat(optionItem.price)
@@ -450,7 +485,12 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                         />
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6">price</Typography>
+                                                        <Typography variant="h6">
+                                                            {stockEditableData[option.id]?.price.toLocaleString("pt-BR", {
+                                                                style: "currency",
+                                                                currency: "BRL"
+                                                            })}
+                                                        </Typography>
                                                     </TableCell>
                                                     <TableCell>
                                                         <Box display="flex" alignItems="center">
