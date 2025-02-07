@@ -389,8 +389,11 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                                             value={option.workingDays}
                                                                             onChange={(e) => {
                                                                                 const value = e.target.value
-                                                                                // updateOptionPrice(option.id, optionsMath.getOrder())
                                                                                 updateOption(option.id, { workingDays: value })
+                                                                                optionsMath.setDaysPerYear(value)
+                                                                                const price = optionsMath.calculateOptionPrice()
+                                                                                const updatedObj = { price }
+                                                                                updateOptionPrice(option.id, updatedObj)
                                                                             }}
                                                                             inputProps={{ min: 0 }}
                                                                             sx={{
