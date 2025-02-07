@@ -6,7 +6,7 @@ import { UnderlineTabs } from "../../layouts/mui-treasury/mockup-tabs";
 import CloseIcon from "@mui/icons-material/Close";
 import { ButtonGroupOperation } from "./components/ButtonGroupOperation";
 import OptionsTable from "./components/OptionsTable";
-import { Strategy, createEmptyStrategy, createStockData, OptionType, StockData, TickerData, OptionData, createOptionData } from "../../models/strategy";
+import { Strategy, createEmptyStrategy, createStockData, OptionType, StockData, TickerData, OptionData, createOptionData, OptionTypeName, OrderTypeName, OrderType } from "../../models/strategy";
 import { v4 as uuidv4 } from 'uuid';
 import useForm from "../../hooks/useForm"
 import { FinancialSummary } from "./components/FinancialSummary";
@@ -14,6 +14,8 @@ import WebSocketConnection from "../../services/ws-connection/WebSocketConnectio
 import WebSocketService from "../../services/ws-service/WebSocketService";
 import { useSnackbar } from 'notistack';
 import ManagerTickerMonitor from "../../services/manager-ticker-monitor/ManagerTickerMonitor";
+import useStockOptionSync from "../../hooks/useStockOptionSync";
+import OptionsMath2 from "../../services/options-math/OptionsMath2";
 
 const webSocketConnection = WebSocketConnection.getInstance()
 webSocketConnection.connect()
@@ -31,13 +33,14 @@ const OptionsDashboard = () => {
 
     const [stockDataKeyValue, setStockDataKeyValue] = useState<Record<string, StockData[]>>({})
     const [optionDataKeyValue, setOptionDataKeyValue] = useState<Record<string, OptionData[]>>({})
-
     const [stockEditableData, setStockEditableData] = React.useState<Record<string, any>>({})
 
     const stockDataRef = useRef(stockDataKeyValue);
     const optionDataRef = useRef(optionDataKeyValue);
 
     const { enqueueSnackbar } = useSnackbar();
+
+    // useStockOptionSync(stockDataRef, optionDataRef, stockDataKeyValue, optionDataKeyValue, stockEditableData, fee, rowId, strategies, tabIndex);
 
     useEffect(() => {
         webSocketService.getRiskFree((r: unknown) => {
@@ -51,9 +54,43 @@ const OptionsDashboard = () => {
         optionDataRef.current = optionDataKeyValue;
     }, [stockDataKeyValue, optionDataKeyValue]);
 
-    useEffect(() => {
-        console.log("ALTEROU STOCK EDITABLE DATA: ", stockEditableData)
-    }, [stockEditableData])
+    // useEffect(() => {
+    //     console.log("O preço da opção deve ser alterado")
+    // }, [stockEditableData, stockDataKeyValue, optionDataKeyValue, fee])
+
+    const updateOptionPrice = (optionId: string, updatedObj: any) => {
+        const editableData = stockEditableData[optionId]
+        const updatedDir = !stockEditableData[optionId]?.direction
+        const strDirection: OrderType = updatedDir ? OrderTypeName.BUY : OrderTypeName.SELL
+
+        let price: number = 0
+        if(updatedObj.hasOwnProperty("price")){
+            price = updatedObj.price
+        }else{
+            price = editableData.price
+        }
+
+        let priceToManager = updatePriceSignal(price, strDirection)
+        updatedObj.price = priceToManager
+        setStockEditableData((prevStockEditableData: Record<string, any>) => {
+            return {
+                ...prevStockEditableData,
+                [optionId]: { ...stockEditableData[optionId], ...updatedObj }
+            }
+        });
+    }
+
+    const updatePriceSignal = (priceToManager: number, strDirection: string) => {
+        if (strDirection === OrderTypeName.BUY) {
+            priceToManager = Math.abs(priceToManager) * -1;
+        }
+
+        if (strDirection === OrderTypeName.SELL) {
+            priceToManager = Math.abs(priceToManager)
+        }
+
+        return priceToManager
+    }
 
     const getFee = (r: unknown) => {
         const response: string = r as string
@@ -126,7 +163,7 @@ const OptionsDashboard = () => {
     const inicializeStockQtdFromRow = (operationId: string) => {
         setStockEditableData((prevStockEditableData: Record<string, any>) => ({
             ...prevStockEditableData,
-            [operationId]: { ...stockEditableData[operationId], ...{ stockQtd: 100, direction: true, volatility: 0.0, greekDictionary: { delta: 0.0 } } }
+            [operationId]: { ...stockEditableData[operationId], ...{ stockQtd: 100, direction: true, volatility: 0.0, price: 0.0, greekDictionary: { delta: 0.0 } } }
         }));
     }
 
@@ -373,6 +410,7 @@ const OptionsDashboard = () => {
                                                 stockEditableData={stockEditableData}
                                                 setStockEditableData={setStockEditableData}
                                                 fee={parseFloat(fee)}
+                                                updateOptionPrice={updateOptionPrice}
                                             />
                                         }
                                     </TabPanel>

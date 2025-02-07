@@ -198,8 +198,7 @@ interface OptionsTableProps {
     stockEditableData: Record<string, any>
     setStockEditableData: (e: any) => void
     fee: number
-    updateOptionPrice: (str: string, obj: OptionsMath2) => void
-    toggleDirection: (str: string) => void
+    updateOptionPrice: (str: string, x: any) => void
 }
 
 const OptionsTable: React.FC<OptionsTableProps> = ({
@@ -213,8 +212,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
     getValueFromAutocomplete,
     updateOption,
     setStockEditableData,
-    updateOptionPrice,
-    toggleDirection
+    updateOptionPrice
 }: OptionsTableProps) => {
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
@@ -332,26 +330,9 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                         <SwitchTextTrack
                                                             checked={stockEditableData[option.id]?.direction}
                                                             onChange={(_) => {
-                                                                toggleDirection(option.id)
-                                                                setStockEditableData((prevStockEditableData: Record<string, any>) => {
-                                                                    const editableData = stockEditableData[option.id]
-                                                                    let priceToManager = editableData.price
-
-                                                                    const updatedDir = !stockEditableData[option.id]?.direction
-                                                                    const strDirection: OrderType = updatedDir ? OrderTypeName.BUY : OrderTypeName.SELL
-                                                                    if (strDirection === OrderTypeName.BUY) {
-                                                                        priceToManager = Math.abs(priceToManager) * -1;
-                                                                    }
-
-                                                                    if (strDirection === OrderTypeName.SELL) {
-                                                                        priceToManager = Math.abs(priceToManager)
-                                                                    }
-
-                                                                    return {
-                                                                        ...prevStockEditableData,
-                                                                        [option.id]: { ...stockEditableData[option.id], "direction": updatedDir, price: priceToManager }
-                                                                    }
-                                                                });
+                                                                const updatedDir = !stockEditableData[option.id]?.direction
+                                                                const updatedObj = { direction: updatedDir }
+                                                                updateOptionPrice(option.id, updatedObj)
                                                             }} />
                                                     </TableCell>
                                                     <TableCell>
@@ -408,7 +389,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                                             value={option.workingDays}
                                                                             onChange={(e) => {
                                                                                 const value = e.target.value
-                                                                                updateOptionPrice(option.id, optionsMath.getOrder())
+                                                                                // updateOptionPrice(option.id, optionsMath.getOrder())
                                                                                 updateOption(option.id, { workingDays: value })
                                                                             }}
                                                                             inputProps={{ min: 0 }}
@@ -429,7 +410,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                                         <Autocomplete
                                                                             disabled={!option.activeName}
                                                                             value={option.strike}
-                                                                            onFocus={() => updateOptionPrice(option.id, optionsMath.getOrder())}
+                                                                            // onFocus={() => updateOptionPrice(option.id, optionsMath.getOrder())}
                                                                             onChange={(_, newValue) => {
                                                                                 const newStrike = newValue || option.strike
                                                                                 updateOption(option.id, { strike: newStrike })
@@ -454,7 +435,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                             type="number"
                                                             size="small"
                                                             value={stockEditableData[option.id]?.volatility}
-                                                            onFocus={() => updateOptionPrice(option.id, optionsMath.getOrder())}
+                                                            // onFocus={() => updateOptionPrice(option.id, optionsMath.getOrder())}
                                                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                                                                 const volatility = stockEditableData[option.id]?.volatility
                                                                 const price = parseFloat(optionItem.price)
