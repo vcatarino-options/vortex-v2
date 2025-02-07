@@ -264,6 +264,9 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                     />
                                     <TableBody>
                                         {stockDataList.map((option, index) => {
+                                            console.log("QUANTITY:", stockEditableData[option.id])
+                                            const result: number = parseFloat(stockEditableData[option.id].stockQtd) * stockEditableData[option.id]?.price
+                                            console.log("NUM: ", result)
                                             const optionItem = optionDataList?.[index];
                                             const isItemSelected = isSelected(option.id);
                                             const labelId = `enhanced-table-checkbox-${index}`;
@@ -514,7 +517,10 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                         </Box>
                                                     </TableCell>
                                                     <TableCell>
-                                                        <Typography variant="h6">result</Typography>
+                                                        <Typography variant="h6">
+                                                            {/* {parseFloat(option.quantity) * stockEditableData[option.id]?.price} */}
+                                                            {result.toFixed(2)}
+                                                        </Typography>
                                                     </TableCell>
                                                     <TableCell align="center" sx={{ backgroundColor: "#282C34" }}>
                                                         <Typography variant="h6">
