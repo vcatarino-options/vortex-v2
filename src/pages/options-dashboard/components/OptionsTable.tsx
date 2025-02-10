@@ -190,13 +190,12 @@ const EnhancedTableToolbar: React.FC<EnhancedTableToolbarProps> = ({ numSelected
 interface OptionsTableProps {
     stockDataList: StockData[],
     optionDataList: OptionData[],
+    editableDataList: any[],
     selecteds: string[],
     deleteItens: (e: any) => void,
     setSelecteds: (e: any) => void
     getValueFromAutocomplete: (a: string, b: string, c: string) => void
     updateOption: (a: string, opt: Partial<StockData>) => void
-    stockEditableData: Record<string, any>
-    setStockEditableData: (e: any) => void
     fee: number
     updateOptionPrice: (str: string, x: any) => void
     updatedImpliedVol: (var1: string, var2: any) => void
@@ -205,16 +204,15 @@ interface OptionsTableProps {
 const OptionsTable: React.FC<OptionsTableProps> = ({
     stockDataList,
     optionDataList,
+    editableDataList,
     selecteds,
-    stockEditableData,
     fee,
     deleteItens,
     setSelecteds,
     getValueFromAutocomplete,
     updateOption,
-    setStockEditableData,
     updateOptionPrice,
-    updatedImpliedVol
+    updatedImpliedVol,
 }: OptionsTableProps) => {
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
@@ -270,18 +268,19 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                     />
                                     <TableBody>
                                         {stockDataList.map((option, index) => {
-                                            const result: number = parseFloat(stockEditableData[option.id].stockQtd) * stockEditableData[option.id]?.price
+                                            const editableItem = editableDataList?.[index]
+                                            const result: number = parseFloat(editableItem.stockQtd) * editableItem?.price
                                             const optionItem = optionDataList?.[index];
                                             const isItemSelected = isSelected(option.id);
                                             const labelId = `enhanced-table-checkbox-${index}`;
                                             const order: Order = {
-                                                volatility: stockEditableData[option.id]?.volatility,
+                                                volatility: editableItem?.volatility,
                                                 strPrice: optionItem.price,
                                                 strStrike: option.strike.split(' ')[0].replace(/\./g, '').replace(',', '.'),
                                                 workingDays: option.workingDays,
                                                 fee: fee,
                                                 type: option.optionType,
-                                                direction: stockEditableData[option.id]?.direction
+                                                direction: editableItem?.direction
                                             }
 
                                             const optionsMath: OptionsMath2 = new OptionsMath2(order)
@@ -335,9 +334,9 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                     </TableCell>
                                                     <TableCell>
                                                         <SwitchTextTrack
-                                                            checked={stockEditableData[option.id]?.direction}
+                                                            checked={editableItem?.direction}
                                                             onChange={(_) => {
-                                                                const updatedDir = !stockEditableData[option.id]?.direction
+                                                                const updatedDir = !editableItem?.direction
                                                                 const updatedObj = { direction: updatedDir }
                                                                 updateOptionPrice(option.id, updatedObj)
                                                             }} />
@@ -347,12 +346,9 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                             disabled={!option.activeName}
                                                             type="number"
                                                             size="small"
-                                                            value={stockEditableData[option.id]?.stockQtd}
+                                                            value={editableItem?.stockQtd}
                                                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                                                setStockEditableData((prevStockEditableData: Record<string, any>) => ({
-                                                                    ...prevStockEditableData,
-                                                                    [option.id]: { ...stockEditableData[option.id], "stockQtd": e.target.value }
-                                                                }));
+                                                                updatedImpliedVol(option.id, { stockQtd: e.target.value })
                                                             }}
                                                             inputProps={{ min: 0, step: 100 }}
                                                             sx={{
@@ -458,16 +454,16 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                             disabled={!option.activeName}
                                                             type="number"
                                                             size="small"
-                                                            value={stockEditableData[option.id]?.volatility}
+                                                            value={editableItem?.volatility}
 
                                                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                                                const volatility = stockEditableData[option.id]?.volatility
+                                                                const volatility = editableItem?.volatility
                                                                 const price = parseFloat(optionItem.price)
                                                                 const strike = parseFloat(option.strike.split(' ')[0].replace(/\./g, '').replace(',', '.'));
                                                                 const daysPerYear = parseInt(option.workingDays) / 252
                                                                 const feePerCent = fee / 100
                                                                 const type = option.optionType
-                                                                const direction = stockEditableData[option.id]?.direction ? OrderTypeName.BUY : OrderTypeName.SELL
+                                                                const direction = editableItem?.direction ? OrderTypeName.BUY : OrderTypeName.SELL
                                                                 const { delta } = OptionsMath.getOptionsGreeks(volatility, price, strike, daysPerYear, feePerCent, type, direction)
 
                                                                 const optionPrice = optionsMath.calculateOptionPrice()
@@ -490,7 +486,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
                                                         <Typography variant="h6">
-                                                            {stockEditableData[option.id]?.price.toLocaleString("pt-BR", {
+                                                            {editableItem?.price.toLocaleString("pt-BR", {
                                                                 style: "currency",
                                                                 currency: "BRL"
                                                             })}
@@ -503,7 +499,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                                     ml: 2,
                                                                 }}
                                                             >
-                                                                <Typography variant="h6">{formatValue(stockEditableData[option.id]?.costVolatility)}</Typography>
+                                                                <Typography variant="h6">{formatValue(editableItem?.costVolatility)}</Typography>
                                                                 <Typography color="textSecondary" variant="h6" fontWeight="400">
                                                                     {optionItem?.optionIn?.bandCost || 0.0}
                                                                 </Typography>
@@ -523,7 +519,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                                     ml: 2,
                                                                 }}
                                                             >
-                                                                <Typography variant="h6">{formatValue(stockEditableData[option.id]?.salesVolatility)}</Typography>
+                                                                <Typography variant="h6">{formatValue(editableItem?.salesVolatility)}</Typography>
                                                                 <Typography color="textSecondary" variant="h6" fontWeight="400" align="right">
                                                                     {optionItem?.optionOut?.bandSales || 0.0}
                                                                 </Typography>
@@ -537,7 +533,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                     </TableCell>
                                                     <TableCell align="center" sx={{ backgroundColor: "#282C34" }}>
                                                         <Typography variant="h6">
-                                                            {new Intl.NumberFormat('en-US', { signDisplay: "always" }).format(stockEditableData[option.id]?.greekDictionary.delta ?? 0)}
+                                                            {new Intl.NumberFormat('en-US', { signDisplay: "always" }).format(editableItem?.greekDictionary.delta ?? 0)}
                                                         </Typography>
                                                     </TableCell>
                                                     {/* <TableCell sx={{ backgroundColor: "#282C34" }}>

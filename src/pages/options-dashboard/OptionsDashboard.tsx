@@ -35,6 +35,8 @@ const OptionsDashboard = () => {
     const [optionDataKeyValue, setOptionDataKeyValue] = useState<Record<string, OptionData[]>>({})
     const [stockEditableData, setStockEditableData] = React.useState<Record<string, any>>({})
 
+    const [stockEditableDataV2, setStockEditableDataV2] = React.useState<Record<string, any[]>>({})
+
     const stockDataRef = useRef(stockDataKeyValue);
     const optionDataRef = useRef(optionDataKeyValue);
 
@@ -55,34 +57,34 @@ const OptionsDashboard = () => {
     }, [stockDataKeyValue, optionDataKeyValue]);
 
     const updateOptionPrice = (optionId: string, updatedObj: any) => {
-        const editableData = stockEditableData[optionId]
-        const updatedDir = !stockEditableData[optionId]?.direction
-        const strDirection: OrderType = updatedDir ? OrderTypeName.BUY : OrderTypeName.SELL
+        const key = strategies[tabIndex].id
+        const editableDataV2 = stockEditableDataV2[key]
+
+        const strDirection2: OrderType = updatedObj.direction ? OrderTypeName.BUY : OrderTypeName.SELL
+        const editableList = editableDataV2.filter((op: any) => op.id === optionId)
 
         let price: number = 0
         if (updatedObj.hasOwnProperty("price")) {
             price = updatedObj.price
         } else {
-            price = editableData.price
+            price = editableList[0].price
         }
 
-        let priceToManager = updatePriceSignal(price, strDirection)
+        let priceToManager = updatePriceSignal(price, strDirection2)
         updatedObj.price = priceToManager
-        setStockEditableData((prevStockEditableData: Record<string, any>) => {
-            return {
-                ...prevStockEditableData,
-                [optionId]: { ...stockEditableData[optionId], ...updatedObj }
-            }
-        });
+
+        const clonedEditableValue = JSON.parse(JSON.stringify(stockEditableDataV2))
+        const updatedList = clonedEditableValue[key].map((op: any) => op.id === optionId ? { ...op, ...updatedObj } : op)
+        clonedEditableValue[key] = updatedList
+        setStockEditableDataV2(clonedEditableValue)
     }
 
     const updatedImpliedVol = (optionId: string, updatedObj: any) => {
-        setStockEditableData((prevStockEditableData: Record<string, any>) => {
-            return {
-                ...prevStockEditableData,
-                [optionId]: { ...stockEditableData[optionId], ...updatedObj }
-            }
-        });
+        const key = strategies[tabIndex].id
+        const clonedEditableValue = JSON.parse(JSON.stringify(stockEditableDataV2))
+        const updatedList = clonedEditableValue[key].map((op: any) => op.id === optionId ? { ...op, ...updatedObj } : op)
+        clonedEditableValue[key] = updatedList
+        setStockEditableDataV2(clonedEditableValue)
     }
 
     const updatePriceSignal = (priceToManager: number, strDirection: string) => {
@@ -166,10 +168,21 @@ const OptionsDashboard = () => {
     }
 
     const inicializeStockQtdFromRow = (operationId: string) => {
-        setStockEditableData((prevStockEditableData: Record<string, any>) => ({
-            ...prevStockEditableData,
-            [operationId]: { ...stockEditableData[operationId], ...{ stockQtd: 100, direction: true, volatility: 0.0, price: 0.0, greekDictionary: { delta: 0.0 } } }
-        }));
+        //CRIOU setStockEditableDataV2
+        const strategy = strategies[tabIndex]
+        const operationKey = strategy.id
+
+        // setStockEditableData((prevStockEditableData: Record<string, any>) => ({
+        //     ...prevStockEditableData,
+        //     [operationId]: { ...stockEditableData[operationId], ...{ stockQtd: 100, direction: true, volatility: 0.0, price: 0.0, greekDictionary: { delta: 0.0 } } }
+        // }));
+
+        const emptyEditableRow = { id: operationId, stockQtd: 100, direction: true, volatility: 0.0, price: 0.0, greekDictionary: { delta: 0.0 } }
+
+        setStockEditableDataV2((prevStockEditableDataV2: Record<string, any[]>) => ({
+            ...prevStockEditableDataV2,
+            [operationKey]: prevStockEditableDataV2[operationKey] ? [...prevStockEditableDataV2[operationKey], emptyEditableRow] : [emptyEditableRow]
+        }))
     }
 
     const deletingOptionFromTable = () => {
@@ -409,11 +422,13 @@ const OptionsDashboard = () => {
                                                 getValueFromAutocomplete={findActiveData}
                                                 stockDataList={stockDataKeyValue[strategy.id]}
                                                 optionDataList={optionDataKeyValue[strategy.id]}
+                                                editableDataList={stockEditableDataV2[strategy.id]}
                                                 selecteds={selecteds}
                                                 setSelecteds={setSelecteds}
                                                 deleteItens={deletingOptionFromTable}
                                                 stockEditableData={stockEditableData}
                                                 setStockEditableData={setStockEditableData}
+                                                setStockEditableDataV2={setStockEditableDataV2}
                                                 fee={parseFloat(fee)}
                                                 updateOptionPrice={updateOptionPrice}
                                                 updatedImpliedVol={updatedImpliedVol}
