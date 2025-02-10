@@ -14,8 +14,6 @@ import WebSocketConnection from "../../services/ws-connection/WebSocketConnectio
 import WebSocketService from "../../services/ws-service/WebSocketService";
 import { useSnackbar } from 'notistack';
 import ManagerTickerMonitor from "../../services/manager-ticker-monitor/ManagerTickerMonitor";
-import useStockOptionSync from "../../hooks/useStockOptionSync";
-import OptionsMath2 from "../../services/options-math/OptionsMath2";
 
 const webSocketConnection = WebSocketConnection.getInstance()
 webSocketConnection.connect()
@@ -33,16 +31,12 @@ const OptionsDashboard = () => {
 
     const [stockDataKeyValue, setStockDataKeyValue] = useState<Record<string, StockData[]>>({})
     const [optionDataKeyValue, setOptionDataKeyValue] = useState<Record<string, OptionData[]>>({})
-    const [stockEditableData, setStockEditableData] = React.useState<Record<string, any>>({})
-
     const [stockEditableDataV2, setStockEditableDataV2] = React.useState<Record<string, any[]>>({})
 
     const stockDataRef = useRef(stockDataKeyValue);
     const optionDataRef = useRef(optionDataKeyValue);
 
     const { enqueueSnackbar } = useSnackbar();
-
-    // useStockOptionSync(stockDataRef, optionDataRef, stockDataKeyValue, optionDataKeyValue, stockEditableData, fee, rowId, strategies, tabIndex);
 
     useEffect(() => {
         webSocketService.getRiskFree((r: unknown) => {
@@ -426,8 +420,6 @@ const OptionsDashboard = () => {
                                                 selecteds={selecteds}
                                                 setSelecteds={setSelecteds}
                                                 deleteItens={deletingOptionFromTable}
-                                                stockEditableData={stockEditableData}
-                                                setStockEditableData={setStockEditableData}
                                                 setStockEditableDataV2={setStockEditableDataV2}
                                                 fee={parseFloat(fee)}
                                                 updateOptionPrice={updateOptionPrice}
