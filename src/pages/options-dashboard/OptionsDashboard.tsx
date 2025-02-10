@@ -14,6 +14,7 @@ import WebSocketConnection from "../../services/ws-connection/WebSocketConnectio
 import WebSocketService from "../../services/ws-service/WebSocketService";
 import { useSnackbar } from 'notistack';
 import ManagerTickerMonitor from "../../services/manager-ticker-monitor/ManagerTickerMonitor";
+import OptionStrategy from "../../services/option-strategy/OptionStrategy";
 
 const webSocketConnection = WebSocketConnection.getInstance()
 webSocketConnection.connect()
@@ -33,6 +34,7 @@ const OptionsDashboard = () => {
     const [optionDataKeyValue, setOptionDataKeyValue] = useState<Record<string, OptionData[]>>({})
     const [stockEditableDataV2, setStockEditableDataV2] = React.useState<Record<string, any[]>>({})
 
+    const [margin, setMargin] = useState<Record<string, { margin: string }>>({});
     const stockDataRef = useRef(stockDataKeyValue);
     const optionDataRef = useRef(optionDataKeyValue);
 
@@ -49,6 +51,59 @@ const OptionsDashboard = () => {
         stockDataRef.current = stockDataKeyValue;
         optionDataRef.current = optionDataKeyValue;
     }, [stockDataKeyValue, optionDataKeyValue]);
+
+    useEffect(() => {
+        defineMargin()
+    }, [selecteds])
+
+    const defineMargin = async () => {
+        let positions: any[] = findPositions()
+        const strategy = OptionStrategy.identifyOptionStrategy(positions)
+        await findMargin(positions, strategy)
+    }
+
+    useEffect(() => {
+        console.log('margin alterada: ')
+    }, [margin])
+
+    const findPositions = () => {
+        if (!strategies[tabIndex]?.id) return
+        const key = strategies[tabIndex]?.id
+        const stockDataList = stockDataKeyValue[key]
+        const editableDataList = stockEditableDataV2[key]
+        const selectedsStock: StockData[] = stockDataList.filter(stock => selecteds.includes(stock.id))
+        const selectedsEditable: any[] = editableDataList.filter(editableData => selecteds.includes(editableData.id))
+
+        let positions: any[] = []
+        selectedsStock.forEach((stock: StockData, idx: number) => {
+            const rowData = {
+                type: stock.optionType,
+                strike: parseFloat(stock.strike.split(' ')[0].replace(',', '.')),
+                side: stock.orderType,
+                quantidade: selectedsEditable[idx].stockQtd,
+                ticker: stock.activeName
+            }
+            positions.push(rowData)
+        })
+
+        return positions
+    }
+
+    const findMargin = async (positions: any[], strategy: any) => {
+        const result = await OptionStrategy.calculateMargin(webSocketService, positions, strategy)
+        const formattedNumber = result?.toLocaleString('pt-BR', {
+            minimumFractionDigits: 2,
+        });
+        const key = strategies[tabIndex]?.id
+
+        setMargin(prevMargin => ({
+            ...prevMargin,
+            [key]: {
+                ...(prevMargin[key] || {}),
+                margin: formattedNumber || ''
+            }
+        }));
+    }
 
     const updateOptionPrice = (optionId: string, updatedObj: any) => {
         const key = strategies[tabIndex].id
@@ -395,7 +450,7 @@ const OptionsDashboard = () => {
                             {/* INÍCIO INFORMAÇÕES DO ATIVO */}
                             <Box sx={{ px: 2, pt: 1, display: "flex", justifyContent: "space-between" }}>
                                 <ButtonGroupOperation addingOperation={addingOperation} />
-                                <FinancialSummary editableDataList={stockEditableDataV2[strategies[tabIndex].id]}setIputValue={setFormData} />
+                                <FinancialSummary editableDataList={stockEditableDataV2[strategies[tabIndex].id]} margin={margin[strategies[tabIndex].id]} setIputValue={setFormData} />
                             </Box>
                             {/* FIM INFORMAÇÕES DO ATIVO */}
                             {/* INÍCIO DADOS PARA CADA TAB */}

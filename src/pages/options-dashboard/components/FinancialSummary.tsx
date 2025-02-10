@@ -5,13 +5,12 @@ import { TextField } from "@mui/material";
 interface FinancialSummaryProps extends BoxProps {
     setIputValue: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
     editableDataList: any[]
+    margin: any
 }
 export const FinancialSummary = (props: FinancialSummaryProps) => {
     let totalPrice = 0
     if (props.editableDataList && props.editableDataList.length > 0) {
-        totalPrice = props.editableDataList.reduce((sum:number, item: { price: number }) => sum + (item.price || 0), 0);
-
-        console.log("editableDataList: ", props.editableDataList)
+        totalPrice = props.editableDataList.reduce((sum: number, item: { price: number }) => sum + (item.price || 0), 0);
     }
     return (
         <Box>
@@ -39,7 +38,7 @@ export const FinancialSummary = (props: FinancialSummaryProps) => {
                     name="estimatedMargin"
                     label="Margem aprox. (%)"
                     size="small"
-                    value={"100,00"}
+                    value={props.margin.margin}
                     onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => props.setIputValue(e)}
                     sx={{ width: 130 }}
                     slotProps={{

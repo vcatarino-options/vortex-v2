@@ -397,8 +397,8 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                                                 const price = optionsMath.calculateOptionPrice()
                                                                                 const updatedObj = { price }
                                                                                 updateOptionPrice(option.id, updatedObj)
-                                                                                const optionPriceBuy = parseFloat(optionItem?.optionIn?.bandCost)
-                                                                                const optionPriceSale = parseFloat(optionItem?.optionOut?.bandSales)
+                                                                                const optionPriceBuy = parseFloat(optionItem?.optionIn?.cost)
+                                                                                const optionPriceSale = parseFloat(optionItem?.optionOut?.sales)
                                                                                 const costVolatility = optionsMath.getImpliedVolatility(optionPriceBuy)
                                                                                 const salesVolatility = optionsMath.getImpliedVolatility(optionPriceSale)
                                                                                 updatedImpliedVol(option.id, { costVolatility, salesVolatility })
