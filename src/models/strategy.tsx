@@ -34,13 +34,17 @@ export interface StockData {
     strikes: string[]
     serie: string
     series: string[]
-    // volatility: string, 
-    // price: string,
-    // optionIn: OptionIn,
-    // optionOut: OptionOut,
-    // result: string,
-    // optionGreek: OptionGreek
 }
+
+export type Order = {
+    volatility: number;
+    strPrice: string;
+    strStrike: string;
+    workingDays: string;
+    fee: number;
+    type: OptionType;
+    direction: boolean;
+};
 
 export interface OptionData {
     id: string,
