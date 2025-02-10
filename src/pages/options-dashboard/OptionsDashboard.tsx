@@ -54,24 +54,29 @@ const OptionsDashboard = () => {
         optionDataRef.current = optionDataKeyValue;
     }, [stockDataKeyValue, optionDataKeyValue]);
 
-    // useEffect(() => {
-    //     console.log("O preço da opção deve ser alterado")
-    // }, [stockEditableData, stockDataKeyValue, optionDataKeyValue, fee])
-
     const updateOptionPrice = (optionId: string, updatedObj: any) => {
         const editableData = stockEditableData[optionId]
         const updatedDir = !stockEditableData[optionId]?.direction
         const strDirection: OrderType = updatedDir ? OrderTypeName.BUY : OrderTypeName.SELL
 
         let price: number = 0
-        if(updatedObj.hasOwnProperty("price")){
+        if (updatedObj.hasOwnProperty("price")) {
             price = updatedObj.price
-        }else{
+        } else {
             price = editableData.price
         }
 
         let priceToManager = updatePriceSignal(price, strDirection)
         updatedObj.price = priceToManager
+        setStockEditableData((prevStockEditableData: Record<string, any>) => {
+            return {
+                ...prevStockEditableData,
+                [optionId]: { ...stockEditableData[optionId], ...updatedObj }
+            }
+        });
+    }
+
+    const updatedImpliedVol = (optionId: string, updatedObj: any) => {
         setStockEditableData((prevStockEditableData: Record<string, any>) => {
             return {
                 ...prevStockEditableData,
@@ -411,6 +416,7 @@ const OptionsDashboard = () => {
                                                 setStockEditableData={setStockEditableData}
                                                 fee={parseFloat(fee)}
                                                 updateOptionPrice={updateOptionPrice}
+                                                updatedImpliedVol={updatedImpliedVol}
                                             />
                                         }
                                     </TabPanel>

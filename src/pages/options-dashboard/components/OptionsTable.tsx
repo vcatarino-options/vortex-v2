@@ -199,6 +199,7 @@ interface OptionsTableProps {
     setStockEditableData: (e: any) => void
     fee: number
     updateOptionPrice: (str: string, x: any) => void
+    updatedImpliedVol: (var1: string, var2: any) => void
 }
 
 const OptionsTable: React.FC<OptionsTableProps> = ({
@@ -212,7 +213,8 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
     getValueFromAutocomplete,
     updateOption,
     setStockEditableData,
-    updateOptionPrice
+    updateOptionPrice,
+    updatedImpliedVol
 }: OptionsTableProps) => {
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
@@ -243,6 +245,10 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
     };
 
     const isSelected = (id: string) => selecteds.indexOf(id) !== -1;
+
+    const formatValue = (value: string): string => {
+        return Number.isNaN(value) ? '-' : value;
+    }
 
     return (
         <>
@@ -395,6 +401,11 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                                                 const price = optionsMath.calculateOptionPrice()
                                                                                 const updatedObj = { price }
                                                                                 updateOptionPrice(option.id, updatedObj)
+                                                                                const optionPriceBuy = parseFloat(optionItem?.optionIn?.bandCost)
+                                                                                const optionPriceSale = parseFloat(optionItem?.optionOut?.bandSales)
+                                                                                const costVolatility = optionsMath.getImpliedVolatility(optionPriceBuy)
+                                                                                const salesVolatility = optionsMath.getImpliedVolatility(optionPriceSale)
+                                                                                updatedImpliedVol(option.id, { costVolatility, salesVolatility })
                                                                             }}
                                                                             inputProps={{ min: 0 }}
                                                                             sx={{
@@ -422,6 +433,11 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                                                 const price = optionsMath.calculateOptionPrice()
                                                                                 const updatedObj = { price }
                                                                                 updateOptionPrice(option.id, updatedObj)
+                                                                                const optionPriceBuy = parseFloat(optionItem?.optionIn?.bandCost)
+                                                                                const optionPriceSale = parseFloat(optionItem?.optionOut?.bandSales)
+                                                                                const costVolatility = optionsMath.getImpliedVolatility(optionPriceBuy)
+                                                                                const salesVolatility = optionsMath.getImpliedVolatility(optionPriceSale)
+                                                                                updatedImpliedVol(option.id, { costVolatility, salesVolatility })
                                                                             }}
                                                                             onClick={(event) => event.stopPropagation()}
                                                                             options={option.strikes}
@@ -487,7 +503,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                                     ml: 2,
                                                                 }}
                                                             >
-                                                                <Typography variant="h6">costVolatility</Typography>
+                                                                <Typography variant="h6">{formatValue(stockEditableData[option.id]?.costVolatility)}</Typography>
                                                                 <Typography color="textSecondary" variant="h6" fontWeight="400">
                                                                     {optionItem?.optionIn?.bandCost || 0.0}
                                                                 </Typography>
@@ -507,7 +523,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                                     ml: 2,
                                                                 }}
                                                             >
-                                                                <Typography variant="h6">salesVolatility</Typography>
+                                                                <Typography variant="h6">{formatValue(stockEditableData[option.id]?.salesVolatility)}</Typography>
                                                                 <Typography color="textSecondary" variant="h6" fontWeight="400" align="right">
                                                                     {optionItem?.optionOut?.bandSales || 0.0}
                                                                 </Typography>
