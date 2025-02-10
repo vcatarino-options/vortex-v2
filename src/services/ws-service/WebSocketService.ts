@@ -34,4 +34,11 @@ export default class WebSocketService {
         if (!this.socket) return;
         this.socket.on(`book_info/${ticker}`, r => callback(r));
     }
+
+    public getTickerMargin = (ticker: string, callback: (r: unknown) => void) => {
+        if (!this.socket) return;
+        
+        this.socket.emit('get_ticker_margin', ticker);
+        this.socket.once(`ticker_margin/${ticker}`, callback)
+    }
 }

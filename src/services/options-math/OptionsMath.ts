@@ -76,17 +76,17 @@ export default class OptionsMath {
         return 0.5 + 0.3989422804014327 * total;
     }
 
-    // static calculateRowResultBasedOnVolToggleside(
-    //     toggleSide: string,
-    //     quantidade: number,
-    //     volatility: number,
-    // ) {
-    //     return toggleSide === 'Compra'
-    //         ? OptionsMath.formatNumber(
-    //             quantidade * OptionsMath.calculateOptionPrice(volatility) * -1,
-    //         )
-    //         : OptionsMath.formatNumber(quantidade * OptionsMath.calculateOptionPrice(volatility));
-    // }
+    static calculateRowResultBasedOnVolToggleside(
+        direction: string,
+        quantidade: number,
+        volatility: number,
+    ) {
+        return direction === OrderTypeName.BUY
+            ? OptionsMath.formatNumber(
+                quantidade * OptionsMath.calculateOptionPrice(volatility) * -1,
+            )
+            : OptionsMath.formatNumber(quantidade * OptionsMath.calculateOptionPrice(volatility));
+    }
 
     static blackScholesOptionPrice(
         volatility: number,
@@ -110,23 +110,17 @@ export default class OptionsMath {
         return optionPrice;
     }
 
-    // static calculateOptionPrice = (
-    //     volatility: number,
-    //     tickerPerson: string,
-    //     activePrice: number,
-    //     fees: number,
-    //     modifiedDu: number,
-    //     type: OptionType) => {
-    //     const option = tickerPerson || personOption || '';
-    //     return OptionsMath.blackScholesOptionPrice(
-    //         volatility / 100,
-    //         activePrice,
-    //         OptionsMath.parseNumber(option.split(' ')[0]),
-    //         modifiedDu / 252,
-    //         fees / 100,
-    //         type,
-    //     );
-    // };
+    static calculateOptionPrice = (volatility, tickerPerson) => {
+        const option = tickerPerson || personOption || '';
+        return funcs.blackScholesOptionPrice(
+            volatility / 100,
+            parseFloat(ativoPrice),
+            funcs.parseNumber(option.split(' ')[0]),
+            modifiedDu / 252,
+            fees / 100,
+            type,
+        );
+    };
 
     static parseNumber(text: string) {
         if (typeof text !== 'string') {
