@@ -162,14 +162,8 @@ const OptionsDashboard = () => {
     }
 
     const inicializeStockQtdFromRow = (operationId: string) => {
-        //CRIOU setStockEditableDataV2
         const strategy = strategies[tabIndex]
         const operationKey = strategy.id
-
-        // setStockEditableData((prevStockEditableData: Record<string, any>) => ({
-        //     ...prevStockEditableData,
-        //     [operationId]: { ...stockEditableData[operationId], ...{ stockQtd: 100, direction: true, volatility: 0.0, price: 0.0, greekDictionary: { delta: 0.0 } } }
-        // }));
 
         const emptyEditableRow = { id: operationId, stockQtd: 100, direction: true, volatility: 0.0, price: 0.0, greekDictionary: { delta: 0.0 } }
 
@@ -401,7 +395,7 @@ const OptionsDashboard = () => {
                             {/* INÍCIO INFORMAÇÕES DO ATIVO */}
                             <Box sx={{ px: 2, pt: 1, display: "flex", justifyContent: "space-between" }}>
                                 <ButtonGroupOperation addingOperation={addingOperation} />
-                                <FinancialSummary setIputValue={setFormData} />
+                                <FinancialSummary editableDataList={stockEditableDataV2[strategies[tabIndex].id]}setIputValue={setFormData} />
                             </Box>
                             {/* FIM INFORMAÇÕES DO ATIVO */}
                             {/* INÍCIO DADOS PARA CADA TAB */}
