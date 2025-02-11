@@ -6,7 +6,7 @@ import { UnderlineTabs } from "../../layouts/mui-treasury/mockup-tabs";
 import CloseIcon from "@mui/icons-material/Close";
 import { ButtonGroupOperation } from "./components/ButtonGroupOperation";
 import OptionsTable from "./components/OptionsTable";
-import { Strategy, createEmptyStrategy, createStockData, OptionType, StockData, TickerData, OptionData, createOptionData, OptionTypeName, OrderTypeName, OrderType } from "../../models/strategy";
+import { Strategy, createEmptyStrategy, createStockData, OptionType, StockData, TickerData, OptionData, createOptionData, OrderTypeName, OrderType } from "../../models/strategy";
 import { v4 as uuidv4 } from 'uuid';
 import useForm from "../../hooks/useForm"
 import { FinancialSummary } from "./components/FinancialSummary";
@@ -57,7 +57,8 @@ const OptionsDashboard = () => {
     }, [selecteds])
 
     const defineMargin = async () => {
-        let positions: any[] = findPositions()
+        let positions: any[] | undefined = findPositions()
+        if (!positions) return
         const strategy = OptionStrategy.identifyOptionStrategy(positions)
         await findMargin(positions, strategy)
     }
@@ -94,13 +95,23 @@ const OptionsDashboard = () => {
         const formattedNumber = result?.toLocaleString('pt-BR', {
             minimumFractionDigits: 2,
         });
+
+        console.log(formattedNumber)
         const key = strategies[tabIndex]?.id
+
+        // setMargin(prevMargin => ({
+        //     ...prevMargin,
+        //     [key]: {
+        //         ...(prevMargin[key] || {}),
+        //         margin: formattedNumber || ''
+        //     }
+        // }));
 
         setMargin(prevMargin => ({
             ...prevMargin,
             [key]: {
                 ...(prevMargin[key] || {}),
-                margin: formattedNumber || ''
+                margin: '45'
             }
         }));
     }
@@ -469,7 +480,6 @@ const OptionsDashboard = () => {
                                                 selecteds={selecteds}
                                                 setSelecteds={setSelecteds}
                                                 deleteItens={deletingOptionFromTable}
-                                                setStockEditableDataV2={setStockEditableDataV2}
                                                 fee={parseFloat(fee)}
                                                 updateOptionPrice={updateOptionPrice}
                                                 updatedImpliedVol={updatedImpliedVol}

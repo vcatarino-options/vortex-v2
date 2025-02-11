@@ -22,7 +22,7 @@ import {
 import { SwitchTextTrack } from '../../../layouts/mui-treasury/layout-core-v6';
 import FeatherIcon from 'feather-icons-react';
 import CustomCheckbox from '../../../components/custom-elements/CustomCheckbox';
-import { OptionData, OptionTypeName, Order, OrderType, OrderTypeName, StockData } from '../../../models/strategy';
+import { OptionData, OptionTypeName, Order, OrderTypeName, StockData } from '../../../models/strategy';
 import { stockList } from '../../../utils/stockList';
 import OptionsMath from '../../../services/options-math/OptionsMath';
 import OptionsMath2 from '../../../services/options-math/OptionsMath2';
