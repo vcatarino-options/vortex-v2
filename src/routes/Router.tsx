@@ -1,7 +1,7 @@
 import { RouteObject } from "react-router"
 import OptionsDashboard from "../pages/options-dashboard/OptionsDashboard"
 import { LayoutV6AppAnalytics } from "../layouts/mui-treasury/layout-v6-app-analytics"
-import Login from "../pages/login /Login"
+import Login from "../pages/login/Login"
 
 const Router: RouteObject[] = [
     {
