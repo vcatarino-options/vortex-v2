@@ -35,7 +35,7 @@ const OptionsDashboard = () => {
     const [stockEditableDataV2, setStockEditableDataV2] = React.useState<Record<string, any[]>>({})
 
     const prevSerieMapRef = useRef<Record<string, string> | null>(null);
-    const [margin, setMargin] = useState<Record<string, { margin: string }>>({});
+    const [margin, setMargin] = useState<Record<string, { margin: string, opPrice: number }>>({});
     const stockDataRef = useRef(stockDataKeyValue);
     const optionDataRef = useRef(optionDataKeyValue);
 
@@ -62,6 +62,25 @@ const OptionsDashboard = () => {
 
     useEffect(() => {
         defineMargin()
+
+        console.log("SELECTEDS: ", selecteds)
+        const itemsToSum = stockEditableDataV2[strategies[tabIndex].id].filter(item => selecteds.includes(item.id))
+        const totalPrice = itemsToSum.reduce((sum: number, item: { price: number }) => sum + (item.price || 0), 0);
+        console.log("TOTAL PRICE: ", totalPrice)
+        const key = strategies[tabIndex]?.id
+
+        setMargin(prevMargin => ({
+            ...prevMargin,
+            [key]: {
+                ...(prevMargin[key] || {}),
+                opPrice: totalPrice
+            }
+        }));
+
+        // let totalPrice = 0
+        // if (props.editableDataList && props.editableDataList.length > 0) {
+        //     totalPrice = props.editableDataList.reduce((sum: number, item: { price: number }) => sum + (item.price || 0), 0);
+        // }
     }, [selecteds])
 
     const defineMargin = async () => {
@@ -285,7 +304,7 @@ const OptionsDashboard = () => {
         })
     }
 
-    const findActiveData = (newValue: string, currentValue: string, id: string, serie?:string) => {
+    const findActiveData = (newValue: string, currentValue: string, id: string, serie?: string) => {
         try {
             const operation = getStockDataById(id)
             const operationType = operation.optionType
@@ -332,7 +351,7 @@ const OptionsDashboard = () => {
         try {
             checkTickerReceivedFromWebSocket(r)
             const updatedOp: StockData = getStockDataById(opId)
-            
+
             updatedOp.workingDays = r.du
             updatedOp.strike = r.option
             updatedOp.strikes = r.options

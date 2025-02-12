@@ -21,7 +21,7 @@ export const FinancialSummary = (props: FinancialSummaryProps) => {
                     name="price"
                     label="Preço da op. (R$)"
                     size="small"
-                    value={totalPrice.toFixed(2)}
+                    value={props?.margin?.opPrice.toFixed(2)}
                     onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => props.setIputValue(e)}
                     sx={{ width: 130, mr: 2 }}
                     slotProps={{
