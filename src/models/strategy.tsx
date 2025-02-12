@@ -77,7 +77,7 @@ export interface TickerData {
     rowId: string,
     ticker: string,
     type: OptionType,
-    series?: string,
+    serie?: string,
     price?: string
 }
 

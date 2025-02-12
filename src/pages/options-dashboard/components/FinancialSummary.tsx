@@ -38,7 +38,7 @@ export const FinancialSummary = (props: FinancialSummaryProps) => {
                     name="estimatedMargin"
                     label="Margem aprox. (%)"
                     size="small"
-                    value={props.margin.margin}
+                    value={props?.margin?.margin}
                     onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => props.setIputValue(e)}
                     sx={{ width: 130 }}
                     slotProps={{

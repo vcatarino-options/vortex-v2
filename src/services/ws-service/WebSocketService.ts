@@ -21,7 +21,7 @@ export default class WebSocketService {
     public getTickerChangeData(tickerData: TickerData, callback: any) {
         if (!this.socket) return;
 
-        this.socket.emit('get_ticker_change_data', tickerData.rowId, tickerData.ticker, tickerData.type, tickerData.series, null);
+        this.socket.emit('get_ticker_change_data', tickerData.rowId, tickerData.ticker, tickerData.type, tickerData.serie, null);
         this.socket.on('ticker_change', (r) => { callback(r) })
     }
 

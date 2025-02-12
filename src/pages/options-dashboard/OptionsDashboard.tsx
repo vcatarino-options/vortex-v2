@@ -34,6 +34,7 @@ const OptionsDashboard = () => {
     const [optionDataKeyValue, setOptionDataKeyValue] = useState<Record<string, OptionData[]>>({})
     const [stockEditableDataV2, setStockEditableDataV2] = React.useState<Record<string, any[]>>({})
 
+    const prevSerieMapRef = useRef<Record<string, string> | null>(null);
     const [margin, setMargin] = useState<Record<string, { margin: string }>>({});
     const stockDataRef = useRef(stockDataKeyValue);
     const optionDataRef = useRef(optionDataKeyValue);
@@ -47,6 +48,13 @@ const OptionsDashboard = () => {
     }, [])
 
     useEffect(() => {
+        const key = strategies[tabIndex]?.id
+        const changedItemId = getChangedSerie(stockDataKeyValue, key)
+        if (changedItemId) {
+            const stockData: StockData = getStockDataById(changedItemId)
+            const activeName: string = stockData.activeName
+            findActiveData(activeName, activeName, changedItemId, stockData.serie)
+        }
         console.debug("Ref atualizada.");
         stockDataRef.current = stockDataKeyValue;
         optionDataRef.current = optionDataKeyValue;
@@ -66,6 +74,29 @@ const OptionsDashboard = () => {
     useEffect(() => {
         console.log('margin alterada: ')
     }, [margin])
+
+    const getChangedSerie = (stockDataKeyValue: Record<string, StockData[]>, key: string | undefined): string | null => {
+        if (!key || !stockDataKeyValue[key]) return null;
+        const currentSerieMap: Record<string, string> = {};
+        let changedItemId: string | null = null;
+
+        stockDataKeyValue[key].forEach(item => {
+            currentSerieMap[item.id] = item.serie;
+        });
+
+        if (prevSerieMapRef.current) {
+            for (const id in currentSerieMap) {
+                if (prevSerieMapRef.current[id] !== currentSerieMap[id]) {
+                    changedItemId = id;
+                    break;
+                }
+            }
+        }
+
+        prevSerieMapRef.current = currentSerieMap;
+
+        return changedItemId;
+    }
 
     const findPositions = () => {
         if (!strategies[tabIndex]?.id) return
@@ -254,7 +285,7 @@ const OptionsDashboard = () => {
         })
     }
 
-    const findActiveData = (newValue: string, currentValue: string, id: string) => {
+    const findActiveData = (newValue: string, currentValue: string, id: string, serie?:string) => {
         try {
             const operation = getStockDataById(id)
             const operationType = operation.optionType
@@ -262,6 +293,7 @@ const OptionsDashboard = () => {
                 rowId: id,
                 ticker: newValue,
                 type: operationType,
+                serie: serie || undefined
             }
 
             webSocketService.getTickerChangeData(tickerData, (r: unknown) => {
@@ -300,6 +332,7 @@ const OptionsDashboard = () => {
         try {
             checkTickerReceivedFromWebSocket(r)
             const updatedOp: StockData = getStockDataById(opId)
+            
             updatedOp.workingDays = r.du
             updatedOp.strike = r.option
             updatedOp.strikes = r.options

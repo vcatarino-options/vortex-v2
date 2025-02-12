@@ -1,7 +1,8 @@
 import { io, Socket } from 'socket.io-client'
 import StorageService from '../storage/StorageService';
 // const VORTEX_SERVER_HOST = 'http://34.121.205.167/'
-const VORTEX_SERVER_HOST = 'localhost:8000'
+// const VORTEX_SERVER_HOST = 'localhost:8000'
+const VORTEX_SERVER_HOST = "f518-200-201-185-202.ngrok-free.app"
 
 export default class WebSocketConnection {
     private static instance: WebSocketConnection | null = null;

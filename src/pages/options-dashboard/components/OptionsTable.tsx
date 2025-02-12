@@ -379,7 +379,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                                             }}
                                                                             onClick={(event) => event.stopPropagation()}
                                                                             options={option.series}
-                                                                            sx={{ width: 200 }}
+                                                                            sx={{ width: 165 }}
                                                                             size="small"
                                                                             renderInput={(params) => <TextField {...params} />}
                                                                         />
@@ -405,7 +405,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                                             }}
                                                                             inputProps={{ min: 0 }}
                                                                             sx={{
-                                                                                width: 90,
+                                                                                width: 65,
                                                                                 fontSize: "0.875rem",
                                                                                 padding: "5px 12px",
                                                                                 border: "1px solid #767e89",
@@ -420,7 +420,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                                     <TableCell>
                                                                         <Autocomplete
                                                                             disabled={!option.activeName}
-                                                                            value={option.strike}
+                                                                            value={option.strike.match(/(.*?)-/)?.[1].trim() || ""}
                                                                             onChange={(_, newValue) => {
                                                                                 const newStrike = newValue || option.strike
                                                                                 updateOption(option.id, { strike: newStrike })
@@ -438,9 +438,9 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                                             onClick={(event) => event.stopPropagation()}
                                                                             options={option.strikes}
                                                                             getOptionLabel={(option) => String(option)}
-                                                                            sx={{ width: 200 }}
+                                                                            sx={{ width: 170 }}
                                                                             size="small"
-                                                                            renderInput={(params) => <TextField {...params} />}
+                                                                            renderInput={(params) => <TextField {...params}  label={option.strike.match(/-\s*(\S+)/)?.[1] || ""}/>}
                                                                         />
                                                                     </TableCell>
                                                                 </>
@@ -472,7 +472,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                             }}
                                                             inputProps={{ min: 0, step: 0.01 }}
                                                             sx={{
-                                                                width: 90,
+                                                                width: 76,
                                                                 fontSize: "0.875rem",
                                                                 padding: "5px 12px",
                                                                 border: "1px solid #767e89",
