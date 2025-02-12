@@ -62,13 +62,24 @@ const OptionsDashboard = () => {
 
     useEffect(() => {
         defineMargin()
+        defineSumOpPrice()
+    }, [selecteds])
 
-        console.log("SELECTEDS: ", selecteds)
-        const itemsToSum = stockEditableDataV2[strategies[tabIndex].id].filter(item => selecteds.includes(item.id))
-        const totalPrice = itemsToSum.reduce((sum: number, item: { price: number }) => sum + (item.price || 0), 0);
-        console.log("TOTAL PRICE: ", totalPrice)
-        const key = strategies[tabIndex]?.id
-
+    const defineSumOpPrice = () => {
+        const key = strategies[tabIndex]?.id;
+    
+        if (!key || !stockEditableDataV2[key]) {
+            console.warn("No data available for key:", key);
+            return; 
+        }
+    
+        const itemsToSum = (stockEditableDataV2[key] || []).filter(item => selecteds.includes(item.id));
+    
+        const totalPrice = itemsToSum.reduce(
+            (sum: number, item: { price?: number }) => sum + (item.price || 0), 
+            0
+        );
+    
         setMargin(prevMargin => ({
             ...prevMargin,
             [key]: {
@@ -76,12 +87,8 @@ const OptionsDashboard = () => {
                 opPrice: totalPrice
             }
         }));
-
-        // let totalPrice = 0
-        // if (props.editableDataList && props.editableDataList.length > 0) {
-        //     totalPrice = props.editableDataList.reduce((sum: number, item: { price: number }) => sum + (item.price || 0), 0);
-        // }
-    }, [selecteds])
+    };
+    
 
     const defineMargin = async () => {
         let positions: any[] | undefined = findPositions()
@@ -90,10 +97,7 @@ const OptionsDashboard = () => {
         await findMargin(positions, strategy)
     }
 
-    useEffect(() => {
-        console.log('margin alterada: ')
-    }, [margin])
-
+    
     const getChangedSerie = (stockDataKeyValue: Record<string, StockData[]>, key: string | undefined): string | null => {
         if (!key || !stockDataKeyValue[key]) return null;
         const currentSerieMap: Record<string, string> = {};
@@ -146,22 +150,13 @@ const OptionsDashboard = () => {
             minimumFractionDigits: 2,
         });
 
-        console.log(formattedNumber)
         const key = strategies[tabIndex]?.id
-
-        // setMargin(prevMargin => ({
-        //     ...prevMargin,
-        //     [key]: {
-        //         ...(prevMargin[key] || {}),
-        //         margin: formattedNumber || ''
-        //     }
-        // }));
 
         setMargin(prevMargin => ({
             ...prevMargin,
             [key]: {
                 ...(prevMargin[key] || {}),
-                margin: '45'
+                margin: formattedNumber || ''
             }
         }));
     }
@@ -513,7 +508,7 @@ const OptionsDashboard = () => {
                             {/* INÍCIO INFORMAÇÕES DO ATIVO */}
                             <Box sx={{ px: 2, pt: 1, display: "flex", justifyContent: "space-between" }}>
                                 <ButtonGroupOperation addingOperation={addingOperation} />
-                                <FinancialSummary editableDataList={stockEditableDataV2[strategies[tabIndex].id]} margin={margin[strategies[tabIndex].id]} setIputValue={setFormData} />
+                                <FinancialSummary margin={margin[strategies[tabIndex].id]} setIputValue={setFormData} />
                             </Box>
                             {/* FIM INFORMAÇÕES DO ATIVO */}
                             {/* INÍCIO DADOS PARA CADA TAB */}

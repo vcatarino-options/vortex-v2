@@ -4,14 +4,9 @@ import { TextField } from "@mui/material";
 
 interface FinancialSummaryProps extends BoxProps {
     setIputValue: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
-    editableDataList: any[]
     margin: any
 }
 export const FinancialSummary = (props: FinancialSummaryProps) => {
-    let totalPrice = 0
-    if (props.editableDataList && props.editableDataList.length > 0) {
-        totalPrice = props.editableDataList.reduce((sum: number, item: { price: number }) => sum + (item.price || 0), 0);
-    }
     return (
         <Box>
             <Typography variant="h5" fontWeight="500" pb={1.5}>Resumo:</Typography>

@@ -196,7 +196,7 @@ export default class OptionStrategy {
                 pos?.length === 1 && pos.some(p => p.side === OrderTypeName.SELL)
             )
         };
-        console.log(positions)
+        
         for (const [strategyName, criteria] of Object.entries(strategies)) {
             if (criteria(positions)) {
                 return strategyName;
