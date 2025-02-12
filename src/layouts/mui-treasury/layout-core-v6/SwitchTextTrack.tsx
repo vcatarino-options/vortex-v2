@@ -3,12 +3,13 @@ import Switch, { switchClasses } from "@mui/material/Switch";
 
 
 export const SwitchTextTrack = styled(Switch)({
-  width: 100,
+  width: 110,
   height: 48,
   padding: 8,
   [`& .${switchClasses.switchBase}`]: {
     padding: 11,
     color: "#ff6a00",
+    transform: "translateX(0px)"
   },
   [`& .${switchClasses.thumb}`]: {
     width: 26,
@@ -32,19 +33,19 @@ export const SwitchTextTrack = styled(Switch)({
       fontWeight: 500,
     },
     "&:before": {
-      content: '"compra"',
-      left: 8,
+      content: '"COMPRA"',
+      left: 5,
       opacity: 0,
     },
     "&:after": {
-      content: '"venda"',
+      content: '"VENDA"',
       right: 9,
     },
   },
   [`& .${switchClasses.checked}`]: {
     [`&.${switchClasses.switchBase}`]: {
       color: "#185a9d",
-      transform: "translateX(52px)",
+      transform: "translateX(125%)",
       "&:hover": {
         backgroundColor: "rgba(24,90,257,0.08)",
       },
