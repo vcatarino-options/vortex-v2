@@ -35,6 +35,7 @@ const OptionsDashboard = () => {
     const [stockEditableDataV2, setStockEditableDataV2] = React.useState<Record<string, any[]>>({})
 
     const prevSerieMapRef = useRef<Record<string, string> | null>(null);
+    const prevStrikeMapRef = useRef<Record<string, string> | null>(null);
     const [margin, setMargin] = useState<Record<string, { margin: string, opPrice: number }>>({});
     const stockDataRef = useRef(stockDataKeyValue);
     const optionDataRef = useRef(optionDataKeyValue);
@@ -55,6 +56,23 @@ const OptionsDashboard = () => {
             const activeName: string = stockData.activeName
             findActiveData(activeName, activeName, changedItemId, stockData.serie)
         }
+        const changedIdBecauseStrike = getChangedStrike(stockDataKeyValue, key)
+        if (changedIdBecauseStrike) {
+            console.log("O Strike mudou :: ", changedIdBecauseStrike)
+            const stockData: StockData = getStockDataById(changedIdBecauseStrike)
+            const strike = stockData.strike.match(/-\s*(\S+)/)?.[1]
+            console.log("STRIKE :: ", strike)
+
+            if (!strike) {
+                console.warn("strike undefined")
+                return
+            }
+
+            webSocketService.listenBookInfo(strike, (d: any) => {
+                updateOptionData(changedIdBecauseStrike, d)
+            })
+        }
+
         console.debug("Ref atualizada.");
         stockDataRef.current = stockDataKeyValue;
         optionDataRef.current = optionDataKeyValue;
@@ -67,19 +85,19 @@ const OptionsDashboard = () => {
 
     const defineSumOpPrice = () => {
         const key = strategies[tabIndex]?.id;
-    
-        if (!key || !stockEditableDataV2[key]) {
+        
+        if (!key || !optionDataKeyValue[key]) {
             console.warn("No data available for key:", key);
-            return; 
+            return;
         }
-    
-        const itemsToSum = (stockEditableDataV2[key] || []).filter(item => selecteds.includes(item.id));
-    
-        const totalPrice = itemsToSum.reduce(
-            (sum: number, item: { price?: number }) => sum + (item.price || 0), 
+
+        const itemsToSum = (optionDataKeyValue[key] || []).filter(item => selecteds.includes(item.id));
+
+        const totalPrice = itemsToSum.reduce<number>(
+            (sum, item) => sum + (Number(item.price) || 0),
             0
         );
-    
+
         setMargin(prevMargin => ({
             ...prevMargin,
             [key]: {
@@ -88,7 +106,7 @@ const OptionsDashboard = () => {
             }
         }));
     };
-    
+
 
     const defineMargin = async () => {
         let positions: any[] | undefined = findPositions()
@@ -97,7 +115,7 @@ const OptionsDashboard = () => {
         await findMargin(positions, strategy)
     }
 
-    
+
     const getChangedSerie = (stockDataKeyValue: Record<string, StockData[]>, key: string | undefined): string | null => {
         if (!key || !stockDataKeyValue[key]) return null;
         const currentSerieMap: Record<string, string> = {};
@@ -117,6 +135,29 @@ const OptionsDashboard = () => {
         }
 
         prevSerieMapRef.current = currentSerieMap;
+
+        return changedItemId;
+    }
+
+    const getChangedStrike = (stockDataKeyValue: Record<string, StockData[]>, key: string | undefined): string | null => {
+        if (!key || !stockDataKeyValue[key]) return null;
+        const currentStrikeMap: Record<string, string> = {};
+        let changedItemId: string | null = null;
+
+        stockDataKeyValue[key].forEach(item => {
+            currentStrikeMap[item.id] = item.strike;
+        });
+
+        if (prevStrikeMapRef.current) {
+            for (const id in currentStrikeMap) {
+                if (prevStrikeMapRef.current[id] !== currentStrikeMap[id]) {
+                    changedItemId = id;
+                    break;
+                }
+            }
+        }
+
+        prevStrikeMapRef.current = currentStrikeMap;
 
         return changedItemId;
     }
@@ -317,11 +358,13 @@ const OptionsDashboard = () => {
                     const isOkKeepObserveTicker = ManagerTickerMonitor.shouldKeepObservingTicker(currentValue)
                     if (!isOkKeepObserveTicker) webSocketService.unsubscribeTicker(currentValue)
                 }
+
+
             })
 
-            webSocketService.listenBookInfo(newValue, (d: any) => {
-                updateOptionData(id, d)
-            })
+            // webSocketService.listenBookInfo(newValue, (d: any) => {
+            //     updateOptionData(id, d)
+            // })
         } catch (e) {
             console.error("OptionsDashboard - findActiveData", e)
             enqueueSnackbar('Não foi possível carregar os dados solicitados. O ticker é válido?', { variant: "error", preventDuplicate: true });
@@ -330,6 +373,7 @@ const OptionsDashboard = () => {
 
     const updateOptionData = (id: string, d: any) => {
         const option: OptionData = getOptionDataById(id)
+        console.log("OPTION :: ", d)
         option.optionIn.cost = d[3]
         option.optionIn.bandCost = d[149]
         option.optionOut.sales = d[4]

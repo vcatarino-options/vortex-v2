@@ -115,7 +115,7 @@ const EnhancedTableHead: React.FC<EnhancedTableHeadProps> = ({ onSelectAllClick,
                     </Typography>
                 </TableCell>
                 <TableCell sx={{ backgroundColor: "#282C34" }}>
-                    <Typography variant="h6" fontWeight="500" >
+                    <Typography variant="h6" fontWeight="500"  align='right' >
                         Vol. Venda
                     </Typography>
                 </TableCell>
@@ -329,7 +329,11 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                     </TableCell>
                                                     <TableCell>
                                                         <Typography color="textSecondary" variant="h6" fontWeight="400">
-                                                            {optionItem.price}
+                                                            {/* {optionItem.price} */}
+                                                            {editableItem?.price.toLocaleString("pt-BR", {
+                                                                style: "currency",
+                                                                currency: "BRL"
+                                                            })}
                                                         </Typography>
                                                     </TableCell>
                                                     <TableCell>
@@ -440,7 +444,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                                             getOptionLabel={(option) => String(option)}
                                                                             sx={{ width: 170 }}
                                                                             size="small"
-                                                                            renderInput={(params) => <TextField {...params}  label={option.strike.match(/-\s*(\S+)/)?.[1] || ""}/>}
+                                                                            renderInput={(params) => <TextField {...params} label={option.strike.match(/-\s*(\S+)/)?.[1] || ""} />}
                                                                         />
                                                                     </TableCell>
                                                                 </>
@@ -486,11 +490,11 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
                                                         <Typography variant="h6">
-                                                            {editableItem?.price.toLocaleString("pt-BR", {
-                                                                style: "currency",
-                                                                currency: "BRL"
-                                                            })}
+                                                            {optionItem.price}
                                                         </Typography>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Typography variant="h6">{formatValue(editableItem?.costVolatility)}</Typography>
                                                     </TableCell>
                                                     <TableCell>
                                                         <Box display="flex" alignItems="center">
@@ -499,19 +503,13 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                                     ml: 2,
                                                                 }}
                                                             >
-                                                                <Typography variant="h6">{formatValue(editableItem?.costVolatility)}</Typography>
+                                                                <Typography variant="h6">{optionItem?.optionIn?.cost || 0.0}</Typography>
                                                                 <Typography color="textSecondary" variant="h6" fontWeight="400">
                                                                     {optionItem?.optionIn?.bandCost || 0.0}
                                                                 </Typography>
                                                             </Box>
                                                         </Box>
                                                     </TableCell>
-                                                    <TableCell>
-                                                        <Typography variant="h6">{optionItem?.optionIn?.cost || 0.0}</Typography>
-                                                    </TableCell>
-                                                    <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6">{optionItem?.optionOut?.sales || 0.0}</Typography>
-                                                    </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
                                                         <Box display="flex" alignItems="center">
                                                             <Box
@@ -519,12 +517,16 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                                     ml: 2,
                                                                 }}
                                                             >
-                                                                <Typography variant="h6">{formatValue(editableItem?.salesVolatility)}</Typography>
+                                                                <Typography variant="h6">{optionItem?.optionOut?.sales || 0.0}</Typography>
                                                                 <Typography color="textSecondary" variant="h6" fontWeight="400" align="right">
                                                                     {optionItem?.optionOut?.bandSales || 0.0}
                                                                 </Typography>
                                                             </Box>
                                                         </Box>
+
+                                                    </TableCell>
+                                                    <TableCell sx={{ backgroundColor: "#282C34" }}>
+                                                        <Typography variant="h6" align='right'>{formatValue(editableItem?.salesVolatility)}</Typography>
                                                     </TableCell>
                                                     <TableCell>
                                                         <Typography variant="h6">
