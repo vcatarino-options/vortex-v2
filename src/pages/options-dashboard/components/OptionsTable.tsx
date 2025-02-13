@@ -496,8 +496,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
                                                         <Typography variant="h6">
-                                                            {/* {optionItem.price} */}
-                                                            "optionItem.price"
+                                                            {optionItem.price}
                                                         </Typography>
                                                     </TableCell>
                                                     <TableCell>
