@@ -25,9 +25,9 @@ const OptionsDashboard = () => {
     const [fee, setFee] = useState<string>("")
     const [open, setOpen] = useState(false);
     const [strategyName, setStrategyName] = useState("")
+    const [strategies, setStrategies] = useState<Strategy[]>([])
     const [tabIndex, setTabIndex] = React.useState(0);
     const { setFormData } = useForm({ rate: "", price: "", estimatedMargin: "" })
-    const [strategies, setStrategies] = useState<Strategy[]>([])
     const [selecteds, setSelecteds] = React.useState<string[]>([]);
 
     const [stockDataKeyValue, setStockDataKeyValue] = useState<Record<string, StockData[]>>({})
@@ -71,13 +71,14 @@ const OptionsDashboard = () => {
             }
             // console.log("STRIKE QUE EU DEVO PROCURAR: ", strike)
             webSocketService.listenBookInfo(strike, (d: any) => {
+                console.log("ouvindo o ticker: ", strike)
                 updateOptionData(changedIdBecauseStrike, d, strike)
             })
         }
 
 
-        console.debug("::optionDataKeyValue::", optionDataKeyValue)
-        console.debug(":: stockDataKeyValue ::", stockDataKeyValue)
+        // console.debug("::optionDataKeyValue::", optionDataKeyValue)
+        // console.debug(":: stockDataKeyValue ::", stockDataKeyValue)
 
     }, [stockDataKeyValue, optionDataKeyValue]);
 
@@ -318,9 +319,9 @@ const OptionsDashboard = () => {
         const emptyStockDataRow = createStockData({ id: operationId, optionType: optiontype })
         const emptyOptionDataRow = createOptionData({ id: operationId })
 
-        console.log(`Adicionei operation: id[${operationId}]`)
-        console.log(`emptyStockDataRow: [${emptyStockDataRow}]`)
-        console.log(`emptyOptionDataRow: [${emptyOptionDataRow}]`)
+        // console.log(`Adicionei operation: id[${operationId}]`)
+        // console.log(`emptyStockDataRow: [${emptyStockDataRow}]`)
+        // console.log(`emptyOptionDataRow: [${emptyOptionDataRow}]`)
         // Atualizando StockData
         setStockDataKeyValue(prevStockData => ({
             ...prevStockData,
@@ -394,21 +395,77 @@ const OptionsDashboard = () => {
         }
     }
 
-    const updateOptionData = (id: string, d: any, strike?: string) => {
-        const option: OptionData = getOptionDataById(id)
-        console.log("OPTION :: ", d)
-        console.log("STRIKE :: ", strike)
-        option.optionIn.cost = d[3]
-        option.optionIn.bandCost = d[149]
-        option.optionOut.sales = d[4]
-        option.optionOut.bandSales = d[148]
-        option.price = d[2]
-        const key = strategies[tabIndex].id
-        const clonedOptionsKeyValue = JSON.parse(JSON.stringify(optionDataRef.current))
-        const updatedList = clonedOptionsKeyValue[key].map((op: OptionData) => op.id === option.id ? option : op)
-        clonedOptionsKeyValue[key] = updatedList
-        setOptionDataKeyValue(clonedOptionsKeyValue)
-    }
+    // const updateOptionData = (id: string, d: any, strike?: string) => {
+    //     const option: OptionData = getOptionDataById(id)
+    //     console.log("OPTION :: ", d)
+    //     console.log("STRIKE :: ", strike)
+    //     option.optionIn.cost = d[3]
+    //     option.optionIn.bandCost = d[149]
+    //     option.optionOut.sales = d[4]
+    //     option.optionOut.bandSales = d[148]
+    //     option.price = d[2]
+    //     const key = strategies[tabIndex].id
+    //     const clonedOptionsKeyValue = JSON.parse(JSON.stringify(optionDataRef.current))
+    //     const updatedList = clonedOptionsKeyValue[key].map((op: OptionData) => op.id === option.id ? option : op)
+    //     clonedOptionsKeyValue[key] = updatedList
+    //     setOptionDataKeyValue(clonedOptionsKeyValue)
+    // }
+
+    const updateOptionData = (id: string, d: any, strike: string) => {
+        const key = strategies[tabIndex]?.id;
+        if (!key) return;
+
+        console.log("OPTION :: ", d);
+        console.log("STRIKE :: ", strike);
+
+        // Se não tiver strike, apenas atualiza pelo ID original
+        // if (!strike) {
+        //     updateSingleOptionData(id, d);
+        //     return;
+        // }
+
+        // Encontrar todas as `StockData` que possuem esse `strike`
+        const matchingStockItems = stockDataRef.current[key]?.filter((stock) => stock.strike.includes(strike)) || [];
+        console.log("matchingStockItems :: ", matchingStockItems);
+        if (matchingStockItems.length === 0) {
+            console.warn(`Nenhuma StockData encontrada para o strike: ${strike}`);
+            return;
+        }
+
+        console.log(`Encontradas ${matchingStockItems.length} entradas para o strike ${strike}`);
+
+        // Criar um Map para acesso rápido às opções a serem atualizadas
+        const optionMap = new Map<string, OptionData>();
+
+        matchingStockItems.forEach((stockItem) => {
+            const option = getOptionDataById(stockItem.id);
+            if (option) {
+                optionMap.set(stockItem.id, { ...option }); // Criar uma cópia para manter a imutabilidade
+            }
+        });
+
+        if (optionMap.size === 0) return;
+
+        // Atualizar todas as `OptionData` dentro do `optionMap`
+        optionMap.forEach((option) => {
+            option.optionIn.cost = d[3];
+            option.optionIn.bandCost = d[149];
+            option.optionOut.sales = d[4];
+            option.optionOut.bandSales = d[148];
+            option.price = d[2];
+        });
+
+        // Criar uma nova lista de opções com os valores atualizados
+        const updatedList = optionDataRef.current[key]?.map((op: OptionData) =>
+            optionMap.has(op.id) ? optionMap.get(op.id)! : op
+        ) || [];
+        console.log("updatedList: ", updatedList)
+        // Atualizar o estado
+        setOptionDataKeyValue((prev) => ({
+            ...prev,
+            [key]: updatedList
+        }));
+    };
 
     const getTicker = (r: any, opId: string, activeName: string) => {
         try {
