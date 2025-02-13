@@ -44,6 +44,15 @@ export type Order = {
     fee: number;
     type: OptionType;
     direction: boolean;
+    optionPrice?: number;
+};
+
+export type ImpliedVolatilityOrder = {
+    strike: string;
+    workingDays: string;
+    fee: string;
+    type: OptionType;
+    activePrice: number
 };
 
 export interface OptionData {

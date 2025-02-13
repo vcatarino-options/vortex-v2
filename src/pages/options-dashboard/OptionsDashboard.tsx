@@ -6,7 +6,7 @@ import { UnderlineTabs } from "../../layouts/mui-treasury/mockup-tabs";
 import CloseIcon from "@mui/icons-material/Close";
 import { ButtonGroupOperation } from "./components/ButtonGroupOperation";
 import OptionsTable from "./components/OptionsTable";
-import { Strategy, createEmptyStrategy, createStockData, OptionType, StockData, TickerData, OptionData, createOptionData, OrderTypeName, OrderType } from "../../models/strategy";
+import { Strategy, createEmptyStrategy, createStockData, OptionType, StockData, TickerData, OptionData, createOptionData, OrderTypeName, OrderType, ImpliedVolatilityOrder } from "../../models/strategy";
 import { v4 as uuidv4 } from 'uuid';
 import useForm from "../../hooks/useForm"
 import { FinancialSummary } from "./components/FinancialSummary";
@@ -15,6 +15,7 @@ import WebSocketService from "../../services/ws-service/WebSocketService";
 import { useSnackbar } from 'notistack';
 import ManagerTickerMonitor from "../../services/manager-ticker-monitor/ManagerTickerMonitor";
 import OptionStrategy from "../../services/option-strategy/OptionStrategy";
+import OptionsMath3 from "../../services/options-math/OptionsMath3";
 
 const webSocketConnection = WebSocketConnection.getInstance()
 webSocketConnection.connect()
@@ -22,7 +23,7 @@ const socket = webSocketConnection.getSocket()
 const webSocketService = new WebSocketService(socket)
 
 const OptionsDashboard = () => {
-    const [fee, setFee] = useState<string>("")
+    const [fee, setFee] = useState<string>("13.25")
     const [open, setOpen] = useState(false);
     const [strategyName, setStrategyName] = useState("")
     const [strategies, setStrategies] = useState<Strategy[]>([])
@@ -405,7 +406,7 @@ const OptionsDashboard = () => {
         const optionMap = getOptionsMap(matchingStockItems);
         if (optionMap.size === 0) return;
 
-        updateOptionValues(optionMap, d);
+        updateOptionValues(optionMap, d, matchingStockItems);
         updateOptionState(key, optionMap);
     };
 
@@ -432,15 +433,42 @@ const OptionsDashboard = () => {
         return optionMap;
     };
 
+    //variávei necessárias para as duas volatilidades
+    // strike
+    // workingDays
+    // fee
+    // type: option.optionType,
+    // type: option.optionType,
+
     // Atualiza os valores das opções no Map
-    const updateOptionValues = (optionMap: Map<string, OptionData>, d: any) => {
-        optionMap.forEach((option) => {
+    const updateOptionValues = (optionMap: Map<string, OptionData>, d: any, matchingStockItems: StockData[]) => {
+        matchingStockItems.forEach((stockItem) => {
+            const option = optionMap.get(stockItem.id);
+            if (!option) return;
+
             option.optionIn.cost = d[3];
             option.optionIn.bandCost = d[149];
             option.optionOut.sales = d[4];
             option.optionOut.bandSales = d[148];
             option.price = d[2];
-        });
+
+            //O active price deve ser consumido via websocket também
+            const order: ImpliedVolatilityOrder = {
+                strike: stockItem.strike,
+                workingDays: stockItem.workingDays,
+                fee: fee ? fee : "0",
+                type: stockItem.optionType,
+                activePrice: 26.10
+            }
+            const costVol = OptionsMath3.getImpliedVolatility(parseFloat(option.optionIn.cost), order)
+            const salesVol = OptionsMath3.getImpliedVolatility(parseFloat(option.optionOut.sales), order)
+
+            console.log("costVol: ", costVol)
+            console.log("salesVol: ", salesVol)
+            // Calcula a volatilidade e atribui os valores
+            option.optionIn.costVolatility = costVol.toString()
+            option.optionOut.salesVolatility = salesVol.toString()
+        })
     };
 
     // Atualiza o estado com os novos valores

@@ -115,7 +115,7 @@ const EnhancedTableHead: React.FC<EnhancedTableHeadProps> = ({ onSelectAllClick,
                     </Typography>
                 </TableCell>
                 <TableCell sx={{ backgroundColor: "#282C34" }}>
-                    <Typography variant="h6" fontWeight="500"  align='right' >
+                    <Typography variant="h6" fontWeight="500" align='right' >
                         Vol. Venda
                     </Typography>
                 </TableCell>
@@ -275,7 +275,8 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                             const labelId = `enhanced-table-checkbox-${index}`;
                                             const order: Order = {
                                                 volatility: editableItem?.volatility,
-                                                strPrice: optionItem.price,
+                                                // strPrice: optionItem.price,
+                                                strPrice: "0.34",
                                                 strStrike: option.strike.split(' ')[0].replace(/\./g, '').replace(',', '.'),
                                                 workingDays: option.workingDays,
                                                 fee: fee,
@@ -312,11 +313,14 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                             value={option.activeName || null}
                                                             onChange={(_, newValue) => {
                                                                 if (newValue && stockList.includes(newValue)) {
+                                                                    console.log("activeName:: onchange:: ", newValue)
                                                                     getValueFromAutocomplete(newValue as string, option.activeName, option.id)
                                                                 }
                                                             }}
+                                                            // Esse aqui serve para trocar o value do input
                                                             onInputChange={(_, newInputValue) => {
                                                                 if (newInputValue && stockList.includes(newInputValue)) {
+                                                                    console.log("activeName:: onInputchange:: ", newInputValue)
                                                                     getValueFromAutocomplete(newInputValue as string, option.activeName, option.id)
                                                                 }
                                                             }}
@@ -426,18 +430,19 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                                             disabled={!option.activeName}
                                                                             value={option.strike.match(/(.*?)-/)?.[1].trim() || ""}
                                                                             onChange={(_, newValue) => {
-                                                                                const newStrike = newValue || option.strike
-                                                                                updateOption(option.id, { strike: newStrike })
+                                                                                console.log("active name", newValue)
+                                                                                // const newStrike = newValue || option.strike
+                                                                                // updateOption(option.id, { strike: newStrike })
 
-                                                                                optionsMath.setStrike(parseFloat(newStrike.split(' ')[0].replace(/\./g, '').replace(',', '.')))
-                                                                                const price = optionsMath.calculateOptionPrice()
-                                                                                const updatedObj = { price }
-                                                                                updateOptionPrice(option.id, updatedObj)
-                                                                                const optionPriceBuy = parseFloat(optionItem?.optionIn?.bandCost)
-                                                                                const optionPriceSale = parseFloat(optionItem?.optionOut?.bandSales)
-                                                                                const costVolatility = optionsMath.getImpliedVolatility(optionPriceBuy)
-                                                                                const salesVolatility = optionsMath.getImpliedVolatility(optionPriceSale)
-                                                                                updatedImpliedVol(option.id, { costVolatility, salesVolatility })
+                                                                                // optionsMath.setStrike(parseFloat(newStrike.split(' ')[0].replace(/\./g, '').replace(',', '.')))
+                                                                                // const price = optionsMath.calculateOptionPrice()
+                                                                                // const updatedObj = { price }
+                                                                                // updateOptionPrice(option.id, updatedObj)
+                                                                                // const optionPriceBuy = parseFloat(optionItem?.optionIn?.bandCost)
+                                                                                // const optionPriceSale = parseFloat(optionItem?.optionOut?.bandSales)
+                                                                                // const costVolatility = optionsMath.getImpliedVolatility(optionPriceBuy)
+                                                                                // const salesVolatility = optionsMath.getImpliedVolatility(optionPriceSale)
+                                                                                // updatedImpliedVol(option.id, { costVolatility, salesVolatility })
                                                                             }}
                                                                             onClick={(event) => event.stopPropagation()}
                                                                             options={option.strikes}
@@ -461,18 +466,19 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                             value={editableItem?.volatility}
 
                                                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                                                const volatility = editableItem?.volatility
-                                                                const price = parseFloat(optionItem.price)
-                                                                const strike = parseFloat(option.strike.split(' ')[0].replace(/\./g, '').replace(',', '.'));
-                                                                const daysPerYear = parseInt(option.workingDays) / 252
-                                                                const feePerCent = fee / 100
-                                                                const type = option.optionType
-                                                                const direction = editableItem?.direction ? OrderTypeName.BUY : OrderTypeName.SELL
-                                                                const { delta } = OptionsMath.getOptionsGreeks(volatility, price, strike, daysPerYear, feePerCent, type, direction)
+                                                                // const volatility = editableItem?.volatility
+                                                                // const price = parseFloat(optionItem.price)
+                                                                // const strike = parseFloat(option.strike.split(' ')[0].replace(/\./g, '').replace(',', '.'));
+                                                                // const daysPerYear = parseInt(option.workingDays) / 252
+                                                                // const feePerCent = fee / 100
+                                                                // const type = option.optionType
+                                                                // const direction = editableItem?.direction ? OrderTypeName.BUY : OrderTypeName.SELL
+                                                                // const { delta } = OptionsMath.getOptionsGreeks(volatility, price, strike, daysPerYear, feePerCent, type, direction)
 
-                                                                const optionPrice = optionsMath.calculateOptionPrice()
-                                                                const updatedObj = { volatility: e.target.value, price: optionPrice, "greekDictionary": { "delta": delta } }
-                                                                updateOptionPrice(option.id, updatedObj)
+                                                                // const optionPrice = optionsMath.calculateOptionPrice()
+                                                                // const updatedObj = { volatility: e.target.value, price: optionPrice, "greekDictionary": { "delta": delta } }
+                                                                // updateOptionPrice(option.id, updatedObj)
+                                                                console.log("volatility")
                                                             }}
                                                             inputProps={{ min: 0, step: 0.01 }}
                                                             sx={{
@@ -490,11 +496,12 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
                                                         <Typography variant="h6">
-                                                            {optionItem.price}
+                                                            {/* {optionItem.price} */}
+                                                            "optionItem.price"
                                                         </Typography>
                                                     </TableCell>
                                                     <TableCell>
-                                                        <Typography variant="h6">{formatValue(editableItem?.costVolatility)}</Typography>
+                                                        <Typography variant="h6">{optionItem?.optionIn?.costVolatility}</Typography>
                                                     </TableCell>
                                                     <TableCell>
                                                         <Box display="flex" alignItems="center">
@@ -526,7 +533,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
 
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6" align='right'>{formatValue(editableItem?.salesVolatility)}</Typography>
+                                                        <Typography variant="h6" align='right'>{optionItem?.optionOut?.salesVolatility}</Typography>
                                                     </TableCell>
                                                     <TableCell>
                                                         <Typography variant="h6">
