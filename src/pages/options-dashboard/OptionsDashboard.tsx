@@ -49,6 +49,8 @@ const OptionsDashboard = () => {
     }, [])
 
     useEffect(() => {
+        sincronizeState()
+
         const key = strategies[tabIndex]?.id
         const changedItemId = getChangedSerie(stockDataKeyValue, key)
         if (changedItemId) {
@@ -67,21 +69,28 @@ const OptionsDashboard = () => {
                 console.warn("strike undefined")
                 return
             }
-
+            // console.log("STRIKE QUE EU DEVO PROCURAR: ", strike)
             webSocketService.listenBookInfo(strike, (d: any) => {
-                updateOptionData(changedIdBecauseStrike, d)
+                updateOptionData(changedIdBecauseStrike, d, strike)
             })
         }
 
-        console.debug("Ref atualizada.");
-        stockDataRef.current = stockDataKeyValue;
-        optionDataRef.current = optionDataKeyValue;
+
+        console.debug("::optionDataKeyValue::", optionDataKeyValue)
+        console.debug(":: stockDataKeyValue ::", stockDataKeyValue)
+
     }, [stockDataKeyValue, optionDataKeyValue]);
 
     useEffect(() => {
         defineMargin()
         defineSumOpPrice()
     }, [selecteds])
+
+    const sincronizeState = () => {
+        console.debug("Ref atualizada. ",);
+        stockDataRef.current = stockDataKeyValue;
+        optionDataRef.current = optionDataKeyValue;
+    }
 
     const defineSumOpPrice = () => {
         const key = strategies[tabIndex]?.id;
@@ -309,6 +318,9 @@ const OptionsDashboard = () => {
         const emptyStockDataRow = createStockData({ id: operationId, optionType: optiontype })
         const emptyOptionDataRow = createOptionData({ id: operationId })
 
+        console.log(`Adicionei operation: id[${operationId}]`)
+        console.log(`emptyStockDataRow: [${emptyStockDataRow}]`)
+        console.log(`emptyOptionDataRow: [${emptyOptionDataRow}]`)
         // Atualizando StockData
         setStockDataKeyValue(prevStockData => ({
             ...prevStockData,
@@ -382,9 +394,10 @@ const OptionsDashboard = () => {
         }
     }
 
-    const updateOptionData = (id: string, d: any) => {
+    const updateOptionData = (id: string, d: any, strike?: string) => {
         const option: OptionData = getOptionDataById(id)
         console.log("OPTION :: ", d)
+        console.log("STRIKE :: ", strike)
         option.optionIn.cost = d[3]
         option.optionIn.bandCost = d[149]
         option.optionOut.sales = d[4]
