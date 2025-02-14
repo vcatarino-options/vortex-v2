@@ -449,8 +449,12 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                                         <Autocomplete
                                                                             disabled={!option.activeName}
                                                                             value={option.strike.match(/(.*?)-/)?.[1].trim() || ""}
+
                                                                             onChange={(_, newValue) => {
-                                                                                console.log("active name", newValue)
+                                                                                updateOption(option.id, { strike: newValue || option.strike })
+                                                                            }}
+                                                                            // onChange={(_, newValue) => {
+                                                                            //     console.log("active name", newValue)
                                                                                 // const newStrike = newValue || option.strike
                                                                                 // updateOption(option.id, { strike: newStrike })
 
@@ -463,7 +467,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                                                 // const costVolatility = optionsMath.getImpliedVolatility(optionPriceBuy)
                                                                                 // const salesVolatility = optionsMath.getImpliedVolatility(optionPriceSale)
                                                                                 // updatedImpliedVol(option.id, { costVolatility, salesVolatility })
-                                                                            }}
+                                                                            // }}
                                                                             onClick={(event) => event.stopPropagation()}
                                                                             options={option.strikes}
                                                                             getOptionLabel={(option) => String(option)}
@@ -486,19 +490,6 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                             value={editableItem?.volatility}
 
                                                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                                                // const volatility = editableItem?.volatility
-                                                                // const price = parseFloat(optionItem.price)
-                                                                // const strike = parseFloat(option.strike.split(' ')[0].replace(/\./g, '').replace(',', '.'));
-                                                                // const daysPerYear = parseInt(option.workingDays) / 252
-                                                                // const feePerCent = fee / 100
-                                                                // const type = option.optionType
-                                                                // const direction = editableItem?.direction ? OrderTypeName.BUY : OrderTypeName.SELL
-                                                                // const { delta } = OptionsMath.getOptionsGreeks(volatility, price, strike, daysPerYear, feePerCent, type, direction)
-
-                                                                // const optionPrice = optionsMath.calculateOptionPrice()
-                                                                // const updatedObj = { volatility: e.target.value, price: optionPrice, "greekDictionary": { "delta": delta } }
-                                                                // updateOptionPrice(option.id, updatedObj)
-                                                                console.log("volatility")
                                                                 updateOptionPrice(option.id, { volatility: e.target.value })
                                                             }}
                                                             inputProps={{ min: 0, step: 0.01 }}
