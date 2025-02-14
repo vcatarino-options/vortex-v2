@@ -605,7 +605,12 @@ const OptionsDashboard = () => {
                             {/* INÍCIO INFORMAÇÕES DO ATIVO */}
                             <Box sx={{ px: 2, pt: 1, display: "flex", justifyContent: "space-between" }}>
                                 <ButtonGroupOperation addingOperation={addingOperation} />
-                                <FinancialSummary margin={margin[strategies[tabIndex].id]} setIputValue={setFormData} />
+                                <FinancialSummary
+                                    selecteds={selecteds}
+                                    options={optionDataKeyValue[strategies[tabIndex]?.id]}
+                                    editableItems={stockEditableDataV2[strategies[tabIndex]?.id]}
+                                    margin={margin[strategies[tabIndex].id]}
+                                    setIputValue={setFormData} />
                             </Box>
                             {/* FIM INFORMAÇÕES DO ATIVO */}
                             {/* INÍCIO DADOS PARA CADA TAB */}

@@ -59,7 +59,7 @@ export interface OptionData {
     id: string,
     optionIn: OptionIn,
     optionOut: OptionOut
-    price: string
+    price: string | number
 }
 
 export interface OptionIn {
