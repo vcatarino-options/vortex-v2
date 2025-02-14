@@ -31,8 +31,8 @@ function Login() {
             } else {
                 enqueueSnackbar("Ocorreu um erro inesperado. Fale com o administrador do sistema.", { variant: "error" });
             }
+            setIsLoading(false)
         }
-        setIsLoading(false)
     }
 
     const checkEmail = (email: string) => {
@@ -61,6 +61,12 @@ function Login() {
             throw Error(
                 "O password é uma informação necessária. Preencha o campo vazio."
             );
+        }
+    }
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+        if (e.key === "Enter") {
+            doLogin()
         }
     }
 
@@ -109,6 +115,7 @@ function Login() {
                                     <Grid container spacing={0} display="flex" justifyContent="center">
                                         <Grid item xs={12} lg={9} xl={6}>
                                             <Box
+                                                onKeyDown={handleKeyDown}
                                                 sx={{
                                                     p: 4,
                                                 }}
@@ -150,6 +157,11 @@ function Login() {
                                                         placeholder="Senha*"
                                                         fullWidth
                                                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData(e)}
+                                                        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                                                            if (e.key === 'Enter') {
+                                                                doLogin();
+                                                            }
+                                                        }}
                                                         endAdornment={
                                                             <InputAdornment position="end">
                                                                 <IconButton
