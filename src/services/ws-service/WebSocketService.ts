@@ -30,9 +30,14 @@ export default class WebSocketService {
         this.socket.emit('unsubscribe_ticker', ticker);
     };
 
-    public listenBookInfo = (ticker: string, callback: (r: unknown) => void) => {
+    public listenBookInfo = (ticker: string, callback: (r: unknown, ticker: string) => void) => {
         if (!this.socket) return;
-        this.socket.on(`book_info/${ticker}`, r => callback(r));
+
+        const eventKey = `book_info/${ticker}`;
+
+        this.socket.off(eventKey);
+
+        this.socket.on(eventKey, callback);
     }
 
     public getTickerMargin = (ticker: string, callback: (r: unknown) => void) => {

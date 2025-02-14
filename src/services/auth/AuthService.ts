@@ -8,8 +8,8 @@ export default class AuthService {
         email: string,
         password: string
     ): Promise<void> => {
-        // const host = "localhost:8000"
-        const host = "f518-200-201-185-202.ngrok-free.app"
+        const host = "34.95.213.62:80"
+        // const host = "f8be-200-201-185-202.ngrok-free.app"
         // const host = "34.121.205.167"
         console.log("HOST: ", HOST)
         const data = {
@@ -18,7 +18,7 @@ export default class AuthService {
         };
 
         try {
-            const response = await axios.post(`https://${host}/user_login/`, data, {
+            const response = await axios.post(`http://${host}/user_login/`, data, {
                 headers: {
                     'accept': 'application/json',
                     'Content-Type': 'application/json'
