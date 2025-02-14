@@ -17,20 +17,19 @@ export const FinancialSummary = (props: FinancialSummaryProps) => {
     }
 
     const itemsToSum = (props.options || [])
-    .filter(item => props.selecteds.includes(item.id))
-    .map(item => {
-        const stock = props.editableItems.find((stock: any) => stock.id === item.id);
-        const price = typeof item.price === "number" ? item.price : parseFloat(item.price);
-        
-        return {
-            ...item,
-            price: stock?.direction ? price * -1 : price
-        };
-    });
+        .filter(item => props.selecteds.includes(item.id))
+        .map(item => {
+            const stock = props.editableItems.find((stock: any) => stock.id === item.id);
+            const price = typeof item.price === "number" ? item.price : parseFloat(item.price);
 
-console.log(">>>", itemsToSum);
+            return {
+                ...item,
+                price: stock?.direction ? price * -1 : price
+            };
+        });
 
-const totalPrice = itemsToSum.reduce((sum, item) => sum + (item.price || 0), 0);
+
+    const totalPrice = itemsToSum.reduce((sum, item) => sum + (item.price || 0), 0);
 
     return (
         <Box>
