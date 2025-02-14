@@ -22,9 +22,10 @@ import {
 import { SwitchTextTrack } from '../../../layouts/mui-treasury/layout-core-v6';
 import FeatherIcon from 'feather-icons-react';
 import CustomCheckbox from '../../../components/custom-elements/CustomCheckbox';
-import { OptionData, OptionTypeName, StockData, Direction } from '../../../models/strategy';
+import { OptionData, OptionTypeName, StockData, Direction, OptionType, OrderType, OrderTypeName } from '../../../models/strategy';
 import { stockList } from '../../../utils/stockList';
 import { useRouteLoaderData } from "react-router";
+import OptionsMath3 from '../../../services/options-math/OptionsMath3';
 
 interface EnhancedTableHeadProps {
     numSelected: number,
@@ -222,6 +223,19 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
         setSelecteds([]);
     };
 
+    const getOptionsGreeks = (
+        volatility: number,
+        activePrice: number,
+        strike: number,
+        daysPerYear: number,
+        selic: number,
+        optionType: OptionType,
+        direction: OrderType) => {
+        return OptionsMath3.getOptionsGreeks(volatility, activePrice, strike, daysPerYear, selic, optionType, direction)
+
+    }
+
+
     const handleClick = (_: React.ChangeEvent<HTMLInputElement>, id: string) => {
         const selectedIndex = selecteds.indexOf(id);
         let newSelected: string[] = [];
@@ -271,6 +285,9 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                             const optionItem = optionDataList?.[index];
                                             const result: number = parseFloat(editableItem.stockQtd) * parseFloat(optionItem.price)
                                             const isItemSelected = isSelected(option.id);
+                                            const strike = parseFloat(option.strike.split(' ')[0].replace(/\./g, '').replace(',', '.'));
+                                            const daysPerYear = editableItem?.workingDays ? editableItem.workingDays / 252 : 0
+                                            const direction: OrderType = editableItem.direction ? OrderTypeName.BUY : OrderTypeName.SELL
                                             const labelId = `enhanced-table-checkbox-${index}`;
 
                                             return (
@@ -482,6 +499,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                                 // const updatedObj = { volatility: e.target.value, price: optionPrice, "greekDictionary": { "delta": delta } }
                                                                 // updateOptionPrice(option.id, updatedObj)
                                                                 console.log("volatility")
+                                                                updateOptionPrice(option.id, { volatility: e.target.value })
                                                             }}
                                                             inputProps={{ min: 0, step: 0.01 }}
                                                             sx={{
@@ -555,7 +573,15 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                     </TableCell>
                                                     <TableCell align="center" sx={{ backgroundColor: "#282C34" }}>
                                                         <Typography variant="h6">
-                                                            {new Intl.NumberFormat('en-US', { signDisplay: "always" }).format(editableItem?.greekDictionary.delta ?? 0)}
+                                                            {new Intl.NumberFormat('en-US', { signDisplay: "always" }).format(
+                                                                getOptionsGreeks(
+                                                                    editableItem?.volatility,
+                                                                    26.16,
+                                                                    strike,
+                                                                    daysPerYear,
+                                                                    selic,
+                                                                    option?.optionType,
+                                                                    direction).delta ?? 0)}
                                                         </Typography>
                                                     </TableCell>
                                                     {/* <TableCell sx={{ backgroundColor: "#282C34" }}>

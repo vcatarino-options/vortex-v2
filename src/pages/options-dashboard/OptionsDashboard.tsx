@@ -38,6 +38,8 @@ const OptionsDashboard = () => {
 
     const prevSerieMapRef = useRef<Record<string, string> | null>(null);
     const prevStrikeMapRef = useRef<Record<string, string> | null>(null);
+    const prevVolatitlityMapRef = useRef<Record<string, string> | null>(null);
+
     const [margin, setMargin] = useState<Record<string, { margin: string, opPrice: number }>>({});
     const stockDataRef = useRef(stockDataKeyValue);
     const optionDataRef = useRef(optionDataKeyValue);
@@ -65,15 +67,11 @@ const OptionsDashboard = () => {
                 console.warn("strike undefined")
                 return
             }
-            // console.log("STRIKE QUE EU DEVO PROCURAR: ", strike)
+
             webSocketService.listenBookInfo(strike, (d: any) => {
                 updateOptionData(changedIdBecauseStrike, d, strike)
             })
         }
-
-
-        // console.debug("::optionDataKeyValue::", optionDataKeyValue)
-        // console.debug(":: stockDataKeyValue ::", stockDataKeyValue)
 
     }, [stockDataKeyValue, optionDataKeyValue]);
 
@@ -163,6 +161,29 @@ const OptionsDashboard = () => {
         }
 
         prevStrikeMapRef.current = currentStrikeMap;
+
+        return changedItemId;
+    }
+
+    const getChangedVolatility = (stockEditableDataV2: Record<string, any[]>, key: string | undefined): string | null => {
+        if (!key || !stockEditableDataV2[key]) return null;
+        const currentVolatilityMap: Record<string, string> = {};
+        let changedItemId: string | null = null;
+
+        stockEditableDataV2[key].forEach(item => {
+            currentVolatilityMap[item.id] = item.volatility;
+        });
+
+        if (prevVolatitlityMapRef.current) {
+            for (const id in currentVolatilityMap) {
+                if (prevVolatitlityMapRef.current[id] !== currentVolatilityMap[id]) {
+                    changedItemId = id;
+                    break;
+                }
+            }
+        }
+
+        prevVolatitlityMapRef.current = currentVolatilityMap;
 
         return changedItemId;
     }
@@ -507,6 +528,16 @@ const OptionsDashboard = () => {
             throw new Error("OptionsDashboard: Não existe uma opção válida.");
         }
         return JSON.parse(JSON.stringify(option))
+    }
+
+    const getStockEditableDataById = (id: string) => {
+        const strategy = strategies[tabIndex]
+        const operations = stockEditableDataV2[strategy.id]
+        const operation = operations.find(op => op.id === id)
+        if (!operation) {
+            throw new Error("OptionsDashboard: Não existe uma operação válida.");
+        }
+        return JSON.parse(JSON.stringify(operation))
     }
 
     return (

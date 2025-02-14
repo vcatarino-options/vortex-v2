@@ -46,7 +46,7 @@ export default class OptionsMath3 {
         const WORKING_DAYS_ON_YEAR: number = 252
         const strike: number = parseFloat(order.strike.split(' ')[0].replace(/\./g, '').replace(',', '.'))
         const daysPerYear: number = parseFloat(order.workingDays) / WORKING_DAYS_ON_YEAR
-        const feePercent: number = order.selic/100
+        const feePercent: number = order.selic / 100
         const type = order.type
         const activePrice = order.activePrice
         return { strike, daysPerYear, feePercent, type, activePrice }
@@ -96,5 +96,55 @@ export default class OptionsMath3 {
             total += values[k];
         }
         return 0.5 + 0.3989422804014327 * total;
+    }
+
+    static getOptionsGreeks(
+        volatility: number,
+        activePrice: number,
+        personOption: number,
+        daysPerYear: number,
+        selic: number,
+        optionType: OptionType,
+        orderType: OrderType) {
+        const d1 = (Math.log(activePrice / personOption) + (selic + 0.5 * volatility ** 2) * daysPerYear) / (volatility * Math.sqrt(daysPerYear));
+        const d2 = d1 - volatility * Math.sqrt(daysPerYear);
+        let delta, gamma, theta, vega, rho;
+
+        if (optionType.toUpperCase() === OptionTypeName.CALL) {
+            delta = OptionsMath3._stdNormal(d1);
+            rho = (personOption * daysPerYear * Math.exp(-selic * daysPerYear) * OptionsMath3._stdNormal(d2)) / 100;
+            theta = ((-activePrice * Math.exp(-0.5 * d1 * d1) / Math.sqrt(2 * Math.PI) * volatility) / (2 * Math.sqrt(daysPerYear))
+                - (selic * personOption * Math.exp(-selic * daysPerYear) * OptionsMath3._stdNormal(d2))) / 252;
+        } else if (optionType.toUpperCase() === OptionTypeName.PUT) {
+            delta = OptionsMath3._stdNormal(d1) - 1;
+            rho = (-personOption * daysPerYear * Math.exp(-selic * daysPerYear) * OptionsMath3._stdNormal(-d2)) / 100;
+            theta = ((-activePrice * Math.exp(-0.5 * d1 * d1) / Math.sqrt(2 * Math.PI) * volatility) / (2 * Math.sqrt(daysPerYear))
+                + (selic * personOption * Math.exp(-selic * daysPerYear) * OptionsMath3._stdNormal(-d2))) / 252;
+        } else {
+            throw new Error("Invalid option_type. Use 'CALL' or 'PUT'.");
+        }
+
+        gamma = 1 / (activePrice * volatility * Math.sqrt(daysPerYear) * Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * d1 * d1);
+        vega = (activePrice * Math.sqrt(daysPerYear) * Math.exp(((d1) ** 2 / 2) * -1) / (Math.sqrt(2 * Math.PI))) / 100
+        if (
+            (orderType.toUpperCase() === OrderTypeName.SELL && optionType.toUpperCase() === OptionTypeName.CALL) ||
+            (orderType.toUpperCase() === OrderTypeName.BUY && optionType.toUpperCase() === OptionTypeName.PUT)
+        ) {
+            delta = delta < 0 ? delta : delta * -1
+            gamma = gamma < 0 ? gamma : gamma * -1
+            theta = theta < 0 ? theta * -1 : theta
+            vega = vega < 0 ? vega : vega * -1
+            rho = rho < 0 ? rho : rho * -1
+        } else if (
+            (orderType.toUpperCase() === OrderTypeName.BUY && optionType.toUpperCase() === OptionTypeName.CALL) ||
+            (orderType.toUpperCase() === OrderTypeName.SELL && optionType.toUpperCase() === OptionTypeName.PUT)
+        ) {
+            delta = delta > 0 ? delta : delta * -1
+            gamma = gamma > 0 ? gamma : gamma * -1
+            theta = theta > 0 ? theta * -1 : theta
+            vega = vega > 0 ? vega : vega * -1
+            rho = rho > 0 ? rho : rho * -1
+        }
+        return { delta, gamma, theta, vega, rho }
     }
 }
