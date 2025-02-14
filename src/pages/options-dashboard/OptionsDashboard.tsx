@@ -16,6 +16,7 @@ import { useSnackbar } from 'notistack';
 import ManagerTickerMonitor from "../../services/manager-ticker-monitor/ManagerTickerMonitor";
 import OptionStrategy from "../../services/option-strategy/OptionStrategy";
 import OptionsMath3 from "../../services/options-math/OptionsMath3";
+import { useLoaderData } from "react-router";
 
 const webSocketConnection = WebSocketConnection.getInstance()
 webSocketConnection.connect()
@@ -23,7 +24,8 @@ const socket = webSocketConnection.getSocket()
 const webSocketService = new WebSocketService(socket)
 
 const OptionsDashboard = () => {
-    const [fee, setFee] = useState<string>("13.25")
+    let loaderData = useLoaderData<{ selic: number }>();
+    const [fee, setFee] = useState<string>("15.25")
     const [open, setOpen] = useState(false);
     const [strategyName, setStrategyName] = useState("")
     const [strategies, setStrategies] = useState<Strategy[]>([])
@@ -456,7 +458,7 @@ const OptionsDashboard = () => {
             const order: ImpliedVolatilityOrder = {
                 strike: stockItem.strike,
                 workingDays: stockItem.workingDays,
-                fee: fee ? fee : "0",
+                selic: loaderData.selic,
                 type: stockItem.optionType,
                 activePrice: 26.10
             }
@@ -588,7 +590,7 @@ const OptionsDashboard = () => {
                         name="rate"
                         label="Juros (%)"
                         size="small"
-                        value={fee}
+                        value={loaderData.selic}
                         sx={{ width: 90 }}
                         slotProps={{
                             inputLabel: {
@@ -670,7 +672,6 @@ const OptionsDashboard = () => {
                                                 selecteds={selecteds}
                                                 setSelecteds={setSelecteds}
                                                 deleteItens={deletingOptionFromTable}
-                                                fee={parseFloat(fee)}
                                                 updateOptionPrice={updateDataKeyValue}
                                                 updatedImpliedVol={updatedImpliedVol}
                                             />

@@ -46,7 +46,7 @@ export default class OptionsMath3 {
         const WORKING_DAYS_ON_YEAR: number = 252
         const strike: number = parseFloat(order.strike.split(' ')[0].replace(/\./g, '').replace(',', '.'))
         const daysPerYear: number = parseFloat(order.workingDays) / WORKING_DAYS_ON_YEAR
-        const feePercent: number = parseFloat(order.fee)/100
+        const feePercent: number = order.selic/100
         const type = order.type
         const activePrice = order.activePrice
         return { strike, daysPerYear, feePercent, type, activePrice }

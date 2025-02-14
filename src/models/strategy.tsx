@@ -50,7 +50,7 @@ export type Order = {
 export type ImpliedVolatilityOrder = {
     strike: string;
     workingDays: string;
-    fee: string;
+    selic: number;
     type: OptionType;
     activePrice: number
 };

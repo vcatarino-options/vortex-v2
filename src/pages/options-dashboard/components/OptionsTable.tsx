@@ -24,8 +24,8 @@ import FeatherIcon from 'feather-icons-react';
 import CustomCheckbox from '../../../components/custom-elements/CustomCheckbox';
 import { OptionData, OptionTypeName, Order, OrderTypeName, StockData } from '../../../models/strategy';
 import { stockList } from '../../../utils/stockList';
-import OptionsMath from '../../../services/options-math/OptionsMath';
 import OptionsMath2 from '../../../services/options-math/OptionsMath2';
+import { useRouteLoaderData } from "react-router";
 
 interface EnhancedTableHeadProps {
     numSelected: number,
@@ -196,7 +196,6 @@ interface OptionsTableProps {
     setSelecteds: (e: any) => void
     getValueFromAutocomplete: (a: string, b: string, c: string) => void
     updateOption: (a: string, opt: Partial<StockData>) => void
-    fee: number
     updateOptionPrice: (str: string, x: any) => void
     updatedImpliedVol: (var1: string, var2: any) => void
 }
@@ -206,7 +205,6 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
     optionDataList,
     editableDataList,
     selecteds,
-    fee,
     deleteItens,
     setSelecteds,
     getValueFromAutocomplete,
@@ -214,6 +212,8 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
     updateOptionPrice,
     updatedImpliedVol,
 }: OptionsTableProps) => {
+    const { selic } = useRouteLoaderData("optionsDashboard");
+
     const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.checked) {
             const newSelecteds = stockDataList.map((n) => n.id);
@@ -279,7 +279,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                 strPrice: "0.34",
                                                 strStrike: option.strike.split(' ')[0].replace(/\./g, '').replace(',', '.'),
                                                 workingDays: option.workingDays,
-                                                fee: fee,
+                                                fee: selic,
                                                 type: option.optionType,
                                                 direction: editableItem?.direction
                                             }
