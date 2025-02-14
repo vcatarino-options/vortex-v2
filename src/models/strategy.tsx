@@ -160,3 +160,8 @@ export enum OptionTypeName {
     ACTIVE = "ACTIVE"
 }
 
+export enum Direction {
+    BUY = "-",
+    SALES = "+"
+}
+

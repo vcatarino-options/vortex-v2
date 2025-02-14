@@ -22,7 +22,7 @@ import {
 import { SwitchTextTrack } from '../../../layouts/mui-treasury/layout-core-v6';
 import FeatherIcon from 'feather-icons-react';
 import CustomCheckbox from '../../../components/custom-elements/CustomCheckbox';
-import { OptionData, OptionTypeName, StockData } from '../../../models/strategy';
+import { OptionData, OptionTypeName, StockData, Direction } from '../../../models/strategy';
 import { stockList } from '../../../utils/stockList';
 import { useRouteLoaderData } from "react-router";
 
@@ -268,8 +268,8 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                     <TableBody>
                                         {stockDataList.map((option, index) => {
                                             const editableItem = editableDataList?.[index]
-                                            const result: number = parseFloat(editableItem.stockQtd) * editableItem?.price
                                             const optionItem = optionDataList?.[index];
+                                            const result: number = parseFloat(editableItem.stockQtd) * parseFloat(optionItem.price)
                                             const isItemSelected = isSelected(option.id);
                                             const labelId = `enhanced-table-checkbox-${index}`;
 
@@ -498,9 +498,14 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                         />
                                                     </TableCell>
                                                     <TableCell sx={{ backgroundColor: "#282C34" }}>
-                                                        <Typography variant="h6">
-                                                            {optionItem.price}
-                                                        </Typography>
+                                                        <Box display="flex" alignItems="center" gap={1}>
+                                                            <Typography variant="h6">
+                                                                {editableItem?.direction ? Direction.BUY : Direction.SALES}
+                                                            </Typography>
+                                                            <Typography variant="h6">
+                                                                {optionItem.price}
+                                                            </Typography>
+                                                        </Box>
                                                     </TableCell>
                                                     <TableCell>
                                                         <Typography variant="h6">{optionItem?.optionIn?.costVolatility}</Typography>
@@ -538,9 +543,15 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                         <Typography variant="h6" align='right'>{optionItem?.optionOut?.salesVolatility}</Typography>
                                                     </TableCell>
                                                     <TableCell>
-                                                        <Typography variant="h6">
-                                                            {result.toFixed(2)}
-                                                        </Typography>
+                                                        <Box display="flex" alignItems="center" gap={1}>
+                                                            <Typography variant="h6">
+                                                                {editableItem?.direction ? Direction.BUY : Direction.SALES}
+                                                            </Typography>
+                                                            <Typography variant="h6">
+                                                                {result.toFixed(2)}
+                                                            </Typography>
+                                                        </Box>
+
                                                     </TableCell>
                                                     <TableCell align="center" sx={{ backgroundColor: "#282C34" }}>
                                                         <Typography variant="h6">

@@ -210,35 +210,11 @@ const OptionsDashboard = () => {
     // [optionDataKeyValue, setOptionDataKeyValue]
     const updateDataKeyValue = (optionId: string, updatedObj: any) => {
         const key = strategies[tabIndex].id
-        updateOptionPrice(optionId, updatedObj)
         delete updatedObj.price
         const clonedEditableValue = JSON.parse(JSON.stringify(stockEditableDataV2))
         const updatedList = clonedEditableValue[key].map((op: any) => op.id === optionId ? { ...op, ...updatedObj } : op)
         clonedEditableValue[key] = updatedList
         setStockEditableDataV2(clonedEditableValue)
-    }
-
-    const updateOptionPrice = (optionId: string, updatedObj: any) => {
-        const key = strategies[tabIndex].id
-        const optionDataStructure = optionDataKeyValue[key]
-
-        const strDirection2: OrderType = updatedObj.direction ? OrderTypeName.BUY : OrderTypeName.SELL
-        const optionDataList = optionDataStructure.filter((op: any) => op.id === optionId)
-
-        let price: number = 0
-        if (updatedObj.hasOwnProperty("price")) {
-            price = updatedObj.price
-        } else {
-            price = Number(optionDataList[0].price)
-        }
-
-        let priceToManager = updatePriceSignal(price, strDirection2)
-
-
-        const clonedOptionDataKeyValue = JSON.parse(JSON.stringify(optionDataKeyValue))
-        const updatedList = clonedOptionDataKeyValue[key].map((op: any) => op.id === optionId ? { ...op, ...{ price: priceToManager } } : op)
-        clonedOptionDataKeyValue[key] = updatedList
-        setOptionDataKeyValue(clonedOptionDataKeyValue)
     }
 
     const updatedImpliedVol = (optionId: string, updatedObj: any) => {
@@ -247,18 +223,6 @@ const OptionsDashboard = () => {
         const updatedList = clonedEditableValue[key].map((op: any) => op.id === optionId ? { ...op, ...updatedObj } : op)
         clonedEditableValue[key] = updatedList
         setStockEditableDataV2(clonedEditableValue)
-    }
-
-    const updatePriceSignal = (priceToManager: number, strDirection: string) => {
-        if (strDirection === OrderTypeName.BUY) {
-            priceToManager = Math.abs(priceToManager) * -1;
-        }
-
-        if (strDirection === OrderTypeName.SELL) {
-            priceToManager = Math.abs(priceToManager)
-        }
-
-        return priceToManager
     }
 
     const handleCloseTab = (strategyId: string) => {
