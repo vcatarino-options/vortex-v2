@@ -393,7 +393,23 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                                         />
                                                                     </TableCell>
                                                                     <TableCell>
-                                                                        <InputBase
+                                                                        <TextField
+                                                                            value={option.workingDays}
+                                                                            size="small"
+                                                                            slotProps={{
+                                                                                input: {
+                                                                                    readOnly: true,
+                                                                                },
+                                                                            }}
+                                                                            sx={{
+                                                                                width: 65,
+                                                                                fontSize: "0.875rem",
+                                                                                "& .MuiInputBase-input": {
+                                                                                    textAlign: "center"
+                                                                                }
+                                                                            }}
+                                                                        />
+                                                                        {/* <InputBase
                                                                             disabled={!option.activeName}
                                                                             type="number"
                                                                             size="small"
@@ -423,7 +439,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                                                     borderColor: "#ccc", // Cor da borda ao passar o mouse
                                                                                 }
                                                                             }}
-                                                                        />
+                                                                        /> */}
                                                                     </TableCell>
                                                                     <TableCell>
                                                                         <Autocomplete
