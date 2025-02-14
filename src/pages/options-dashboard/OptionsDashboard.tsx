@@ -6,7 +6,7 @@ import { UnderlineTabs } from "../../layouts/mui-treasury/mockup-tabs";
 import CloseIcon from "@mui/icons-material/Close";
 import { ButtonGroupOperation } from "./components/ButtonGroupOperation";
 import OptionsTable from "./components/OptionsTable";
-import { Strategy, createEmptyStrategy, createStockData, OptionType, StockData, TickerData, OptionData, createOptionData, OrderTypeName, OrderType, ImpliedVolatilityOrder } from "../../models/strategy";
+import { Strategy, createEmptyStrategy, createStockData, OptionType, StockData, TickerData, OptionData, createOptionData, ImpliedVolatilityOrder } from "../../models/strategy";
 import { v4 as uuidv4 } from 'uuid';
 import useForm from "../../hooks/useForm"
 import { FinancialSummary } from "./components/FinancialSummary";
@@ -38,7 +38,6 @@ const OptionsDashboard = () => {
 
     const prevSerieMapRef = useRef<Record<string, string> | null>(null);
     const prevStrikeMapRef = useRef<Record<string, string> | null>(null);
-    const prevVolatitlityMapRef = useRef<Record<string, string> | null>(null);
 
     const [margin, setMargin] = useState<Record<string, { margin: string, opPrice: number }>>({});
     const stockDataRef = useRef(stockDataKeyValue);
@@ -69,7 +68,7 @@ const OptionsDashboard = () => {
             }
 
             webSocketService.listenBookInfo(strike, (d: any) => {
-                updateOptionData(changedIdBecauseStrike, d, strike)
+                updateOptionData(d, strike)
             })
         }
 
@@ -161,29 +160,6 @@ const OptionsDashboard = () => {
         }
 
         prevStrikeMapRef.current = currentStrikeMap;
-
-        return changedItemId;
-    }
-
-    const getChangedVolatility = (stockEditableDataV2: Record<string, any[]>, key: string | undefined): string | null => {
-        if (!key || !stockEditableDataV2[key]) return null;
-        const currentVolatilityMap: Record<string, string> = {};
-        let changedItemId: string | null = null;
-
-        stockEditableDataV2[key].forEach(item => {
-            currentVolatilityMap[item.id] = item.volatility;
-        });
-
-        if (prevVolatitlityMapRef.current) {
-            for (const id in currentVolatilityMap) {
-                if (prevVolatitlityMapRef.current[id] !== currentVolatilityMap[id]) {
-                    changedItemId = id;
-                    break;
-                }
-            }
-        }
-
-        prevVolatitlityMapRef.current = currentVolatilityMap;
 
         return changedItemId;
     }
@@ -326,11 +302,23 @@ const OptionsDashboard = () => {
 
     const deletingOptionFromTable = () => {
         const key = strategies[tabIndex].id
-        const clonedOperationsKeyValue = JSON.parse(JSON.stringify(stockDataKeyValue))
-        const intersections = clonedOperationsKeyValue[key].filter((option: StockData) => !selecteds.includes(option.id));
-        const listToDelete = clonedOperationsKeyValue[key].filter((option: StockData) => selecteds.includes(option.id));
-        clonedOperationsKeyValue[key] = intersections
-        setStockDataKeyValue(clonedOperationsKeyValue)
+        const clonedStockDataKeyValue = JSON.parse(JSON.stringify(stockDataKeyValue))
+        const clonedOptionsDataKeyValue = JSON.parse(JSON.stringify(optionDataKeyValue))
+        const clonedStockEditableData = JSON.parse(JSON.stringify(stockEditableDataV2))
+
+        const intersectionsStockData = clonedStockDataKeyValue[key].filter((stockData: StockData) => !selecteds.includes(stockData.id));
+        const intersectionsOptionsData = clonedOptionsDataKeyValue[key].filter((optionData: OptionData) => !selecteds.includes(optionData.id));
+        const intersectionsEditableData = clonedStockEditableData[key].filter((stockEditableData: any) => !selecteds.includes(stockEditableData.id));
+
+        const listToDelete = clonedStockDataKeyValue[key].filter((option: StockData) => selecteds.includes(option.id));
+        clonedStockDataKeyValue[key] = intersectionsStockData
+        clonedOptionsDataKeyValue[key] = intersectionsOptionsData
+        clonedStockEditableData[key] = intersectionsEditableData
+
+        setStockDataKeyValue(clonedStockDataKeyValue)
+        setOptionDataKeyValue(clonedOptionsDataKeyValue)
+        setStockEditableDataV2(clonedStockEditableData)
+        
         listToDelete.forEach((op: StockData) => {
             const stock = op.activeName
             ManagerTickerMonitor.deleteTickerOnTheMonitor(stock, op.id)
@@ -371,7 +359,7 @@ const OptionsDashboard = () => {
     }
 
     //INÍCIO DO UPDATE OPTION DATA
-    const updateOptionData = (id: string, d: any, strike: string) => {
+    const updateOptionData = (d: any, strike: string) => {
         const key = strategies[tabIndex]?.id;
         if (!key) return;
 
@@ -407,13 +395,6 @@ const OptionsDashboard = () => {
         });
         return optionMap;
     };
-
-    //variávei necessárias para as duas volatilidades
-    // strike
-    // workingDays
-    // fee
-    // type: option.optionType,
-    // type: option.optionType,
 
     // Atualiza os valores das opções no Map
     const updateOptionValues = (optionMap: Map<string, OptionData>, d: any, matchingStockItems: StockData[]) => {
@@ -528,16 +509,6 @@ const OptionsDashboard = () => {
             throw new Error("OptionsDashboard: Não existe uma opção válida.");
         }
         return JSON.parse(JSON.stringify(option))
-    }
-
-    const getStockEditableDataById = (id: string) => {
-        const strategy = strategies[tabIndex]
-        const operations = stockEditableDataV2[strategy.id]
-        const operation = operations.find(op => op.id === id)
-        if (!operation) {
-            throw new Error("OptionsDashboard: Não existe uma operação válida.");
-        }
-        return JSON.parse(JSON.stringify(operation))
     }
 
     return (

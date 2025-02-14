@@ -257,9 +257,9 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
 
     const isSelected = (id: string) => selecteds.indexOf(id) !== -1;
 
-    const formatValue = (value: string): string => {
-        return Number.isNaN(value) ? '-' : value;
-    }
+    // const formatValue = (value: string): string => {
+    //     return Number.isNaN(value) ? '-' : value;
+    // }
 
     return (
         <>
@@ -283,7 +283,7 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                         {stockDataList.map((option, index) => {
                                             const editableItem = editableDataList?.[index]
                                             const optionItem = optionDataList?.[index];
-                                            const result: number = parseFloat(editableItem.stockQtd) * parseFloat(optionItem.price)
+                                            const result: number = parseFloat(editableItem.stockQtd.toString()) * parseFloat(optionItem.price.toString());
                                             const isItemSelected = isSelected(option.id);
                                             const strike = parseFloat(option.strike.split(' ')[0].replace(/\./g, '').replace(',', '.'));
                                             const daysPerYear = editableItem?.workingDays ? editableItem.workingDays / 252 : 0

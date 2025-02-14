@@ -1,7 +1,7 @@
 import Box, { BoxProps } from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { TextField } from "@mui/material";
-import { OptionData, StockData } from "../../../models/strategy";
+import { OptionData } from "../../../models/strategy";
 
 interface FinancialSummaryProps extends BoxProps {
     setIputValue: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
