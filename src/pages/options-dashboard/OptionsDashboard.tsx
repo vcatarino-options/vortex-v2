@@ -25,7 +25,6 @@ const webSocketService = new WebSocketService(socket)
 
 const OptionsDashboard = () => {
     let loaderData = useLoaderData<{ selic: number }>();
-    const [fee, setFee] = useState<string>("15.25")
     const [open, setOpen] = useState(false);
     const [strategyName, setStrategyName] = useState("")
     const [strategies, setStrategies] = useState<Strategy[]>([])
@@ -44,12 +43,6 @@ const OptionsDashboard = () => {
     const optionDataRef = useRef(optionDataKeyValue);
 
     const { enqueueSnackbar } = useSnackbar();
-
-    useEffect(() => {
-        webSocketService.getRiskFree((r: unknown) => {
-            getFee(r)
-        })
-    }, [])
 
     useEffect(() => {
         sincronizeState()
@@ -266,11 +259,6 @@ const OptionsDashboard = () => {
         }
 
         return priceToManager
-    }
-
-    const getFee = (r: unknown) => {
-        const response: string = r as string
-        setFee(response)
     }
 
     const handleCloseTab = (strategyId: string) => {
