@@ -22,9 +22,8 @@ import {
 import { SwitchTextTrack } from '../../../layouts/mui-treasury/layout-core-v6';
 import FeatherIcon from 'feather-icons-react';
 import CustomCheckbox from '../../../components/custom-elements/CustomCheckbox';
-import { OptionData, OptionTypeName, Order, OrderTypeName, StockData } from '../../../models/strategy';
+import { OptionData, OptionTypeName, StockData } from '../../../models/strategy';
 import { stockList } from '../../../utils/stockList';
-import OptionsMath2 from '../../../services/options-math/OptionsMath2';
 import { useRouteLoaderData } from "react-router";
 
 interface EnhancedTableHeadProps {
@@ -273,18 +272,6 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                             const optionItem = optionDataList?.[index];
                                             const isItemSelected = isSelected(option.id);
                                             const labelId = `enhanced-table-checkbox-${index}`;
-                                            const order: Order = {
-                                                volatility: editableItem?.volatility,
-                                                // strPrice: optionItem.price,
-                                                strPrice: "0.34",
-                                                strStrike: option.strike.split(' ')[0].replace(/\./g, '').replace(',', '.'),
-                                                workingDays: option.workingDays,
-                                                fee: selic,
-                                                type: option.optionType,
-                                                direction: editableItem?.direction
-                                            }
-
-                                            const optionsMath: OptionsMath2 = new OptionsMath2(order)
 
                                             return (
                                                 <TableRow
