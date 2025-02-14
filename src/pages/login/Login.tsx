@@ -24,7 +24,7 @@ function Login() {
             checkEmail(formValue.email);
             checkPassWord(formValue.password);
             await AuthService.basicAuth(formValue.email, formValue.password);
-            navigate("/v2")
+            navigate("/dashboard")
         } catch (e: unknown) {
             if (e instanceof Error) {
                 enqueueSnackbar(e.message, { variant: "error" });
