@@ -40,6 +40,18 @@ export default class WebSocketService {
         this.socket.on(eventKey, callback);
     }
 
+    public listenOptInfo = (optionName: string, activeName: string, callback: (r: unknown, ticker: string) => void) => {
+        if (!this.socket) return;
+
+        console.log("listenOptInfo")
+        this.socket.emit('subscribe_ticker', optionName, activeName);
+        const eventKey = `option_info/${activeName}`;
+
+        this.socket.off(eventKey);
+        
+        this.socket.on(eventKey, callback);
+    }
+
     public getTickerMargin = (ticker: string, callback: (r: unknown) => void) => {
         if (!this.socket) return;
         

@@ -60,7 +60,9 @@ const OptionsDashboard = () => {
             console.log("O Strike mudou :: ", changedIdBecauseStrike)
             const stockData: StockData = getStockDataById(changedIdBecauseStrike)
             const strike = stockData.strike.match(/-\s*(\S+)/)?.[1]
+            const activeName: string = stockData.activeName
             console.log("STRIKE :: ", strike)
+            console.log("ACTIVE NAME :: ", activeName)
 
             if (!strike) {
                 console.warn("strike undefined")
@@ -70,6 +72,10 @@ const OptionsDashboard = () => {
             webSocketService.listenBookInfo(strike, (d: any) => {
                 updateOptionData(d, strike)
             })
+
+            // webSocketService.listenOptInfo(strike, activeName, (d: any) => {
+            //     updateOptionData(d, strike)
+            // })
         }
 
     }, [stockDataKeyValue, optionDataKeyValue]);
@@ -318,7 +324,7 @@ const OptionsDashboard = () => {
         setStockDataKeyValue(clonedStockDataKeyValue)
         setOptionDataKeyValue(clonedOptionsDataKeyValue)
         setStockEditableDataV2(clonedStockEditableData)
-        
+
         listToDelete.forEach((op: StockData) => {
             const stock = op.activeName
             ManagerTickerMonitor.deleteTickerOnTheMonitor(stock, op.id)
@@ -407,6 +413,13 @@ const OptionsDashboard = () => {
             option.optionOut.sales = d[4];
             option.optionOut.bandSales = d[148];
             option.price = d[2];
+            
+            // const { bid_option, ask_option, tunel_upper_option, tunel_down_option, stock_last } = d
+            // option.optionIn.cost = bid_option;
+            // option.optionIn.bandCost = tunel_down_option;
+            // option.optionOut.sales = ask_option;
+            // option.optionOut.bandSales = tunel_upper_option;
+            // option.price = stock_last;
 
             //O active price deve ser consumido via websocket também
             const order: ImpliedVolatilityOrder = {
