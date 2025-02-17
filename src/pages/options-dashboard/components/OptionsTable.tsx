@@ -300,17 +300,14 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                     selected={isItemSelected}
                                                 >
                                                     <TableCell padding="checkbox">
-                                                        <Box display="flex" alignItems={"center"}>
-                                                            <CustomCheckbox
-                                                                onClick={(event: React.ChangeEvent<HTMLInputElement>) => handleClick(event, option.id)}
-                                                                color="primary"
-                                                                checked={isItemSelected}
-                                                                inputprops={{
-                                                                    'aria-labelledby': labelId,
-                                                                }}
-                                                            />
-                                                            <Typography variant="h6" fontWeight="700">{option.optionType.charAt(0)}</Typography>
-                                                        </Box>
+                                                        <CustomCheckbox
+                                                            onClick={(event: React.ChangeEvent<HTMLInputElement>) => handleClick(event, option.id)}
+                                                            color="primary"
+                                                            checked={isItemSelected}
+                                                            inputprops={{
+                                                                'aria-labelledby': labelId,
+                                                            }}
+                                                        />
                                                     </TableCell>
                                                     <TableCell>
                                                         <Autocomplete
@@ -413,68 +410,27 @@ const OptionsTable: React.FC<OptionsTableProps> = ({
                                                                                 }
                                                                             }}
                                                                         />
-                                                                        {/* <InputBase
-                                                                            disabled={!option.activeName}
-                                                                            type="number"
-                                                                            size="small"
-                                                                            value={option.workingDays}
-                                                                            onChange={(e) => {
-                                                                                const value = e.target.value
-                                                                                updateOption(option.id, { workingDays: value })
-                                                                                optionsMath.setDaysPerYear(value)
-                                                                                const price = optionsMath.calculateOptionPrice()
-                                                                                const updatedObj = { price }
-                                                                                updateOptionPrice(option.id, updatedObj)
-                                                                                const optionPriceBuy = parseFloat(optionItem?.optionIn?.cost)
-                                                                                const optionPriceSale = parseFloat(optionItem?.optionOut?.sales)
-                                                                                const costVolatility = optionsMath.getImpliedVolatility(optionPriceBuy)
-                                                                                const salesVolatility = optionsMath.getImpliedVolatility(optionPriceSale)
-                                                                                updatedImpliedVol(option.id, { costVolatility, salesVolatility })
-                                                                            }}
-                                                                            inputProps={{ min: 0 }}
-                                                                            sx={{
-                                                                                width: 65,
-                                                                                fontSize: "0.875rem",
-                                                                                padding: "5px 12px",
-                                                                                border: "1px solid #767e89",
-                                                                                borderRadius: "4px",
-                                                                                transition: "border-color 0.2s ease-in-out",
-                                                                                "&:hover": {
-                                                                                    borderColor: "#ccc", // Cor da borda ao passar o mouse
-                                                                                }
-                                                                            }}
-                                                                        /> */}
+                                                                       
                                                                     </TableCell>
                                                                     <TableCell>
-                                                                        <Autocomplete
-                                                                            disabled={!option.activeName}
-                                                                            value={option.strike.match(/(.*?)-/)?.[1].trim() || ""}
+                                                                        <Box display="flex" alignItems={"center"} justifyContent={"space-between"} sx={{ width: "190px" }}>
+                                                                            <Typography variant="h6" fontWeight="700">{option.optionType.charAt(0)}</Typography>
+                                                                            <Autocomplete
+                                                                                disabled={!option.activeName}
+                                                                                value={option.strike.match(/(.*?)-/)?.[1].trim() || ""}
 
-                                                                            onChange={(_, newValue) => {
-                                                                                updateOption(option.id, { strike: newValue || option.strike })
-                                                                            }}
-                                                                            // onChange={(_, newValue) => {
-                                                                            //     console.log("active name", newValue)
-                                                                                // const newStrike = newValue || option.strike
-                                                                                // updateOption(option.id, { strike: newStrike })
-
-                                                                                // optionsMath.setStrike(parseFloat(newStrike.split(' ')[0].replace(/\./g, '').replace(',', '.')))
-                                                                                // const price = optionsMath.calculateOptionPrice()
-                                                                                // const updatedObj = { price }
-                                                                                // updateOptionPrice(option.id, updatedObj)
-                                                                                // const optionPriceBuy = parseFloat(optionItem?.optionIn?.bandCost)
-                                                                                // const optionPriceSale = parseFloat(optionItem?.optionOut?.bandSales)
-                                                                                // const costVolatility = optionsMath.getImpliedVolatility(optionPriceBuy)
-                                                                                // const salesVolatility = optionsMath.getImpliedVolatility(optionPriceSale)
-                                                                                // updatedImpliedVol(option.id, { costVolatility, salesVolatility })
-                                                                            // }}
-                                                                            onClick={(event) => event.stopPropagation()}
-                                                                            options={option.strikes}
-                                                                            getOptionLabel={(option) => String(option)}
-                                                                            sx={{ width: 170 }}
-                                                                            size="small"
-                                                                            renderInput={(params) => <TextField {...params} label={option.strike.match(/-\s*(\S+)/)?.[1] || ""} />}
-                                                                        />
+                                                                                onChange={(_, newValue) => {
+                                                                                    updateOption(option.id, { strike: newValue || option.strike })
+                                                                                }}
+                                                                                
+                                                                                onClick={(event) => event.stopPropagation()}
+                                                                                options={option.strikes}
+                                                                                getOptionLabel={(option) => String(option)}
+                                                                                sx={{ width: 170 }}
+                                                                                size="small"
+                                                                                renderInput={(params) => <TextField {...params} label={option.strike.match(/-\s*(\S+)/)?.[1] || ""} />}
+                                                                            />
+                                                                        </Box>
                                                                     </TableCell>
                                                                 </>
                                                             )
