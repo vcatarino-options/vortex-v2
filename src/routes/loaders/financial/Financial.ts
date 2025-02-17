@@ -1,13 +1,12 @@
 import axios from "axios";
 
 export default class Financial {
-    static HOST: string = "34.95.213.62:80"
+    static VORTEX_SERVER: string = import.meta.env.VITE_VORTEX_SERVER
     static getSelic = async () => {
-        console.log("HOST: ", Financial.HOST)
-
+        
         try {
 
-            const response = await axios.get(`http://${Financial.HOST}/get_risk_free/`, {
+            const response = await axios.get(`${Financial.VORTEX_SERVER}/get_risk_free/`, {
                 headers: {
                     'accept': 'application/json'
                 },

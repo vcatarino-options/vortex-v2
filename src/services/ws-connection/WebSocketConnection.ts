@@ -1,7 +1,8 @@
 import { io, Socket } from 'socket.io-client'
 import StorageService from '../storage/StorageService';
 // const VORTEX_SERVER_HOST = 'http://34.121.205.167/'
-const VORTEX_SERVER_HOST = 'http://34.95.213.62:80'
+const VORTEX_SERVER_HOST = import.meta.env.VITE_VORTEX_SERVER
+// 'http://34.95.213.62:80'
 // const VORTEX_SERVER_HOST = "f8be-200-201-185-202.ngrok-free.app"
 
 export default class WebSocketConnection {
@@ -23,7 +24,7 @@ export default class WebSocketConnection {
             return;
         }
         const userToken = StorageService.getUserToken()
-        this.socket = io("http://34.95.213.62:80", {
+        this.socket = io(`${VORTEX_SERVER_HOST}`, {
             path: '/pricer_server/',
             transports: ['websocket'],
             auth: {
