@@ -2,7 +2,7 @@ import { Typography, Box } from "@mui/material";
 import useScrollTrigger from "@mui/material/useScrollTrigger";
 import { Content, Header, Root } from "../layout-core-v6";
 import { Outlet } from "react-router";
-
+import logo from "../../../assets/images/backgrounds/image.svg"
 export function LayoutV6AppAnalytics() {
   const trigger = useScrollTrigger({
     threshold: 0,
@@ -13,7 +13,7 @@ export function LayoutV6AppAnalytics() {
       <Header
         sx={{
           height: { xs: 48, sm: 64, md: 72 },
-          bgcolor: "rgba(255,255,255,0.5)",
+          bgcolor: (theme) => theme.palette.primary.dark,
           backdropFilter: "blur(12px)",
           ...(trigger && {
             transition: "0.2s",
@@ -39,13 +39,7 @@ export function LayoutV6AppAnalytics() {
             height: { xs: 52, sm: 64, md: 72 },
           }}
         >
-
-          <Typography
-            variant="h6"
-            sx={{ fontSize: "clamp(18px, 1vw + 1rem, 24px)" }}
-          >
-            <b>Analytics</b>
-          </Typography>
+         <img width={160} src={logo} />
         </Box>
       </Header>
 
